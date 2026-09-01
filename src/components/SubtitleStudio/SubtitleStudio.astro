@@ -18,6 +18,12 @@ const stylePresets = [
 
 <div id="subtitle-studio" class="w-full flex flex-col gap-8">
 
+  <!-- Notification Toast Container -->
+  <div id="studio-toast" class="hidden fixed top-6 right-6 z-50 max-w-md p-4 rounded-xl shadow-l3 border transition-all flex items-center gap-3">
+    <span id="studio-toast-icon" class="text-xl"></span>
+    <p id="studio-toast-msg" class="text-sm font-medium"></p>
+  </div>
+
   <!-- ─── Studio Main Card ─────────────────────────────────── -->
   <div class="bg-[var(--color-canvas)] rounded-2xl border border-[var(--color-hairline)] shadow-l3 overflow-hidden">
 
@@ -44,6 +50,7 @@ const stylePresets = [
       >
         <span>🎙️</span>
         <span>{t(lang, 'studio.tab.audio')}</span>
+        <span class="px-1.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded bg-[var(--color-grad-blue-start)]/10 text-[var(--color-grad-blue-start)]">Cloudflare AI</span>
       </button>
 
       <button
@@ -77,7 +84,7 @@ const stylePresets = [
           <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-[var(--color-link-bg-soft)] text-[var(--color-link)] uppercase tracking-wider">Fastest Workflow</span>
           <h3 class="display-sm text-[var(--color-ink)]">Upload Video & Subtitle File</h3>
         </div>
-        <p class="text-sm text-[var(--color-body)]">Have an SRT, VTT, or ASS file? Upload both your video and subtitle file to sync, style, and burn them into high-res MP4 with zero watermark.</p>
+        <p class="text-sm text-[var(--color-body)]">Have a video file? Upload your video and subtitle file to sync, style, and burn them into high-res MP4 with zero watermark.</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -120,26 +127,54 @@ const stylePresets = [
         </div>
       </div>
 
-      <!-- Quick Action / Demo -->
+      <!-- Quick Action / Auto-Transcribe Option -->
       <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
         <div class="flex items-center gap-3">
-          <span class="text-xl">💡</span>
-          <p class="text-xs text-[var(--color-body)]">Don't have subtitles yet? Use the <strong>AI Auto-Caption</strong> tab to auto-generate timestamped subtitles from your video speech.</p>
+          <span class="text-xl">⚡</span>
+          <p class="text-xs text-[var(--color-body)]">Don't have subtitles yet? <strong>Cloudflare Whisper AI</strong> can automatically extract and generate timestamped subtitles from your video audio.</p>
         </div>
-        <button id="burn-start-btn" type="button" class="w-full sm:w-auto px-6 py-2.5 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-sm font-semibold hover:opacity-90 transition-all shadow-l1 whitespace-nowrap">
-          Open in Studio Editor →
-        </button>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <button id="burn-auto-whisper-btn" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-pill bg-[var(--color-link)] text-white text-sm font-semibold hover:opacity-90 transition-all shadow-l1 whitespace-nowrap">
+            ⚡ Auto-Transcribe with Whisper
+          </button>
+          <button id="burn-start-btn" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-sm font-semibold hover:opacity-90 transition-all shadow-l1 whitespace-nowrap">
+            Open in Studio Editor →
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- ─── TAB 2: AI Audio / Video Transcriber ─────────────────── -->
+    <!-- ─── TAB 2: AI Audio / Video Transcriber (Whisper Edge GPU) ─── -->
     <div id="panel-audio" role="tabpanel" class="hidden p-6 md:p-8 flex-col gap-6">
-      <div class="flex flex-col gap-1">
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-[var(--color-grad-blue-start)]/10 text-[var(--color-grad-blue-start)] uppercase tracking-wider">Cloudflare Whisper AI</span>
-          <h3 class="display-sm text-[var(--color-ink)]">{t(lang, 'studio.tab.audio')}</h3>
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-[var(--color-grad-blue-start)]/10 text-[var(--color-grad-blue-start)] uppercase tracking-wider">Cloudflare Whisper AI</span>
+            <h3 class="display-sm text-[var(--color-ink)]">{t(lang, 'studio.tab.audio')}</h3>
+          </div>
+          <p class="text-sm text-[var(--color-body)]">{t(lang, 'audio.drop.formats')}</p>
         </div>
-        <p class="text-sm text-[var(--color-body)]">{t(lang, 'audio.drop.formats')}</p>
+
+        <!-- Spoken Language Selector -->
+        <div class="flex items-center gap-2 shrink-0">
+          <label for="whisper-lang-select" class="text-xs font-semibold text-[var(--color-mute)] uppercase tracking-wider">Language:</label>
+          <select
+            id="whisper-lang-select"
+            class="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] focus:outline-none focus:border-[var(--color-link)] transition-all cursor-pointer"
+          >
+            <option value="auto">🌐 Auto-Detect Language</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="es">🇪🇸 Spanish (Español)</option>
+            <option value="fr">🇫🇷 French (Français)</option>
+            <option value="de">🇩🇪 German (Deutsch)</option>
+            <option value="pt">🇧🇷 Portuguese (Português)</option>
+            <option value="ja">🇯🇵 Japanese (日本語)</option>
+            <option value="zh">🇨🇳 Chinese (中文)</option>
+            <option value="ar">🇸🇦 Arabic (العربية)</option>
+            <option value="it">🇮🇹 Italian (Italiano)</option>
+            <option value="hi">🇮🇳 Hindi (हिन्दी)</option>
+          </select>
+        </div>
       </div>
 
       <!-- Drag & Drop Upload Zone -->
@@ -159,7 +194,7 @@ const stylePresets = [
         <input
           id="media-file-input"
           type="file"
-          accept="audio/*,video/*,.mp4,.mov,.webm,.mp3,.wav,.m4a"
+          accept="audio/*,video/*,.mp4,.mov,.webm,.mkv,.mp3,.wav,.m4a"
           class="sr-only"
         />
 
@@ -172,7 +207,7 @@ const stylePresets = [
             <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-4 h-7 animate-pulse"></div>
             <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-5 h-5 animate-pulse"></div>
           </div>
-          <p id="transcribe-status-text" class="text-sm font-medium text-[var(--color-ink)] animate-pulse">{t(lang, 'audio.analyzing')}</p>
+          <p id="transcribe-status-text" class="text-sm font-semibold text-[var(--color-ink)] animate-pulse">{t(lang, 'audio.analyzing')}</p>
         </div>
       </label>
 
@@ -250,7 +285,7 @@ const stylePresets = [
           <input
             id="wpl-slider"
             type="range"
-            min="2"
+            min="1"
             max="10"
             value="4"
             class="w-full accent-[var(--color-link)] cursor-pointer"
@@ -261,9 +296,9 @@ const stylePresets = [
       <button
         id="generate-from-script-btn"
         type="button"
-        class="w-full py-3.5 px-6 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-sm font-semibold hover:opacity-90 transition-all shadow-l1 flex items-center justify-center gap-2"
+        class="self-start px-6 py-3 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-sm font-semibold hover:opacity-90 transition-all shadow-l1"
       >
-        <span>{t(lang, 'script.generateBtn')}</span>
+        {t(lang, 'script.generateBtn')} →
       </button>
     </div>
 
@@ -276,7 +311,12 @@ const stylePresets = [
         <!-- Left Column: Video Preview Player & Canvas -->
         <div class="lg:col-span-7 flex flex-col gap-4">
           <div class="flex items-center justify-between">
-            <h4 class="text-sm font-semibold text-[var(--color-ink)]">{t(lang, 'editor.heading')}</h4>
+            <div class="flex items-center gap-2">
+              <h4 class="text-sm font-semibold text-[var(--color-ink)]">{t(lang, 'editor.heading')}</h4>
+              <button id="editor-rewhisper-btn" type="button" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-[var(--color-link-bg-soft)] text-[var(--color-link)] hover:bg-[var(--color-link)] hover:text-white transition-all">
+                ⚡ Auto-Transcribe with Whisper
+              </button>
+            </div>
             
             <!-- Aspect Ratio Selector -->
             <div class="flex items-center gap-1.5 p-1 rounded-lg bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-xs">
@@ -342,7 +382,7 @@ const stylePresets = [
 
           <!-- Video Playback & Seek Bar -->
           <div class="flex items-center gap-3 p-3 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
-            <button id="ctrl-play-pause" type="button" class="p-2 rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] transition-colors">
+            <button id="ctrl-play-pause" type="button" class="p-2 rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] transition-colors" aria-label="Play/Pause">
               ▶
             </button>
             <input
@@ -352,76 +392,70 @@ const stylePresets = [
               max="100"
               value="0"
               step="0.1"
-              class="w-full accent-[var(--color-link)] cursor-pointer"
+              class="flex-1 accent-[var(--color-link)] cursor-pointer"
             />
-            <span id="ctrl-time-display" class="text-xs font-mono text-[var(--color-mute)] shrink-0">00:00 / 00:00</span>
+            <span id="ctrl-time-display" class="text-xs font-mono text-[var(--color-body)] min-w-[75px] text-right">
+              00:00 / 00:00
+            </span>
           </div>
 
-          <!-- Safe Zone & Position Controls -->
-          <div class="grid grid-cols-2 gap-3">
+          <!-- Video Options Bar: Safe Zones & Positioning -->
+          <div class="grid grid-cols-2 gap-3 p-3 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-xs">
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-medium text-[var(--color-mute)]">{t(lang, 'editor.safeZones')}</span>
-              <select id="safezone-select" class="px-3 py-2 text-xs font-medium rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] focus:outline-none">
-                <option value="off">{t(lang, 'editor.safeZonesOff')}</option>
-                <option value="tiktok">{t(lang, 'editor.safeZonesTikTok')}</option>
-                <option value="reels">{t(lang, 'editor.safeZonesReels')}</option>
+              <span class="font-medium text-[var(--color-body)]">{t(lang, 'editor.safezones')}</span>
+              <select id="safezone-select" class="p-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] text-xs">
+                <option value="none">None (Full Canvas)</option>
+                <option value="tiktok">TikTok / Shorts Safe Zone</option>
+                <option value="reels">Instagram Reels Safe Zone</option>
               </select>
             </div>
-
             <div class="flex flex-col gap-1">
-              <span class="text-xs font-medium text-[var(--color-mute)]">{t(lang, 'editor.position')}</span>
-              <select id="position-select" class="px-3 py-2 text-xs font-medium rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] focus:outline-none">
-                <option value="bottom">{t(lang, 'editor.posBottom')} (80%)</option>
-                <option value="center">{t(lang, 'editor.posCenter')} (50%)</option>
-                <option value="top">{t(lang, 'editor.posTop')} (20%)</option>
+              <span class="font-medium text-[var(--color-body)]">{t(lang, 'editor.position')}</span>
+              <select id="position-select" class="p-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] text-xs">
+                <option value="bottom">Bottom (80%) - Standard</option>
+                <option value="center">Center - High Focus</option>
+                <option value="top">Top (20%) - Title/Hook</option>
               </select>
             </div>
           </div>
         </div>
 
-        <!-- Right Column: Viral Presets, Timing Sync & Cue Editor -->
+        <!-- Right Column: Style Presets, Timing Sync & Subtitle Cues Timeline -->
         <div class="lg:col-span-5 flex flex-col gap-6">
-
-          <!-- 1. Trending Style Presets -->
+          
+          <!-- 1. Style Preset Selector -->
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between">
-              <h4 class="text-sm font-semibold text-[var(--color-ink)]">{t(lang, 'styles.title')}</h4>
-              <span class="text-xs text-[var(--color-mute)]">Click to apply</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">{t(lang, 'styles.heading')}</span>
+              <span class="text-[11px] text-[var(--color-link)] font-medium">6 Viral Styles</span>
             </div>
             
-            <div class="grid grid-cols-2 gap-2.5">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {stylePresets.map(preset => (
                 <button
-                  class="style-preset-btn p-3 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:border-[var(--color-hairline-strong)] hover:bg-[var(--color-canvas)] text-start flex items-start gap-2.5 transition-all group"
+                  type="button"
+                  class="style-preset-btn flex flex-col items-center justify-center p-3 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:border-[var(--color-link)] hover:bg-[var(--color-canvas)] transition-all text-center gap-1 group"
                   data-preset={preset.id}
                 >
-                  <span class="text-xl shrink-0 group-hover:scale-110 transition-transform">{preset.icon}</span>
-                  <div class="flex flex-col">
-                    <span class="text-xs font-bold text-[var(--color-ink)]">{t(lang, preset.nameKey)}</span>
-                    <span class="text-[10px] text-[var(--color-mute)] line-clamp-1">{preset.desc}</span>
-                  </div>
+                  <span class="text-xl group-hover:scale-110 transition-transform">{preset.icon}</span>
+                  <span class="text-xs font-bold text-[var(--color-ink)]">{t(lang, preset.nameKey)}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          <!-- 2. Subtitle Timing Sync & Drift Resync Tool -->
-          <div class="p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] flex flex-col gap-3">
+          <!-- 2. Millisecond Precision Sync & Drift Control -->
+          <div class="flex flex-col gap-3 p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-[var(--color-ink)] flex items-center gap-1.5">
-                <span>⏱️</span>
-                <span>{t(lang, 'sync.title')}</span>
-              </span>
-              <button id="sync-reset-btn" class="text-[11px] text-[var(--color-link)] font-semibold hover:underline">
-                {t(lang, 'sync.reset')}
-              </button>
+              <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">{t(lang, 'sync.heading')}</span>
+              <span id="sync-offset-display" class="text-xs font-mono font-bold text-[var(--color-link)]">+0.00s</span>
             </div>
-            <div class="flex items-center justify-between text-xs text-[var(--color-mute)]">
-              <span>{t(lang, 'sync.offsetHelp')}</span>
-              <span id="sync-offset-display" class="font-mono font-bold text-[var(--color-ink)]">+0.00s</span>
-            </div>
+            <p class="text-[11px] text-[var(--color-mute)] leading-relaxed">{t(lang, 'sync.desc')}</p>
+
             <div class="flex items-center gap-2">
-              <button id="sync-minus-btn" class="px-2.5 py-1 text-xs font-bold rounded bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:bg-[var(--color-canvas-soft-2)]">-0.2s</button>
+              <button id="sync-minus-btn" type="button" class="px-3 py-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-xs font-bold hover:bg-[var(--color-canvas-soft-2)]">
+                -0.2s
+              </button>
               <input
                 id="sync-offset-slider"
                 type="range"
@@ -429,57 +463,58 @@ const stylePresets = [
                 max="5"
                 step="0.05"
                 value="0"
-                class="w-full accent-[var(--color-violet)] cursor-pointer"
+                class="flex-1 accent-[var(--color-link)] cursor-pointer"
               />
-              <button id="sync-plus-btn" class="px-2.5 py-1 text-xs font-bold rounded bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:bg-[var(--color-canvas-soft-2)]">+0.2s</button>
+              <button id="sync-plus-btn" type="button" class="px-3 py-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-xs font-bold hover:bg-[var(--color-canvas-soft-2)]">
+                +0.2s
+              </button>
+              <button id="sync-reset-btn" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]">
+                Reset
+              </button>
             </div>
           </div>
 
-          <!-- 3. Subtitle Cues Timeline Editor -->
+          <!-- 3. Subtitle Timeline & Cue Editor -->
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <h4 class="text-sm font-semibold text-[var(--color-ink)]">{t(lang, 'timeline.title')}</h4>
-                <span id="cue-count-badge" class="px-2 py-0.5 text-[11px] rounded-full bg-[var(--color-hairline)] text-[var(--color-body)] font-medium">0 cues</span>
+                <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">Subtitle Cues Timeline</span>
+                <span id="cue-count-badge" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-[var(--color-canvas-soft-2)] text-[var(--color-ink)]">0 cues</span>
               </div>
               <button id="add-cue-btn" type="button" class="text-xs font-semibold text-[var(--color-link)] hover:underline">
-                {t(lang, 'timeline.add')}
+                + Add Cue
               </button>
             </div>
 
             <!-- Scrollable Cues List -->
             <div id="cues-container" class="flex flex-col gap-2 max-h-[220px] overflow-y-auto pr-1">
-              <!-- Dynamically populated cues -->
+              <!-- Dynamically populated -->
             </div>
           </div>
 
-          <!-- 4. Export & Download Center -->
-          <div class="p-5 rounded-2xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] flex flex-col gap-4">
-            <h4 class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">{t(lang, 'export.title')}</h4>
-
-            <!-- Primary Action: Burn and Export High-Res MP4 Video -->
+          <!-- 4. Export & Download Actions -->
+          <div class="flex flex-col gap-3 pt-2 border-t border-[var(--color-hairline)]">
             <button
               id="export-burned-video-btn"
               type="button"
-              class="w-full py-3 px-4 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-sm font-bold hover:opacity-90 transition-all shadow-l1 flex items-center justify-center gap-2"
+              class="w-full py-3.5 px-6 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] font-bold text-sm hover:opacity-90 transition-all shadow-l2 flex items-center justify-center gap-2"
             >
-              <span>{t(lang, 'export.burnVideo')}</span>
+              <span>🎬</span>
+              <span>Export High-Res MP4 (Burned Subtitles)</span>
             </button>
-            <p class="text-[11px] text-center text-[var(--color-mute)] -mt-2">{t(lang, 'export.noWatermark')}</p>
 
-            <!-- Secondary Subtitle File Exports -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-[var(--color-hairline)]">
-              <button id="export-srt-btn" class="px-3 py-2 text-xs font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-all">
-                .SRT
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <button id="export-srt-btn" type="button" class="p-2 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+                ⬇️ Download .SRT
               </button>
-              <button id="export-vtt-btn" class="px-3 py-2 text-xs font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-all">
-                .WebVTT
+              <button id="export-vtt-btn" type="button" class="p-2 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+                ⬇️ Download .VTT
               </button>
-              <button id="export-ass-btn" class="px-3 py-2 text-xs font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-all">
-                .ASS
+              <button id="export-ass-btn" type="button" class="p-2 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+                ⬇️ Download .ASS
               </button>
-              <button id="export-copy-btn" class="px-3 py-2 text-xs font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-all">
-                📋 Copy
+              <button id="export-copy-btn" type="button" class="p-2 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+                📋 Copy Text
               </button>
             </div>
           </div>
@@ -496,7 +531,7 @@ const stylePresets = [
 
 <!-- Subtitle Studio Logic & Engine -->
 <script>
-  import { parseSubtitleText, serializeToSRT, serializeToVTT, serializeToASS, serializeToTXT, shiftSubtitleTimings, type SubtitleCue } from '../../utils/subtitleParser';
+  import { parseSubtitleText, parseWhisperResponse, serializeToSRT, serializeToVTT, serializeToASS, serializeToTXT, shiftSubtitleTimings, type SubtitleCue } from '../../utils/subtitleParser';
   import { extractAudioFromMedia } from '../../utils/audioExtractor';
 
   let currentCues: SubtitleCue[] = [];
@@ -504,6 +539,28 @@ const stylePresets = [
   let currentPreset = 'hormozi';
   let syncOffset = 0;
   let videoBlobUrl = '';
+  let activeVideoFile: File | null = null;
+
+  // Toast Notification System
+  function showToast(msg: string, type: 'success' | 'warning' | 'info' = 'info') {
+    const toast = document.getElementById('studio-toast');
+    const toastIcon = document.getElementById('studio-toast-icon');
+    const toastMsg = document.getElementById('studio-toast-msg');
+    if (!toast || !toastMsg || !toastIcon) return;
+
+    toastIcon.textContent = type === 'success' ? '✓' : type === 'warning' ? '⚠️' : 'ℹ️';
+    toastMsg.textContent = msg;
+
+    toast.className = 'fixed top-6 right-6 z-50 max-w-md p-4 rounded-xl shadow-l3 border transition-all flex items-center gap-3 ' +
+      (type === 'success' ? 'bg-emerald-950/90 text-emerald-200 border-emerald-700 backdrop-blur-md' :
+       type === 'warning' ? 'bg-amber-950/90 text-amber-200 border-amber-700 backdrop-blur-md' :
+       'bg-[var(--color-canvas)] text-[var(--color-ink)] border-[var(--color-hairline)] backdrop-blur-md');
+
+    toast.classList.remove('hidden');
+    setTimeout(() => {
+      toast.classList.add('hidden');
+    }, 4500);
+  }
 
   // Default demo cues
   const defaultDemoCues: SubtitleCue[] = [
@@ -564,14 +621,18 @@ const stylePresets = [
   const burnSubName = document.getElementById('burn-sub-name');
   const studioVideo = document.getElementById('studio-video') as HTMLVideoElement;
 
+  function loadVideoToPlayer(file: File) {
+    activeVideoFile = file;
+    if (videoBlobUrl) URL.revokeObjectURL(videoBlobUrl);
+    videoBlobUrl = URL.createObjectURL(file);
+    studioVideo.src = videoBlobUrl;
+    studioVideo.load();
+    if (burnVideoName) burnVideoName.textContent = `✓ ${file.name}`;
+  }
+
   burnVideoInput?.addEventListener('change', (e) => {
     const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) {
-      if (videoBlobUrl) URL.revokeObjectURL(videoBlobUrl);
-      videoBlobUrl = URL.createObjectURL(file);
-      studioVideo.src = videoBlobUrl;
-      if (burnVideoName) burnVideoName.textContent = `✓ ${file.name}`;
-    }
+    if (file) loadVideoToPlayer(file);
   });
 
   burnSubInput?.addEventListener('change', async (e) => {
@@ -583,6 +644,7 @@ const stylePresets = [
         originalCues = [...cues];
         currentCues = [...cues];
         if (burnSubName) burnSubName.textContent = `✓ ${file.name} (${cues.length} cues)`;
+        showToast(`✓ Loaded ${cues.length} cues from ${file.name}`, 'success');
       }
     }
   });
@@ -595,68 +657,105 @@ const stylePresets = [
     switchTab('editor');
   });
 
-  // Audio / Video Transcribe Handler
+  document.getElementById('burn-auto-whisper-btn')?.addEventListener('click', () => {
+    if (activeVideoFile) {
+      transcribeMediaFile(activeVideoFile);
+    } else {
+      burnVideoInput?.click();
+    }
+  });
+
+  document.getElementById('editor-rewhisper-btn')?.addEventListener('click', () => {
+    if (activeVideoFile) {
+      transcribeMediaFile(activeVideoFile);
+    } else {
+      mediaFileInput?.click();
+    }
+  });
+
+  // Core Cloudflare Whisper AI Audio/Video Transcriber
   const mediaFileInput = document.getElementById('media-file-input') as HTMLInputElement;
   const transcribeLoading = document.getElementById('transcribe-loading');
   const transcribeStatusText = document.getElementById('transcribe-status-text');
+  const whisperLangSelect = document.getElementById('whisper-lang-select') as HTMLSelectElement;
 
-  mediaFileInput?.addEventListener('change', async (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
+  async function transcribeMediaFile(file: File) {
     if (!file) return;
 
-    if (file.type.startsWith('video/')) {
-      if (videoBlobUrl) URL.revokeObjectURL(videoBlobUrl);
-      videoBlobUrl = URL.createObjectURL(file);
-      studioVideo.src = videoBlobUrl;
+    if (file.type.startsWith('video/') || file.name.match(/\.(mp4|mov|webm|mkv|avi|m4v)$/i)) {
+      loadVideoToPlayer(file);
     }
 
     transcribeLoading?.classList.remove('hidden');
-    
+
     try {
-      if (transcribeStatusText) transcribeStatusText.textContent = 'Extracting audio track in browser...';
-      
-      const { blob } = await extractAudioFromMedia(file, (pct, status) => {
+      if (transcribeStatusText) transcribeStatusText.textContent = 'Extracting audio track from media in browser...';
+
+      const extraction = await extractAudioFromMedia(file, (pct, status) => {
         if (transcribeStatusText) transcribeStatusText.textContent = `${status} (${pct}%)`;
       });
 
-      if (transcribeStatusText) transcribeStatusText.textContent = 'Cloudflare AI Whisper transcribing audio...';
+      const { chunks, duration } = extraction;
+      const selectedLanguage = whisperLangSelect?.value || 'auto';
+      const allExtractedCues: SubtitleCue[] = [];
 
-      // Send to Cloudflare Pages endpoint
-      const response = await fetch('/api/transcribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'audio/wav' },
-        body: blob,
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.vtt) {
-          const parsed = parseSubtitleText(data.vtt, 'cloud.vtt');
-          if (parsed.length > 0) {
-            currentCues = parsed;
-            originalCues = [...parsed];
-          }
-        } else if (data.text && data.text.length > 0 && !data.text.includes('Cloudflare Workers AI Whisper is ready')) {
-          const parsed = parseSubtitleText(data.text);
-          currentCues = parsed;
-          originalCues = [...parsed];
-        } else {
-          // Demo fallback
-          currentCues = [...defaultDemoCues];
-          originalCues = [...defaultDemoCues];
+      for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
+        if (transcribeStatusText) {
+          transcribeStatusText.textContent = chunks.length > 1
+            ? `Cloudflare Whisper AI: Transcribing part ${i + 1} of ${chunks.length} (${Math.round(chunk.startSec)}s - ${Math.round(chunk.endSec)}s)...`
+            : `Cloudflare Whisper AI: Transcribing speech with GPU acceleration...`;
         }
+
+        const headers: Record<string, string> = {
+          'Content-Type': 'audio/wav',
+          'X-Audio-Offset': String(chunk.startSec),
+        };
+        if (selectedLanguage && selectedLanguage !== 'auto') {
+          headers['X-Language'] = selectedLanguage;
+        }
+
+        const response = await fetch('/api/transcribe', {
+          method: 'POST',
+          headers,
+          body: chunk.blob,
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          throw new Error(errData.message || errData.error || `Whisper API failed with HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        const parsed = parseWhisperResponse(data, chunk.startSec);
+        if (parsed.length > 0) {
+          allExtractedCues.push(...parsed);
+        }
+      }
+
+      if (allExtractedCues.length > 0) {
+        currentCues = allExtractedCues.map((c, idx) => ({ ...c, id: idx + 1 }));
+        originalCues = [...currentCues];
+        showToast(`✓ Cloudflare Whisper AI successfully transcribed ${currentCues.length} subtitle cues!`, 'success');
       } else {
+        throw new Error('No spoken words were recognized in the audio file.');
+      }
+    } catch (err: any) {
+      console.warn('Whisper transcription notice:', err);
+      showToast(`Notice: ${err?.message || 'Could not complete AI transcription.'}`, 'warning');
+      if (currentCues.length === 0) {
         currentCues = [...defaultDemoCues];
         originalCues = [...defaultDemoCues];
       }
-    } catch (err) {
-      console.warn('Whisper edge call notice:', err);
-      currentCues = [...defaultDemoCues];
-      originalCues = [...defaultDemoCues];
     } finally {
       transcribeLoading?.classList.add('hidden');
       switchTab('editor');
     }
+  }
+
+  mediaFileInput?.addEventListener('change', async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) transcribeMediaFile(file);
   });
 
   // Demo audio sample buttons
@@ -664,6 +763,7 @@ const stylePresets = [
     btn.addEventListener('click', () => {
       currentCues = [...defaultDemoCues];
       originalCues = [...defaultDemoCues];
+      showToast('✓ Loaded sample demo subtitles', 'info');
       switchTab('editor');
     });
   });
@@ -700,7 +800,7 @@ const stylePresets = [
 
   liveSpeechBtn?.addEventListener('click', () => {
     if (!recognition) {
-      alert('Speech recognition is not supported in this browser. Please use Chrome/Edge or upload audio directly.');
+      showToast('Speech recognition is not supported in this browser. Please use Chrome/Edge or upload audio directly.', 'warning');
       return;
     }
     if (!isRecording) {
@@ -742,7 +842,7 @@ const stylePresets = [
   document.getElementById('generate-from-script-btn')?.addEventListener('click', () => {
     const text = scriptInput?.value.trim();
     if (!text) {
-      alert('Please enter or paste your script first.');
+      showToast('Please enter or paste your script first.', 'warning');
       return;
     }
 
@@ -768,6 +868,7 @@ const stylePresets = [
 
     currentCues = cues;
     originalCues = [...cues];
+    showToast(`✓ Generated ${cues.length} subtitle cues from script!`, 'success');
     switchTab('editor');
   });
 
@@ -992,31 +1093,34 @@ const stylePresets = [
   }
 
   document.getElementById('export-srt-btn')?.addEventListener('click', () => {
-    if (currentCues.length === 0) return alert('No subtitle cues to export.');
+    if (currentCues.length === 0) return showToast('No subtitle cues to export.', 'warning');
     downloadFile(serializeToSRT(currentCues), 'freeautocaption-subtitles.srt', 'text/plain');
+    showToast('✓ Downloaded .SRT subtitle file', 'success');
   });
 
   document.getElementById('export-vtt-btn')?.addEventListener('click', () => {
-    if (currentCues.length === 0) return alert('No subtitle cues to export.');
+    if (currentCues.length === 0) return showToast('No subtitle cues to export.', 'warning');
     downloadFile(serializeToVTT(currentCues), 'freeautocaption-subtitles.vtt', 'text/vtt');
+    showToast('✓ Downloaded .VTT subtitle file', 'success');
   });
 
   document.getElementById('export-ass-btn')?.addEventListener('click', () => {
-    if (currentCues.length === 0) return alert('No subtitle cues to export.');
+    if (currentCues.length === 0) return showToast('No subtitle cues to export.', 'warning');
     downloadFile(serializeToASS(currentCues), 'freeautocaption-subtitles.ass', 'text/plain');
+    showToast('✓ Downloaded .ASS subtitle file', 'success');
   });
 
   document.getElementById('export-copy-btn')?.addEventListener('click', () => {
-    if (currentCues.length === 0) return alert('No subtitle cues to copy.');
+    if (currentCues.length === 0) return showToast('No subtitle cues to copy.', 'warning');
     navigator.clipboard.writeText(serializeToTXT(currentCues)).then(() => {
-      alert('✓ Subtitle text copied to clipboard!');
+      showToast('✓ Subtitle text copied to clipboard!', 'success');
     });
   });
 
   // In-Browser Frame-Accurate Video Burner
   document.getElementById('export-burned-video-btn')?.addEventListener('click', async () => {
     if (!studioVideo.src) {
-      alert('Please upload a video or select an audio clip before burning.');
+      showToast('Please upload a video or select an audio clip before burning.', 'warning');
       return;
     }
 
@@ -1059,6 +1163,7 @@ const stylePresets = [
           exportBtn.disabled = false;
           exportBtn.textContent = '🎬 Export High-Res MP4 (Burned Subtitles)';
         }
+        showToast('✓ Burned MP4 video downloaded successfully!', 'success');
       };
 
       studioVideo.currentTime = 0;
@@ -1116,7 +1221,7 @@ const stylePresets = [
       console.warn('In-browser render fallback:', err);
       // If canvas recording fails, download .SRT subtitle file directly
       downloadFile(serializeToSRT(currentCues), 'freeautocaption-subtitles.srt', 'text/plain');
-      alert('Render complete! Your synced subtitle file has been downloaded.');
+      showToast('Render complete! Your synced subtitle file has been downloaded.', 'info');
       if (exportBtn) {
         exportBtn.disabled = false;
         exportBtn.textContent = '🎬 Export High-Res MP4 (Burned Subtitles)';

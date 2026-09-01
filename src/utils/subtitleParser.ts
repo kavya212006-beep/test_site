@@ -218,6 +218,85 @@ export function parseASS(content: string): SubtitleCue[] {
 }
 
 /**
+ * Parses Cloudflare Workers AI Whisper responses into SubtitleCue[]
+ */
+export function parseWhisperResponse(data: any, timeOffset = 0): SubtitleCue[] {
+  if (!data) return [];
+
+  if (Array.isArray(data.cues) && data.cues.length > 0) {
+    return data.cues.map((c: any, idx: number) => ({
+      id: c.id || idx + 1,
+      start: Math.round(((c.start || 0) + timeOffset) * 1000) / 1000,
+      end: Math.round(((c.end || 2) + timeOffset) * 1000) / 1000,
+      text: (c.text || '').trim(),
+      words: c.words,
+    }));
+  }
+
+  if (Array.isArray(data.segments) && data.segments.length > 0) {
+    return data.segments.map((seg: any, idx: number) => ({
+      id: idx + 1,
+      start: Math.round(((typeof seg.start === 'number' ? seg.start : 0) + timeOffset) * 1000) / 1000,
+      end: Math.round(((typeof seg.end === 'number' ? seg.end : 2.5) + timeOffset) * 1000) / 1000,
+      text: (seg.text || '').trim(),
+      words: seg.words,
+    })).filter((c: SubtitleCue) => Boolean(c.text));
+  }
+
+  if (typeof data.vtt === 'string' && data.vtt.trim().length > 0) {
+    const parsedVtt = parseVTT(data.vtt);
+    if (parsedVtt.length > 0) {
+      return parsedVtt.map((c, idx) => ({
+        ...c,
+        id: idx + 1,
+        start: Math.round((c.start + timeOffset) * 1000) / 1000,
+        end: Math.round((c.end + timeOffset) * 1000) / 1000,
+      }));
+    }
+  }
+
+  if (Array.isArray(data.words) && data.words.length > 0) {
+    const cues: SubtitleCue[] = [];
+    const wordsPerCue = 4;
+    for (let i = 0; i < data.words.length; i += wordsPerCue) {
+      const slice = data.words.slice(i, i + wordsPerCue);
+      const start = (slice[0].start || 0) + timeOffset;
+      const end = (slice[slice.length - 1].end || start + 1.8) + timeOffset;
+      const cueText = slice.map((w: any) => (w.word || '').trim()).join(' ');
+      if (cueText) {
+        cues.push({
+          id: cues.length + 1,
+          start: Math.round(start * 1000) / 1000,
+          end: Math.round(end * 1000) / 1000,
+          text: cueText,
+          words: slice,
+        });
+      }
+    }
+    if (cues.length > 0) return cues;
+  }
+
+  if (typeof data.text === 'string' && data.text.trim().length > 0) {
+    const rawLines = data.text.split(/\r?\n/).map((l: string) => l.trim()).filter(Boolean);
+    let currentTime = timeOffset;
+    return rawLines.map((line: string, idx: number) => {
+      const wordCount = line.split(/\s+/).length;
+      const duration = Math.max(1.8, wordCount * 0.35);
+      const cue: SubtitleCue = {
+        id: idx + 1,
+        start: Math.round(currentTime * 100) / 100,
+        end: Math.round((currentTime + duration) * 100) / 100,
+        text: line,
+      };
+      currentTime += duration + 0.2;
+      return cue;
+    });
+  }
+
+  return [];
+}
+
+/**
  * Universal auto-detection parser
  */
 export function parseSubtitleText(content: string, filename = ''): SubtitleCue[] {
@@ -235,6 +314,9 @@ export function parseSubtitleText(content: string, filename = ''): SubtitleCue[]
   if (lowerName.endsWith('.json') || (content.trim().startsWith('{') || content.trim().startsWith('['))) {
     try {
       const parsed = JSON.parse(content);
+      const whisperCues = parseWhisperResponse(parsed);
+      if (whisperCues.length > 0) return whisperCues;
+
       if (Array.isArray(parsed)) {
         return parsed.map((item, idx) => ({
           id: item.id || idx + 1,
@@ -243,14 +325,6 @@ export function parseSubtitleText(content: string, filename = ''): SubtitleCue[]
           text: item.text || item.content || '',
           words: item.words,
         })).filter(c => c.text);
-      } else if (parsed.segments && Array.isArray(parsed.segments)) {
-        return parsed.segments.map((item: any, idx: number) => ({
-          id: idx + 1,
-          start: item.start || 0,
-          end: item.end || 0,
-          text: (item.text || '').trim(),
-          words: item.words,
-        }));
       }
     } catch {
       // Fallback to SRT if JSON parsing fails

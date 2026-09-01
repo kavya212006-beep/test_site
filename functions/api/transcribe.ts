@@ -1,5 +1,5 @@
 // Cloudflare Pages Function: /api/transcribe
-// Runs OpenAI Whisper directly on Cloudflare Workers AI edge serverless GPUs
+// High-Performance OpenAI Whisper on Cloudflare Workers AI Edge GPUs
 
 interface Env {
   AI?: {
@@ -16,24 +16,29 @@ type PagesFunction<T = Env> = (context: {
   data: Record<string, any>;
 }) => Promise<Response>;
 
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, X-Audio-Offset, X-Language',
+};
+
 export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
 
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
-
   try {
     const contentType = request.headers.get('content-type') || '';
+    const url = new URL(request.url);
+    const offsetHeader = request.headers.get('x-audio-offset') || url.searchParams.get('offset') || '0';
+    const languageHeader = request.headers.get('x-language') || url.searchParams.get('language') || '';
+    const timeOffset = parseFloat(offsetHeader) || 0;
+
     let audioBytes: Uint8Array;
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData();
-      const file = formData.get('file') as File | null;
+      const file = (formData.get('file') || formData.get('audio')) as File | null;
       if (!file) {
-        return new Response(JSON.stringify({ error: 'No audio file provided' }), {
+        return new Response(JSON.stringify({ error: 'No audio or video file provided in form data' }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
@@ -43,7 +48,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     } else {
       const buffer = await request.arrayBuffer();
       if (!buffer || buffer.byteLength === 0) {
-        return new Response(JSON.stringify({ error: 'Empty audio buffer' }), {
+        return new Response(JSON.stringify({ error: 'Empty audio buffer received' }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
@@ -51,15 +56,46 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       audioBytes = new Uint8Array(buffer);
     }
 
-    // Run Workers AI Whisper
+    // Convert Uint8Array to number array safely without call-stack overflow
+    const audioArray = Array.from(audioBytes);
+
+    const whisperInput: Record<string, any> = {
+      audio: audioArray,
+      task: 'transcribe',
+      vad_filter: true,
+    };
+
+    if (languageHeader && languageHeader !== 'auto') {
+      whisperInput.language = languageHeader;
+    }
+
+    // Attempt transcription with Workers AI Whisper
     if (env.AI && typeof env.AI.run === 'function') {
-      const input = {
-        audio: [...audioBytes],
-      };
+      let whisperResponse: any = null;
+      let modelUsed = '@cf/openai/whisper-large-v3-turbo';
 
-      const response = await env.AI.run('@cf/openai/whisper', input);
+      try {
+        // 1. Try Whisper Large v3 Turbo (state-of-the-art accuracy & timestamps)
+        whisperResponse = await env.AI.run('@cf/openai/whisper-large-v3-turbo', whisperInput);
+      } catch (err1) {
+        console.warn('Whisper large-v3-turbo failed, falling back to standard whisper:', err1);
+        try {
+          // 2. Fallback to standard OpenAI Whisper on Workers AI
+          modelUsed = '@cf/openai/whisper';
+          whisperResponse = await env.AI.run('@cf/openai/whisper', whisperInput);
+        } catch (err2: any) {
+          throw new Error(`Workers AI Whisper error: ${err2?.message || String(err2)}`);
+        }
+      }
 
-      return new Response(JSON.stringify(response), {
+      if (!whisperResponse) {
+        throw new Error('No response returned from Cloudflare Workers AI Whisper.');
+      }
+
+      // Format response with offset-adjusted cues
+      const formattedResult = normalizeWhisperResult(whisperResponse, timeOffset, modelUsed);
+
+      return new Response(JSON.stringify(formattedResult), {
         status: 200,
         headers: {
           ...corsHeaders,
@@ -69,21 +105,32 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       });
     }
 
-    return new Response(
-      JSON.stringify({
-        text: 'Cloudflare Workers AI Whisper is ready on deployment.',
-        vtt: '',
-        word_count: 0,
-        words: [],
-      }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    // When running in dev server without live Cloudflare AI binding
+    const fallbackResult = {
+      success: true,
+      text: "Welcome to FreeAutoCaption! Cloudflare Workers AI Whisper is configured and will run on edge GPUs upon deployment.",
+      vtt: "WEBVTT - Generated by FreeAutoCaption\n\n00:00:00.000 --> 00:00:03.000\nWelcome to FreeAutoCaption!\n\n00:00:03.100 --> 00:00:06.500\nCloudflare Workers AI Whisper is active on edge deployment.",
+      word_count: 14,
+      segments: [
+        { id: 1, start: timeOffset + 0.0, end: timeOffset + 3.0, text: "Welcome to FreeAutoCaption!" },
+        { id: 2, start: timeOffset + 3.1, end: timeOffset + 6.5, text: "Cloudflare Workers AI Whisper is active on edge deployment." }
+      ],
+      cues: [
+        { id: 1, start: timeOffset + 0.0, end: timeOffset + 3.0, text: "Welcome to FreeAutoCaption!" },
+        { id: 2, start: timeOffset + 3.1, end: timeOffset + 6.5, text: "Cloudflare Workers AI Whisper is active on edge deployment." }
+      ],
+      isDevMock: true,
+    };
+
+    return new Response(JSON.stringify(fallbackResult), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (err: any) {
+    console.error('Transcription API Error:', err);
     return new Response(
       JSON.stringify({
+        success: false,
         error: 'Transcription failed',
         message: err?.message || String(err),
       }),
@@ -98,10 +145,104 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
 export const onRequestOptions: PagesFunction = async () => {
   return new Response(null, {
     status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    },
+    headers: corsHeaders,
   });
 };
+
+/**
+ * Normalizes raw Whisper responses into consistent cues & VTT with timestamp offsets
+ */
+function normalizeWhisperResult(res: any, timeOffset: number, modelName: string) {
+  const text = (res.text || '').trim();
+  const wordCount = res.word_count || (text ? text.split(/\s+/).length : 0);
+  const rawSegments = Array.isArray(res.segments) ? res.segments : [];
+  const rawWords = Array.isArray(res.words) ? res.words : [];
+
+  const cues: Array<{ id: number; start: number; end: number; text: string; words?: any[] }> = [];
+
+  if (rawSegments.length > 0) {
+    rawSegments.forEach((seg: any, idx: number) => {
+      const segStart = (typeof seg.start === 'number' ? seg.start : 0) + timeOffset;
+      const segEnd = (typeof seg.end === 'number' ? seg.end : segStart + 2.5) + timeOffset;
+      const segText = (seg.text || '').trim();
+      if (segText) {
+        cues.push({
+          id: idx + 1,
+          start: Math.round(segStart * 1000) / 1000,
+          end: Math.round(segEnd * 1000) / 1000,
+          text: segText,
+          words: seg.words?.map((w: any) => ({
+            word: w.word,
+            start: (w.start || 0) + timeOffset,
+            end: (w.end || 0) + timeOffset,
+          })),
+        });
+      }
+    });
+  } else if (rawWords.length > 0) {
+    // Group words into natural ~3-5 word subtitle cue cards
+    const wordsPerCue = 4;
+    for (let i = 0; i < rawWords.length; i += wordsPerCue) {
+      const slice = rawWords.slice(i, i + wordsPerCue);
+      const start = (slice[0].start || 0) + timeOffset;
+      const end = (slice[slice.length - 1].end || start + 1.8) + timeOffset;
+      const cueText = slice.map((w: any) => (w.word || '').trim()).join(' ');
+      if (cueText) {
+        cues.push({
+          id: cues.length + 1,
+          start: Math.round(start * 1000) / 1000,
+          end: Math.round(end * 1000) / 1000,
+          text: cueText,
+          words: slice.map((w: any) => ({
+            word: w.word,
+            start: (w.start || 0) + timeOffset,
+            end: (w.end || 0) + timeOffset,
+          })),
+        });
+      }
+    }
+  } else if (text) {
+    // Fallback: estimate timings for full text
+    const words = text.split(/\s+/).filter(Boolean);
+    const wordsPerLine = 4;
+    const secPerWord = 0.35;
+    let curr = timeOffset;
+    for (let i = 0; i < words.length; i += wordsPerLine) {
+      const slice = words.slice(i, i + wordsPerLine);
+      const dur = Math.max(1.4, slice.length * secPerWord);
+      cues.push({
+        id: cues.length + 1,
+        start: Math.round(curr * 100) / 100,
+        end: Math.round((curr + dur) * 100) / 100,
+        text: slice.join(' '),
+      });
+      curr += dur + 0.1;
+    }
+  }
+
+  // Generate clean WebVTT format
+  const vttLines = ['WEBVTT - Generated by Cloudflare Whisper AI\n'];
+  cues.forEach((c) => {
+    vttLines.push(`${formatVttTimestamp(c.start)} --> ${formatVttTimestamp(c.end)}\n${c.text}\n`);
+  });
+
+  return {
+    success: true,
+    model: modelName,
+    text,
+    word_count: wordCount,
+    vtt: vttLines.join('\n'),
+    segments: rawSegments,
+    words: rawWords,
+    cues,
+  };
+}
+
+function formatVttTimestamp(seconds: number): string {
+  const safe = Math.max(0, seconds);
+  const h = Math.floor(safe / 3600);
+  const m = Math.floor((safe % 3600) / 60);
+  const s = Math.floor(safe % 60);
+  const ms = Math.floor((safe % 1) * 1000);
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
+}
