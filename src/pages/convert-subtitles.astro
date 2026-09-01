@@ -1,0 +1,218 @@
+---
+import Layout from '../layouts/Layout.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+
+const lang = 'en';
+
+const pageTitle = "Subtitle Converter Online Free — SRT, VTT, ASS, JSON, TXT | FreeAutoCaption";
+const pageDesc = "Convert subtitles between SRT, WebVTT, ASS, JSON, and plain TXT in one click. 100% free, private in-browser conversion with instant download.";
+---
+
+<Layout
+  lang={lang}
+  title={pageTitle}
+  description={pageDesc}
+  path="/convert-subtitles"
+>
+  <div class="relative overflow-hidden pt-12 pb-20">
+    <!-- Ambient glow -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-gradient-to-b from-[var(--color-violet)]/10 via-[var(--color-pink)]/5 to-transparent blur-3xl -z-10 pointer-events-none"></div>
+
+    <div class="container-page flex flex-col gap-12">
+      <!-- Header -->
+      <div class="flex flex-col items-center text-center max-w-3xl mx-auto gap-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--color-hairline)] bg-[var(--color-canvas)] shadow-xs">
+          <span class="w-2 h-2 rounded-full bg-[var(--color-violet)] animate-pulse"></span>
+          <span class="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider">Multi-Format Subtitle Converter</span>
+        </div>
+
+        <h1 class="display-xl text-[var(--color-ink)] tracking-tight">
+          Convert Subtitle Formats Online Free
+        </h1>
+
+        <p class="body-lg text-[var(--color-body)] max-w-2xl">
+          Convert instantly between <strong>SRT, WebVTT (.vtt), ASS (.ass), JSON, and TXT</strong>. Preserves millisecond timestamps and works 100% client-side in your browser.
+        </p>
+      </div>
+
+      <!-- Converter Card -->
+      <div class="bg-[var(--color-canvas)] rounded-2xl border border-[var(--color-hairline)] shadow-l3 p-6 md:p-8 flex flex-col gap-8">
+        
+        <!-- Input Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider">1. Select Input File</label>
+            <label
+              for="conv-file-input"
+              class="flex flex-col items-center justify-center gap-3 w-full min-h-[160px] p-6 border-2 border-dashed border-[var(--color-hairline)] hover:border-[var(--color-violet)] hover:bg-[var(--color-violet-soft)]/20 rounded-2xl cursor-pointer transition-all text-center bg-[var(--color-canvas-soft)] group"
+            >
+              <div class="w-12 h-12 rounded-xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-l1 flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+                🔄
+              </div>
+              <p id="conv-file-status" class="text-sm font-semibold text-[var(--color-ink)]">Upload .SRT, .VTT, .ASS, .JSON, or .TXT</p>
+              <input id="conv-file-input" type="file" accept=".srt,.vtt,.ass,.ssa,.sub,.json,.txt" class="sr-only" />
+            </label>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider">Or Paste Subtitle Code</label>
+              <button id="conv-load-sample" class="text-xs text-[var(--color-violet)] font-semibold hover:underline">Load Sample SRT</button>
+            </div>
+            <textarea
+              id="conv-input-text"
+              rows="6"
+              placeholder="Paste raw subtitle contents here..."
+              class="w-full p-3 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-xs font-mono text-[var(--color-ink)] focus:outline-none focus:border-[var(--color-violet)]"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Target Format Selector -->
+        <div class="flex flex-col gap-3 p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
+          <label class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">2. Convert Target Format</label>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            <button class="target-fmt-btn px-4 py-2.5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas)] font-bold text-xs text-[var(--color-ink)] shadow-xs transition-all" data-fmt="vtt">
+              Convert to WebVTT (.vtt)
+            </button>
+            <button class="target-fmt-btn px-4 py-2.5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-xs font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-fmt="srt">
+              Convert to SRT (.srt)
+            </button>
+            <button class="target-fmt-btn px-4 py-2.5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-xs font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-fmt="ass">
+              Convert to ASS (.ass)
+            </button>
+            <button class="target-fmt-btn px-4 py-2.5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-xs font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-fmt="json">
+              Convert to JSON (.json)
+            </button>
+            <button class="target-fmt-btn px-4 py-2.5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-xs font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-fmt="txt">
+              Convert to TXT (.txt)
+            </button>
+          </div>
+        </div>
+
+        <!-- Converted Output & Actions -->
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-[var(--color-ink)]">Converted Subtitle Output</h3>
+            <span id="conv-cue-count" class="text-xs font-medium text-[var(--color-mute)]">0 cues</span>
+          </div>
+
+          <textarea
+            id="conv-output-text"
+            rows="8"
+            readonly
+            class="w-full p-4 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-xs font-mono text-[var(--color-ink)] select-all"
+          ></textarea>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <button id="conv-download-btn" class="px-6 py-2.5 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-xs font-semibold hover:opacity-90 transition-all shadow-l1">
+              Download Converted File
+            </button>
+            <button id="conv-copy-btn" class="px-4 py-2.5 rounded-pill bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] text-xs font-semibold transition-all">
+              📋 Copy to Clipboard
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FAQ -->
+      <FaqAccordion lang={lang} />
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { parseSubtitleText, serializeToSRT, serializeToVTT, serializeToASS, serializeToTXT, serializeToJSON, type SubtitleCue } from '../utils/subtitleParser';
+
+  let cues: SubtitleCue[] = [];
+  let targetFormat = 'vtt';
+
+  const fileInput = document.getElementById('conv-file-input') as HTMLInputElement;
+  const fileStatus = document.getElementById('conv-file-status');
+  const inputText = document.getElementById('conv-input-text') as HTMLTextAreaElement;
+  const outputText = document.getElementById('conv-output-text') as HTMLTextAreaElement;
+  const cueCount = document.getElementById('conv-cue-count');
+  const downloadBtn = document.getElementById('conv-download-btn') as HTMLButtonElement;
+
+  function renderOutput() {
+    if (cues.length === 0) {
+      if (outputText) outputText.value = '';
+      if (cueCount) cueCount.textContent = '0 cues';
+      return;
+    }
+
+    let result = '';
+    if (targetFormat === 'vtt') result = serializeToVTT(cues);
+    else if (targetFormat === 'srt') result = serializeToSRT(cues);
+    else if (targetFormat === 'ass') result = serializeToASS(cues);
+    else if (targetFormat === 'json') result = serializeToJSON(cues);
+    else if (targetFormat === 'txt') result = serializeToTXT(cues);
+
+    if (outputText) outputText.value = result;
+    if (cueCount) cueCount.textContent = `${cues.length} cues converted`;
+    if (downloadBtn) downloadBtn.textContent = `Download .${targetFormat.toUpperCase()} File`;
+  }
+
+  function loadInput(text: string, filename = '') {
+    cues = parseSubtitleText(text, filename);
+    renderOutput();
+  }
+
+  fileInput?.addEventListener('change', async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const content = await file.text();
+      if (inputText) inputText.value = content;
+      if (fileStatus) fileStatus.textContent = `✓ ${file.name}`;
+      loadInput(content, file.name);
+    }
+  });
+
+  inputText?.addEventListener('input', () => {
+    loadInput(inputText.value);
+  });
+
+  // Format selection
+  document.querySelectorAll('.target-fmt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.target-fmt-btn').forEach(b => {
+        b.classList.remove('bg-[var(--color-canvas)]', 'text-[var(--color-ink)]', 'font-bold', 'shadow-xs');
+        b.classList.add('bg-[var(--color-canvas-soft)]', 'text-[var(--color-mute)]', 'font-medium');
+      });
+      btn.classList.add('bg-[var(--color-canvas)]', 'text-[var(--color-ink)]', 'font-bold', 'shadow-xs');
+      btn.classList.remove('bg-[var(--color-canvas-soft)]', 'text-[var(--color-mute)]', 'font-medium');
+
+      targetFormat = btn.getAttribute('data-fmt') || 'vtt';
+      renderOutput();
+    });
+  });
+
+  document.getElementById('conv-load-sample')?.addEventListener('click', () => {
+    const sample = `1\n00:00:00,500 --> 00:00:02,800\nConvert subtitles effortlessly with FreeAutoCaption.\n\n2\n00:00:03,000 --> 00:00:05,600\nSupports SRT, VTT, ASS, TXT, and JSON.\n\n3\n00:00:05,800 --> 00:00:09,000\n100% private and runs right in your browser.`;
+    if (inputText) inputText.value = sample;
+    loadInput(sample);
+  });
+
+  // Downloads
+  downloadBtn?.addEventListener('click', () => {
+    if (!outputText?.value) return alert('No converted subtitles to download.');
+    const blob = new Blob([outputText.value], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `freeautocaption-converted.${targetFormat}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('conv-copy-btn')?.addEventListener('click', () => {
+    if (!outputText?.value) return;
+    navigator.clipboard.writeText(outputText.value).then(() => alert('✓ Copied to clipboard!'));
+  });
+
+  // Trigger sample
+  document.getElementById('conv-load-sample')?.click();
+</script>

@@ -9,9 +9,11 @@ const rtl = isRTL(lang);
 
 const navLinks = [
   { key: 'nav.home' as const, path: '/' },
-  { key: 'nav.howItWorks' as const, path: '/how-it-works' },
+  { key: 'nav.burn' as const, path: '/burn-subtitles-into-video' },
+  { key: 'nav.adjuster' as const, path: '/srt-timing-adjuster' },
+  { key: 'nav.converter' as const, path: '/convert-subtitles' },
   { key: 'nav.styles' as const, path: '/subtitle-styles' },
-  { key: 'nav.about' as const, path: '/about' },
+  { key: 'nav.howItWorks' as const, path: '/how-it-works' },
 ];
 
 const currentPath = Astro.url.pathname;
@@ -28,7 +30,7 @@ const currentPath = Astro.url.pathname;
     <a
       href={getLocalizedUrl(lang, '/')}
       class="flex items-center gap-2.5 shrink-0 group"
-      aria-label="Subtitle Generator Free — Home"
+      aria-label="FreeAutoCaption — Home"
     >
       <!-- Logo mark with Subtitle CC icon -->
       <div class="w-8 h-8 rounded-xl bg-[var(--color-ink)] flex items-center justify-center transition-transform group-hover:scale-105 shadow-l1">
@@ -39,12 +41,12 @@ const currentPath = Astro.url.pathname;
         </svg>
       </div>
       <span class="text-sm font-bold text-[var(--color-ink)] tracking-tight hidden sm:block">
-        Subtitle Generator <span class="text-[var(--color-link)] font-semibold text-xs uppercase px-1.5 py-0.5 rounded-md bg-[var(--color-link-bg-soft)]">Free</span>
+        FreeAutoCaption <span class="text-[var(--color-link)] font-semibold text-xs uppercase px-1.5 py-0.5 rounded-md bg-[var(--color-link-bg-soft)]">AI</span>
       </span>
     </a>
 
     <!-- Desktop Nav Links -->
-    <nav class="hidden md:flex items-center gap-1" aria-label="Main navigation">
+    <nav class="hidden lg:flex items-center gap-1" aria-label="Main navigation">
       {navLinks.map(({ key, path }) => {
         const href = getLocalizedUrl(lang, path);
         const isActive = currentPath === href || (path !== '/' && currentPath.startsWith(href));
@@ -52,7 +54,7 @@ const currentPath = Astro.url.pathname;
           <a
             href={href}
             class:list={[
-              'px-3.5 py-1.5 text-sm rounded-full transition-colors',
+              'px-3 py-1.5 text-xs font-medium rounded-full transition-colors',
               isActive
                 ? 'text-[var(--color-ink)] font-semibold bg-[var(--color-canvas-soft-2)]'
                 : 'text-[var(--color-body)] hover:text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft)]'
@@ -83,7 +85,7 @@ const currentPath = Astro.url.pathname;
       <!-- Mobile Hamburger Button -->
       <button
         id="mobile-menu-btn"
-        class="md:hidden w-9 h-9 rounded-lg flex items-center justify-center text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft)] transition-colors border border-[var(--color-hairline)]"
+        class="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft)] transition-colors border border-[var(--color-hairline)]"
         aria-label="Open mobile menu"
         aria-expanded="false"
       >
@@ -100,7 +102,7 @@ const currentPath = Astro.url.pathname;
   <!-- Mobile Navigation Drawer -->
   <div
     id="mobile-menu"
-    class="hidden md:hidden fixed inset-x-0 top-16 bg-[var(--color-canvas)] border-b border-[var(--color-hairline)] p-6 shadow-2xl flex-col gap-4 z-50 transition-all"
+    class="hidden lg:hidden fixed inset-x-0 top-16 bg-[var(--color-canvas)] border-b border-[var(--color-hairline)] p-6 shadow-2xl flex-col gap-4 z-50 transition-all"
   >
     <nav class="flex flex-col gap-2">
       {navLinks.map(({ key, path }) => (

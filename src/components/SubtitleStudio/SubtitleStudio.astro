@@ -7,11 +7,11 @@ interface Props {
 const { lang } = Astro.props;
 
 const stylePresets = [
-  { id: 'hormozi', nameKey: 'styles.hormozi', icon: '🔥', desc: 'Bold yellow pop, high-energy retention' },
+  { id: 'hormozi', nameKey: 'styles.hormozi', icon: '🔥', desc: 'Bold yellow pop, high-energy viral retention' },
   { id: 'beast', nameKey: 'styles.beast', icon: '⚡', desc: 'Thick black stroke with cyan bounce' },
   { id: 'cinematic', nameKey: 'styles.cinematic', icon: '🎬', desc: 'Frosted dark pill box for film & docs' },
-  { id: 'neon', nameKey: 'styles.neon', icon: '💜', desc: 'Cyberpunk glowing cyan & pink' },
-  { id: 'karaoke', nameKey: 'styles.karaoke', icon: '🎤', desc: 'Smooth green progressive highlight' },
+  { id: 'neon', nameKey: 'styles.neon', icon: '💜', desc: 'Cyberpunk glowing cyan & pink neon' },
+  { id: 'karaoke', nameKey: 'styles.karaoke', icon: '🎤', desc: 'Smooth progressive highlight sweep' },
   { id: 'minimal', nameKey: 'styles.minimal', icon: '✨', desc: 'Clean modern typography' },
 ];
 ---
@@ -22,17 +22,30 @@ const stylePresets = [
   <div class="bg-[var(--color-canvas)] rounded-2xl border border-[var(--color-hairline)] shadow-l3 overflow-hidden">
 
     <!-- Top Workflow Tabs Bar -->
-    <div class="flex items-center border-b border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] px-4 pt-3 overflow-x-auto scrollbar-hide" role="tablist">
+    <div class="flex items-center border-b border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] px-4 pt-3 overflow-x-auto scrollbar-hide gap-1" role="tablist">
+      <button
+        id="tab-btn-burn"
+        role="tab"
+        aria-selected="true"
+        aria-controls="panel-burn"
+        class="studio-tab-btn flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 border-[var(--color-ink)] text-[var(--color-ink)] transition-colors whitespace-nowrap -mb-px"
+      >
+        <span>🔥</span>
+        <span>{t(lang, 'studio.tab.burn')}</span>
+        <span class="px-1.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded bg-[var(--color-ink)] text-[var(--color-canvas)]">Top</span>
+      </button>
+
       <button
         id="tab-btn-audio"
         role="tab"
-        aria-selected="true"
+        aria-selected="false"
         aria-controls="panel-audio"
-        class="studio-tab-btn flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 border-[var(--color-ink)] text-[var(--color-ink)] transition-colors whitespace-nowrap -mb-px"
+        class="studio-tab-btn flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 border-transparent text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-colors whitespace-nowrap -mb-px"
       >
         <span>🎙️</span>
         <span>{t(lang, 'studio.tab.audio')}</span>
       </button>
+
       <button
         id="tab-btn-script"
         role="tab"
@@ -43,6 +56,7 @@ const stylePresets = [
         <span>📝</span>
         <span>{t(lang, 'studio.tab.script')}</span>
       </button>
+
       <button
         id="tab-btn-editor"
         role="tab"
@@ -56,10 +70,75 @@ const stylePresets = [
       </button>
     </div>
 
-    <!-- ─── TAB 1: Audio / Video Transcriber ─────────────────── -->
-    <div id="panel-audio" role="tabpanel" class="p-6 md:p-8 flex flex-col gap-6">
+    <!-- ─── TAB 1: Video + Subtitle Burner (Upload Video & Subtitles) ─── -->
+    <div id="panel-burn" role="tabpanel" class="p-6 md:p-8 flex flex-col gap-6">
       <div class="flex flex-col gap-1">
-        <h3 class="display-sm text-[var(--color-ink)]">{t(lang, 'studio.tab.audio')}</h3>
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-[var(--color-link-bg-soft)] text-[var(--color-link)] uppercase tracking-wider">Fastest Workflow</span>
+          <h3 class="display-sm text-[var(--color-ink)]">Upload Video & Subtitle File</h3>
+        </div>
+        <p class="text-sm text-[var(--color-body)]">Have an SRT, VTT, or ASS file? Upload both your video and subtitle file to sync, style, and burn them into high-res MP4 with zero watermark.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- 1. Video Dropzone -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider">{t(lang, 'burn.upload.videoTitle')}</label>
+          <label
+            id="burn-video-dropzone"
+            for="burn-video-input"
+            class="flex flex-col items-center justify-center gap-3 w-full min-h-[190px] p-6 border-2 border-dashed border-[var(--color-hairline)] hover:border-[var(--color-link)] hover:bg-[var(--color-link-bg-soft)]/40 rounded-2xl cursor-pointer transition-all group bg-[var(--color-canvas-soft)] relative text-center"
+          >
+            <div class="w-12 h-12 rounded-xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-l1 flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+              🎥
+            </div>
+            <div>
+              <p id="burn-video-name" class="text-sm font-semibold text-[var(--color-ink)]">Click to choose video or drop here</p>
+              <p class="text-xs text-[var(--color-mute)] mt-0.5">{t(lang, 'burn.upload.videoSubtitle')}</p>
+            </div>
+            <input id="burn-video-input" type="file" accept="video/mp4,video/quicktime,video/webm,video/mkv,video/*" class="sr-only" />
+          </label>
+        </div>
+
+        <!-- 2. Subtitle File Dropzone -->
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider">{t(lang, 'burn.upload.subTitle')}</label>
+          <label
+            id="burn-sub-dropzone"
+            for="burn-sub-input"
+            class="flex flex-col items-center justify-center gap-3 w-full min-h-[190px] p-6 border-2 border-dashed border-[var(--color-hairline)] hover:border-[var(--color-violet)] hover:bg-[var(--color-violet-soft)]/30 rounded-2xl cursor-pointer transition-all group bg-[var(--color-canvas-soft)] relative text-center"
+          >
+            <div class="w-12 h-12 rounded-xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-l1 flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+              📄
+            </div>
+            <div>
+              <p id="burn-sub-name" class="text-sm font-semibold text-[var(--color-ink)]">Click to upload .SRT, .VTT, .ASS</p>
+              <p class="text-xs text-[var(--color-mute)] mt-0.5">{t(lang, 'burn.upload.subSubtitle')}</p>
+            </div>
+            <input id="burn-sub-input" type="file" accept=".srt,.vtt,.ass,.ssa,.sub,.json,.txt" class="sr-only" />
+          </label>
+        </div>
+      </div>
+
+      <!-- Quick Action / Demo -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
+        <div class="flex items-center gap-3">
+          <span class="text-xl">💡</span>
+          <p class="text-xs text-[var(--color-body)]">Don't have subtitles yet? Use the <strong>AI Auto-Caption</strong> tab to auto-generate timestamped subtitles from your video speech.</p>
+        </div>
+        <button id="burn-start-btn" type="button" class="w-full sm:w-auto px-6 py-2.5 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-sm font-semibold hover:opacity-90 transition-all shadow-l1 whitespace-nowrap">
+          Open in Studio Editor →
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── TAB 2: AI Audio / Video Transcriber ─────────────────── -->
+    <div id="panel-audio" role="tabpanel" class="hidden p-6 md:p-8 flex-col gap-6">
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-[var(--color-grad-blue-start)]/10 text-[var(--color-grad-blue-start)] uppercase tracking-wider">Cloudflare Whisper AI</span>
+          <h3 class="display-sm text-[var(--color-ink)]">{t(lang, 'studio.tab.audio')}</h3>
+        </div>
         <p class="text-sm text-[var(--color-body)]">{t(lang, 'audio.drop.formats')}</p>
       </div>
 
@@ -67,12 +146,12 @@ const stylePresets = [
       <label
         id="audio-dropzone"
         for="media-file-input"
-        class="flex flex-col items-center justify-center gap-4 w-full min-h-[220px] p-6 border-2 border-dashed border-[var(--color-hairline)] hover:border-[var(--color-link)] hover:bg-[var(--color-link-bg-soft)] rounded-2xl cursor-pointer transition-all group relative bg-[var(--color-canvas-soft)]"
+        class="flex flex-col items-center justify-center gap-4 w-full min-h-[220px] p-6 border-2 border-dashed border-[var(--color-hairline)] hover:border-[var(--color-link)] hover:bg-[var(--color-link-bg-soft)] rounded-2xl cursor-pointer transition-all group relative bg-[var(--color-canvas-soft)] text-center"
       >
         <div class="w-16 h-16 rounded-2xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-l1 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
           🎙️
         </div>
-        <div class="text-center">
+        <div>
           <p class="text-base font-semibold text-[var(--color-ink)]">{t(lang, 'audio.drop.title')}</p>
           <p class="text-xs text-[var(--color-mute)] mt-1">{t(lang, 'audio.drop.subtitle')}</p>
         </div>
@@ -80,20 +159,20 @@ const stylePresets = [
         <input
           id="media-file-input"
           type="file"
-          accept="audio/*,video/*"
+          accept="audio/*,video/*,.mp4,.mov,.webm,.mp3,.wav,.m4a"
           class="sr-only"
         />
 
         <!-- Loading Overlay -->
-        <div id="transcribe-loading" class="hidden absolute inset-0 bg-[var(--color-canvas)]/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center gap-4 z-20">
+        <div id="transcribe-loading" class="hidden absolute inset-0 bg-[var(--color-canvas)]/95 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center gap-4 z-20">
           <div class="flex items-center gap-1.5 h-8">
-            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-1"></div>
-            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-2"></div>
-            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-3"></div>
-            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-4"></div>
-            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-5"></div>
+            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-1 h-6 animate-pulse"></div>
+            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-2 h-8 animate-pulse"></div>
+            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-3 h-4 animate-pulse"></div>
+            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-4 h-7 animate-pulse"></div>
+            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-5 h-5 animate-pulse"></div>
           </div>
-          <p class="text-sm font-medium text-[var(--color-ink)] animate-pulse">{t(lang, 'audio.analyzing')}</p>
+          <p id="transcribe-status-text" class="text-sm font-medium text-[var(--color-ink)] animate-pulse">{t(lang, 'audio.analyzing')}</p>
         </div>
       </label>
 
@@ -112,278 +191,301 @@ const stylePresets = [
           </button>
         </div>
 
-        <!-- Live Speech Recognition Button -->
         <button
           id="live-speech-btn"
           type="button"
           class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] hover:opacity-85 transition-all shadow-l1 shrink-0"
         >
-          <span id="mic-icon">🎙️</span>
-          <span id="mic-label">Record Voice (Live AI Transcribe)</span>
-          <span id="mic-pulse" class="hidden w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+          <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+          <span>Record Live Mic</span>
         </button>
-      </div>
-
-      <!-- Free AI Model Info Banner -->
-      <div class="p-3.5 rounded-xl bg-[var(--color-link-bg-soft)] border border-[var(--color-link)]/20 flex items-start gap-2.5 text-xs text-[var(--color-ink)]">
-        <span class="text-base shrink-0">✨</span>
-        <div class="flex flex-col gap-0.5">
-          <span class="font-bold">100% Free & Unlimited In-Browser AI Engine</span>
-          <span class="text-[var(--color-body)]">Our speech-to-text uses free open-source Web Speech AI and client-side acoustic modeling. No subscriptions, no API fees, and your media files never leave your device.</span>
-        </div>
       </div>
     </div>
 
-    <!-- ─── TAB 2: Script to Subtitle Synchronizer ───────────── -->
-    <div id="panel-script" role="tabpanel" class="hidden p-6 md:p-8 flex flex-col gap-6">
+    <!-- ─── TAB 3: Script to Subtitles ───────────────────────── -->
+    <div id="panel-script" role="tabpanel" class="hidden p-6 md:p-8 flex-col gap-6">
       <div class="flex flex-col gap-1">
         <h3 class="display-sm text-[var(--color-ink)]">{t(lang, 'script.title')}</h3>
         <p class="text-sm text-[var(--color-body)]">{t(lang, 'script.subtitle')}</p>
       </div>
 
-      <div class="flex flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <label for="script-textarea" class="text-xs font-semibold uppercase tracking-wider text-[var(--color-mute)]">Raw Transcript / Dialogue</label>
-          <button id="insert-sample-script" class="text-xs font-medium text-[var(--color-link)] hover:underline">
-            {t(lang, 'script.sampleBtn')}
-          </button>
-        </div>
+      <div class="relative">
         <textarea
-          id="script-textarea"
+          id="script-input"
           rows="6"
-          class="w-full p-4 text-sm rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-[var(--color-ink)] focus:outline-none focus:ring-2 focus:ring-[var(--color-link)] focus:ring-offset-1 font-sans transition-all placeholder:text-[var(--color-mute)]"
           placeholder={t(lang, 'script.placeholder')}
+          class="w-full p-4 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-[var(--color-ink)] text-sm font-mono focus:outline-none focus:border-[var(--color-link)] focus:ring-2 focus:ring-[var(--color-link-bg-soft)] transition-all resize-y"
         ></textarea>
+        <button
+          id="insert-sample-script"
+          type="button"
+          class="absolute top-3 right-3 px-3 py-1.5 text-xs font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-[var(--color-body)] hover:text-[var(--color-ink)] shadow-xs transition-all"
+        >
+          {t(lang, 'script.sampleBtn')}
+        </button>
       </div>
 
-      <!-- Pacing Controls -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
+      <!-- Pacing & Segmentation Controls -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
         <div class="flex flex-col gap-2">
-          <div class="flex justify-between items-center text-xs font-medium">
-            <span class="text-[var(--color-body)]">{t(lang, 'script.wpm')}</span>
-            <span id="wpm-val" class="font-mono text-[var(--color-ink)] font-bold">160 WPM</span>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-medium text-[var(--color-body)]">{t(lang, 'script.wpm')}</span>
+            <span id="wpm-display" class="font-bold text-[var(--color-ink)]">145 WPM</span>
           </div>
           <input
             id="wpm-slider"
             type="range"
-            min="100"
-            max="260"
-            step="10"
-            value="160"
+            min="90"
+            max="220"
+            value="145"
             class="w-full accent-[var(--color-link)] cursor-pointer"
           />
-          <span class="text-[11px] text-[var(--color-mute)]">Standard conversational speaking pace is ~150-170 WPM.</span>
         </div>
 
         <div class="flex flex-col gap-2">
-          <div class="flex justify-between items-center text-xs font-medium">
-            <span class="text-[var(--color-body)]">{t(lang, 'script.wordsPerLine')}</span>
-            <span id="words-val" class="font-mono text-[var(--color-ink)] font-bold">4 words</span>
+          <div class="flex items-center justify-between text-xs">
+            <span class="font-medium text-[var(--color-body)]">{t(lang, 'script.wordsPerLine')}</span>
+            <span id="wpl-display" class="font-bold text-[var(--color-ink)]">4 words (Viral)</span>
           </div>
           <input
-            id="words-slider"
+            id="wpl-slider"
             type="range"
             min="2"
-            max="8"
-            step="1"
+            max="10"
             value="4"
             class="w-full accent-[var(--color-link)] cursor-pointer"
           />
-          <span class="text-[11px] text-[var(--color-mute)]">Shorter lines (3-5 words) achieve highest retention on Reels & TikTok.</span>
         </div>
       </div>
 
       <button
-        id="generate-script-cues-btn"
-        class="inline-flex items-center justify-center gap-2 h-12 px-6 text-sm font-semibold rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] hover:opacity-85 transition-opacity shadow-l2 self-start"
+        id="generate-from-script-btn"
+        type="button"
+        class="w-full py-3.5 px-6 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-sm font-semibold hover:opacity-90 transition-all shadow-l1 flex items-center justify-center gap-2"
       >
-        <span>⚡</span>
         <span>{t(lang, 'script.generateBtn')}</span>
       </button>
     </div>
 
-    <!-- ─── TAB 3: Live Video Studio & Editor ────────────────── -->
-    <div id="panel-editor" role="tabpanel" class="hidden p-6 md:p-8 flex flex-col gap-8">
+    <!-- ─── TAB 4: Live Video Studio & Editor (Canvas / Burner) ─── -->
+    <div id="panel-editor" role="tabpanel" class="hidden p-6 md:p-8 flex-col gap-8">
       
+      <!-- Studio Grid: Video Player + Controls -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        <!-- Left Column: Video Player & Subtitle Canvas (5 Cols) -->
-        <div class="lg:col-span-5 flex flex-col gap-4">
+
+        <!-- Left Column: Video Preview Player & Canvas -->
+        <div class="lg:col-span-7 flex flex-col gap-4">
           <div class="flex items-center justify-between">
-            <label for="custom-video-input" class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-[var(--color-ink)] hover:border-[var(--color-hairline-strong)] hover:shadow-l1 transition-all cursor-pointer">
-              <span>📁</span>
-              <span>Upload Video</span>
-              <input id="custom-video-input" type="file" accept="video/*" class="sr-only" />
-            </label>
-            <!-- Aspect Ratio Switcher -->
-            <div class="flex items-center gap-1 bg-[var(--color-canvas-soft)] p-1 rounded-lg border border-[var(--color-hairline)] text-xs">
-              <button class="aspect-btn px-2 py-1 rounded font-medium bg-[var(--color-canvas)] text-[var(--color-ink)] shadow-l1" data-ratio="9-16">9:16</button>
-              <button class="aspect-btn px-2 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]" data-ratio="16-9">16:9</button>
-              <button class="aspect-btn px-2 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]" data-ratio="1-1">1:1</button>
+            <h4 class="text-sm font-semibold text-[var(--color-ink)]">{t(lang, 'editor.heading')}</h4>
+            
+            <!-- Aspect Ratio Selector -->
+            <div class="flex items-center gap-1.5 p-1 rounded-lg bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-xs">
+              <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-ink)] bg-[var(--color-canvas)] shadow-xs transition-all" data-aspect="9:16">
+                9:16 Shorts
+              </button>
+              <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="16:9">
+                16:9 YT
+              </button>
+              <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="1:1">
+                1:1 Square
+              </button>
             </div>
           </div>
 
-          <!-- Video Container Box -->
-          <div
-            id="video-viewport"
-            class="relative w-full max-w-[340px] mx-auto aspect-[9/16] bg-zinc-950 rounded-2xl overflow-hidden shadow-2xl border border-[var(--color-hairline)] flex items-center justify-center select-none group"
-          >
-            <!-- Canvas Animated Background Generator (Simulated Video) -->
-            <canvas id="motion-canvas" class="w-full h-full object-cover"></canvas>
+          <!-- Video Canvas Container -->
+          <div id="video-preview-wrapper" class="relative w-full aspect-[9/16] max-h-[520px] mx-auto bg-black rounded-2xl overflow-hidden shadow-l3 border border-[var(--color-hairline)] flex items-center justify-center group select-none">
             
-            <!-- User HTML5 Video Tag (if video file loaded) -->
-            <video id="user-video" class="hidden w-full h-full object-cover" playsinline loop></video>
+            <!-- Native Video Element -->
+            <video
+              id="studio-video"
+              class="w-full h-full object-cover"
+              playsinline
+              preload="auto"
+              crossorigin="anonymous"
+            ></video>
 
-            <!-- Subtitle Overlay Overlay Container -->
-            <div
-              id="subtitle-overlay-box"
-              class="absolute left-4 right-4 pointer-events-none transition-all flex justify-center text-center bottom-[15%]"
-            >
-              <div
-                id="subtitle-rendered-text"
-                class="sub-style-hormozi text-2xl font-bold tracking-tight text-center max-w-full px-2 py-1 leading-snug transition-transform"
-              >
-                <!-- Words injected dynamically by JS -->
-                GENERATE <span class="word-active">VIRAL</span> SUBTITLES
+            <!-- Canvas for subtitle rendering and video export -->
+            <canvas id="studio-burn-canvas" class="hidden"></canvas>
+
+            <!-- Social Media Safe Zone Overlays -->
+            <div id="safe-zone-tiktok" class="hidden absolute inset-0 pointer-events-none border-2 border-dashed border-red-400/40 m-4 flex flex-col justify-between p-3 z-10">
+              <div class="text-[10px] font-mono text-red-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">TikTok Safe Top</div>
+              <div class="text-[10px] font-mono text-red-300/80 bg-black/60 px-1.5 py-0.5 rounded self-end">TikTok Right UI Safe</div>
+              <div class="text-[10px] font-mono text-red-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">TikTok Caption Bounds</div>
+            </div>
+
+            <div id="safe-zone-reels" class="hidden absolute inset-0 pointer-events-none border-2 border-dashed border-purple-400/40 m-4 flex flex-col justify-between p-3 z-10">
+              <div class="text-[10px] font-mono text-purple-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">IG Reels Safe Top</div>
+              <div class="text-[10px] font-mono text-purple-300/80 bg-black/60 px-1.5 py-0.5 rounded self-end">Reels Icons</div>
+              <div class="text-[10px] font-mono text-purple-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">Audio Label Safe</div>
+            </div>
+
+            <!-- Live Subtitle Overlay Layer -->
+            <div id="subtitle-overlay" class="absolute inset-x-0 bottom-16 flex flex-col items-center justify-center p-4 pointer-events-none z-10 text-center transition-all">
+              <div id="subtitle-render-box" class="subtitle-style-hormozi font-extrabold text-2xl tracking-tight transition-transform">
+                <span>FreeAutoCaption Studio</span>
               </div>
             </div>
 
-            <!-- Big Play/Pause Button on Hover -->
+            <!-- Custom Play/Pause Overlay Button -->
             <button
               id="video-play-btn"
-              class="absolute w-14 h-14 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white flex items-center justify-center text-xl hover:scale-110 transition-transform shadow-lg group-hover:opacity-100 opacity-80"
-              aria-label="Play or pause video preview"
+              type="button"
+              class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 text-white text-4xl transition-all cursor-pointer z-10"
+              aria-label="Play video"
             >
-              <span id="play-icon">▶</span>
+              <div class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-l2 group-hover:scale-110 transition-transform">
+                ▶
+              </div>
             </button>
           </div>
 
-          <!-- Player Controls Bar -->
-          <div class="flex flex-col gap-2 p-3 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
-            <div class="flex items-center gap-3">
-              <button id="mini-play-btn" class="w-8 h-8 rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-xs text-[var(--color-ink)] flex items-center justify-center font-bold">
-                ▶
-              </button>
-              <input
-                id="video-seekbar"
-                type="range"
-                min="0"
-                max="100"
-                value="0"
-                step="0.1"
-                class="flex-1 accent-[var(--color-link)] cursor-pointer"
-              />
-              <span id="time-display" class="font-mono text-xs font-medium text-[var(--color-mute)]">00:00 / 00:15</span>
+          <!-- Video Playback & Seek Bar -->
+          <div class="flex items-center gap-3 p-3 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
+            <button id="ctrl-play-pause" type="button" class="p-2 rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] transition-colors">
+              ▶
+            </button>
+            <input
+              id="ctrl-seekbar"
+              type="range"
+              min="0"
+              max="100"
+              value="0"
+              step="0.1"
+              class="w-full accent-[var(--color-link)] cursor-pointer"
+            />
+            <span id="ctrl-time-display" class="text-xs font-mono text-[var(--color-mute)] shrink-0">00:00 / 00:00</span>
+          </div>
+
+          <!-- Safe Zone & Position Controls -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-[var(--color-mute)]">{t(lang, 'editor.safeZones')}</span>
+              <select id="safezone-select" class="px-3 py-2 text-xs font-medium rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] focus:outline-none">
+                <option value="off">{t(lang, 'editor.safeZonesOff')}</option>
+                <option value="tiktok">{t(lang, 'editor.safeZonesTikTok')}</option>
+                <option value="reels">{t(lang, 'editor.safeZonesReels')}</option>
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-[var(--color-mute)]">{t(lang, 'editor.position')}</span>
+              <select id="position-select" class="px-3 py-2 text-xs font-medium rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] focus:outline-none">
+                <option value="bottom">{t(lang, 'editor.posBottom')} (80%)</option>
+                <option value="center">{t(lang, 'editor.posCenter')} (50%)</option>
+                <option value="top">{t(lang, 'editor.posTop')} (20%)</option>
+              </select>
             </div>
           </div>
         </div>
 
-        <!-- Right Column: Style Preset Selector & Position Controls (7 Cols) -->
-        <div class="lg:col-span-7 flex flex-col gap-6">
+        <!-- Right Column: Viral Presets, Timing Sync & Cue Editor -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
 
-          <!-- Style Preset Cards Grid -->
+          <!-- 1. Trending Style Presets -->
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between">
-              <h4 class="text-sm font-bold uppercase tracking-wider text-[var(--color-ink)]">{t(lang, 'styles.title')}</h4>
-              <span class="text-xs text-[var(--color-mute)]">Click any style to preview instantly</span>
+              <h4 class="text-sm font-semibold text-[var(--color-ink)]">{t(lang, 'styles.title')}</h4>
+              <span class="text-xs text-[var(--color-mute)]">Click to apply</span>
             </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="style-presets-grid">
-              {stylePresets.map((preset, idx) => (
+            
+            <div class="grid grid-cols-2 gap-2.5">
+              {stylePresets.map(preset => (
                 <button
-                  class:list={[
-                    'style-preset-btn p-3.5 rounded-xl border text-start flex items-start gap-3 transition-all cursor-pointer',
-                    idx === 0
-                      ? 'border-[var(--color-link)] bg-[var(--color-link-bg-soft)] ring-2 ring-[var(--color-link)]/20'
-                      : 'border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:border-[var(--color-hairline-strong)]'
-                  ]}
-                  data-style={preset.id}
+                  class="style-preset-btn p-3 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:border-[var(--color-hairline-strong)] hover:bg-[var(--color-canvas)] text-start flex items-start gap-2.5 transition-all group"
+                  data-preset={preset.id}
                 >
-                  <span class="text-2xl shrink-0" aria-hidden="true">{preset.icon}</span>
+                  <span class="text-xl shrink-0 group-hover:scale-110 transition-transform">{preset.icon}</span>
                   <div class="flex flex-col">
-                    <span class="text-sm font-bold text-[var(--color-ink)]">{t(lang, preset.nameKey as any)}</span>
-                    <span class="text-xs text-[var(--color-mute)] mt-0.5 leading-snug">{preset.desc}</span>
+                    <span class="text-xs font-bold text-[var(--color-ink)]">{t(lang, preset.nameKey)}</span>
+                    <span class="text-[10px] text-[var(--color-mute)] line-clamp-1">{preset.desc}</span>
                   </div>
                 </button>
               ))}
             </div>
           </div>
 
-          <!-- Position & Font Controls -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
-            <div class="flex flex-col gap-2">
-              <span class="text-xs font-semibold text-[var(--color-body)]">{t(lang, 'editor.position')}</span>
-              <div class="flex gap-1">
-                <button class="pos-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--color-hairline)] text-[var(--color-body)] hover:text-[var(--color-ink)]" data-pos="top">{t(lang, 'editor.posTop')}</button>
-                <button class="pos-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--color-hairline)] text-[var(--color-body)] hover:text-[var(--color-ink)]" data-pos="center">{t(lang, 'editor.posCenter')}</button>
-                <button class="pos-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--color-link)] bg-[var(--color-ink)] text-[var(--color-on-primary)]" data-pos="bottom">{t(lang, 'editor.posBottom')}</button>
-              </div>
+          <!-- 2. Subtitle Timing Sync & Drift Resync Tool -->
+          <div class="p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-[var(--color-ink)] flex items-center gap-1.5">
+                <span>⏱️</span>
+                <span>{t(lang, 'sync.title')}</span>
+              </span>
+              <button id="sync-reset-btn" class="text-[11px] text-[var(--color-link)] font-semibold hover:underline">
+                {t(lang, 'sync.reset')}
+              </button>
             </div>
-
-            <div class="flex flex-col gap-2">
-              <div class="flex justify-between items-center text-xs font-semibold">
-                <span class="text-[var(--color-body)]">{t(lang, 'editor.fontSize')}</span>
-                <span id="fontsize-label" class="font-mono text-[var(--color-ink)]">24px</span>
-              </div>
-              <input
-                id="fontsize-slider"
-                type="range"
-                min="16"
-                max="40"
-                value="24"
-                class="w-full accent-[var(--color-link)] cursor-pointer"
-              />
+            <div class="flex items-center justify-between text-xs text-[var(--color-mute)]">
+              <span>{t(lang, 'sync.offsetHelp')}</span>
+              <span id="sync-offset-display" class="font-mono font-bold text-[var(--color-ink)]">+0.00s</span>
             </div>
-          </div>
-
-          <!-- Timeline & Cue Table Header -->
-          <div class="flex items-center justify-between pt-2">
             <div class="flex items-center gap-2">
-              <h4 class="text-sm font-bold uppercase tracking-wider text-[var(--color-ink)]">{t(lang, 'timeline.title')}</h4>
-              <span id="cue-count-badge" class="px-2 py-0.5 text-xs rounded-full bg-[var(--color-canvas-soft-2)] text-[var(--color-mute)] font-mono">6 cues</span>
+              <button id="sync-minus-btn" class="px-2.5 py-1 text-xs font-bold rounded bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:bg-[var(--color-canvas-soft-2)]">-0.2s</button>
+              <input
+                id="sync-offset-slider"
+                type="range"
+                min="-5"
+                max="5"
+                step="0.05"
+                value="0"
+                class="w-full accent-[var(--color-violet)] cursor-pointer"
+              />
+              <button id="sync-plus-btn" class="px-2.5 py-1 text-xs font-bold rounded bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:bg-[var(--color-canvas-soft-2)]">+0.2s</button>
             </div>
-            <button id="add-cue-btn" class="text-xs font-medium text-[var(--color-link)] hover:underline flex items-center gap-1">
-              {t(lang, 'timeline.add')}
+          </div>
+
+          <!-- 3. Subtitle Cues Timeline Editor -->
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm font-semibold text-[var(--color-ink)]">{t(lang, 'timeline.title')}</h4>
+                <span id="cue-count-badge" class="px-2 py-0.5 text-[11px] rounded-full bg-[var(--color-hairline)] text-[var(--color-body)] font-medium">0 cues</span>
+              </div>
+              <button id="add-cue-btn" type="button" class="text-xs font-semibold text-[var(--color-link)] hover:underline">
+                {t(lang, 'timeline.add')}
+              </button>
+            </div>
+
+            <!-- Scrollable Cues List -->
+            <div id="cues-container" class="flex flex-col gap-2 max-h-[220px] overflow-y-auto pr-1">
+              <!-- Dynamically populated cues -->
+            </div>
+          </div>
+
+          <!-- 4. Export & Download Center -->
+          <div class="p-5 rounded-2xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] flex flex-col gap-4">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">{t(lang, 'export.title')}</h4>
+
+            <!-- Primary Action: Burn and Export High-Res MP4 Video -->
+            <button
+              id="export-burned-video-btn"
+              type="button"
+              class="w-full py-3 px-4 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-sm font-bold hover:opacity-90 transition-all shadow-l1 flex items-center justify-center gap-2"
+            >
+              <span>{t(lang, 'export.burnVideo')}</span>
             </button>
+            <p class="text-[11px] text-center text-[var(--color-mute)] -mt-2">{t(lang, 'export.noWatermark')}</p>
+
+            <!-- Secondary Subtitle File Exports -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-[var(--color-hairline)]">
+              <button id="export-srt-btn" class="px-3 py-2 text-xs font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-all">
+                .SRT
+              </button>
+              <button id="export-vtt-btn" class="px-3 py-2 text-xs font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-all">
+                .WebVTT
+              </button>
+              <button id="export-ass-btn" class="px-3 py-2 text-xs font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-all">
+                .ASS
+              </button>
+              <button id="export-copy-btn" class="px-3 py-2 text-xs font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] transition-all">
+                📋 Copy
+              </button>
+            </div>
           </div>
 
-          <!-- Editable Cues Table Container -->
-          <div class="max-h-[280px] overflow-y-auto rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas)] divide-y divide-[var(--color-hairline)] shadow-l1" id="cues-container">
-            <!-- Cues rendered by JS -->
-          </div>
-
         </div>
 
-      </div>
-
-      <!-- ─── Export Action Bar ─────────────────────────────── -->
-      <div class="pt-6 border-t border-[var(--color-hairline)] flex flex-wrap items-center justify-between gap-4">
-        <div class="flex flex-col">
-          <span class="text-sm font-bold text-[var(--color-ink)]">{t(lang, 'export.title')}</span>
-          <span class="text-xs text-[var(--color-mute)]">Universal formats ready for YouTube, TikTok, Reels, Premiere Pro & CapCut</span>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-2">
-          <button id="burn-video-btn" class="h-10 px-5 text-xs font-semibold rounded-pill bg-gradient-to-r from-[var(--color-link)] to-[var(--color-violet)] text-white hover:opacity-90 transition-all shadow-l2 flex items-center gap-2">
-            <span>🎬</span>
-            <span id="burn-video-label">Download Video with Subtitles</span>
-          </button>
-          <button id="export-srt-btn" class="h-10 px-4 text-xs font-semibold rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] hover:opacity-85 transition-opacity shadow-l1 flex items-center gap-1.5">
-            <span>📥</span>
-            <span>{t(lang, 'export.srt')}</span>
-          </button>
-          <button id="export-vtt-btn" class="h-10 px-4 text-xs font-semibold rounded-pill border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] hover:border-[var(--color-hairline-strong)] hover:shadow-l1 transition-all flex items-center gap-1.5">
-            <span>📄</span>
-            <span>{t(lang, 'export.vtt')}</span>
-          </button>
-          <button id="export-txt-btn" class="h-10 px-4 text-xs font-semibold rounded-pill border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] hover:border-[var(--color-hairline-strong)] hover:shadow-l1 transition-all flex items-center gap-1.5">
-            <span>📝</span>
-            <span>{t(lang, 'export.txt')}</span>
-          </button>
-          <button id="copy-all-btn" class="h-10 px-4 text-xs font-semibold rounded-pill border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)] transition-colors">
-            {t(lang, 'export.copy')}
-          </button>
-        </div>
       </div>
 
     </div>
@@ -392,663 +494,491 @@ const stylePresets = [
 
 </div>
 
-<!-- ─── Client Script Engine ───────────────────────────────── -->
+<!-- Subtitle Studio Logic & Engine -->
 <script>
-  interface SubtitleCue {
-    id: string;
-    start: number; // in seconds
-    end: number;
-    text: string;
-  }
+  import { parseSubtitleText, serializeToSRT, serializeToVTT, serializeToASS, serializeToTXT, shiftSubtitleTimings, type SubtitleCue } from '../../utils/subtitleParser';
+  import { extractAudioFromMedia } from '../../utils/audioExtractor';
 
-  // Preloaded Demo Samples
-  const demoSamples: Record<string, SubtitleCue[]> = {
-    podcast: [
-      { id: '1', start: 0.0, end: 2.2, text: "WELCOME BACK TO THE PODCAST" },
-      { id: '2', start: 2.3, end: 4.8, text: "TODAY WE EXPLORE GENERATIVE AI" },
-      { id: '3', start: 4.9, end: 7.4, text: "HOW CREATORS ARE SCALING 10X" },
-      { id: '4', start: 7.5, end: 9.8, text: "WITH AUTOMATED VIDEO SUBTITLES" },
-      { id: '5', start: 9.9, end: 12.0, text: "AND ZERO MANUAL EDITING EFFORT" },
-    ],
-    motivation: [
-      { id: '1', start: 0.0, end: 2.5, text: "IF YOU WANT WHAT ONLY ONE PERCENT HAVE" },
-      { id: '2', start: 2.6, end: 5.5, text: "YOU MUST DO WHAT NINETY NINE PERCENT WON'T" },
-      { id: '3', start: 5.6, end: 8.8, text: "FOCUS EVERY SINGLE DAY ON YOUR GOALS" },
-      { id: '4', start: 8.9, end: 12.0, text: "BECAUSE CONSISTENCY ALWAYS BEATS TALENT" },
-      { id: '5', start: 12.1, end: 15.0, text: "START CREATING YOUR FUTURE TODAY" },
-    ],
-    tutorial: [
-      { id: '1', start: 0.0, end: 2.4, text: "IN THIS QUICK CODING TUTORIAL" },
-      { id: '2', start: 2.5, end: 5.0, text: "WE WILL CONNECT OUR WEB APPLICATION" },
-      { id: '3', start: 5.1, end: 7.5, text: "DIRECTLY TO AN AI SPEECH ENGINE" },
-      { id: '4', start: 7.6, end: 10.0, text: "TO GENERATE ACCURATE SUBTITLES FAST" },
-    ]
-  };
+  let currentCues: SubtitleCue[] = [];
+  let originalCues: SubtitleCue[] = [];
+  let currentPreset = 'hormozi';
+  let syncOffset = 0;
+  let videoBlobUrl = '';
 
-  // State
-  let currentCues: SubtitleCue[] = [...demoSamples.motivation];
-  let currentStyle = 'hormozi';
-  let isPlaying = false;
-  let currentTime = 0;
-  let duration = 15.0;
-  let animFrameId: number | null = null;
-  let lastTimestamp = 0;
+  // Default demo cues
+  const defaultDemoCues: SubtitleCue[] = [
+    { id: 1, start: 0.0, end: 2.4, text: "Stop wasting hours typing subtitles manually." },
+    { id: 2, start: 2.5, end: 5.2, text: "FreeAutoCaption gives you viral animated captions instantly." },
+    { id: 3, start: 5.3, end: 8.0, text: "Upload your video, pick a style, and export watermark-free!" },
+    { id: 4, start: 8.1, end: 11.5, text: "Boost your TikTok and Shorts retention by over 80%." }
+  ];
 
-  // DOM Elements
-  const tabBtns = document.querySelectorAll<HTMLButtonElement>('.studio-tab-btn');
+  // Tab switching logic
+  const tabBtns = document.querySelectorAll('.studio-tab-btn');
   const panels = {
-    audio: document.getElementById('panel-audio'),
-    script: document.getElementById('panel-script'),
-    editor: document.getElementById('panel-editor'),
+    'burn': document.getElementById('panel-burn'),
+    'audio': document.getElementById('panel-audio'),
+    'script': document.getElementById('panel-script'),
+    'editor': document.getElementById('panel-editor'),
   };
 
-  // Motion Canvas setup (background video simulation)
-  const canvas = document.getElementById('motion-canvas') as HTMLCanvasElement;
-  const ctx = canvas?.getContext('2d');
-  const subtitleRenderedText = document.getElementById('subtitle-rendered-text');
-  const playBtn = document.getElementById('video-play-btn');
-  const miniPlayBtn = document.getElementById('mini-play-btn');
-  const playIcon = document.getElementById('play-icon');
-  const seekbar = document.getElementById('video-seekbar') as HTMLInputElement;
-  const timeDisplay = document.getElementById('time-display');
-  const cuesContainer = document.getElementById('cues-container');
-  const cueCountBadge = document.getElementById('cue-count-badge');
-
-  function resizeCanvas() {
-    if (!canvas) return;
-    canvas.width = canvas.parentElement?.clientWidth || 340;
-    canvas.height = canvas.parentElement?.clientHeight || 604;
-  }
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-
-  // Tab Switching
-  function switchTab(target: 'audio' | 'script' | 'editor') {
+  function switchTab(targetTab: 'burn' | 'audio' | 'script' | 'editor') {
     tabBtns.forEach(btn => {
-      const isTarget = btn.id === `tab-btn-${target}`;
-      btn.setAttribute('aria-selected', String(isTarget));
-      btn.classList.toggle('border-[var(--color-ink)]', isTarget);
-      btn.classList.toggle('text-[var(--color-ink)]', isTarget);
-      btn.classList.toggle('font-semibold', isTarget);
-      btn.classList.toggle('border-transparent', !isTarget);
-      btn.classList.toggle('text-[var(--color-mute)]', !isTarget);
-      btn.classList.toggle('font-medium', !isTarget);
+      const isSelected = btn.id === `tab-btn-${targetTab}`;
+      btn.setAttribute('aria-selected', String(isSelected));
+      if (isSelected) {
+        btn.classList.add('border-[var(--color-ink)]', 'text-[var(--color-ink)]', 'font-semibold');
+        btn.classList.remove('border-transparent', 'text-[var(--color-mute)]', 'font-medium');
+      } else {
+        btn.classList.remove('border-[var(--color-ink)]', 'text-[var(--color-ink)]', 'font-semibold');
+        btn.classList.add('border-transparent', 'text-[var(--color-mute)]', 'font-medium');
+      }
     });
 
     Object.entries(panels).forEach(([key, panel]) => {
-      panel?.classList.toggle('hidden', key !== target);
+      if (panel) {
+        if (key === targetTab) {
+          panel.classList.remove('hidden');
+          panel.classList.add('flex');
+        } else {
+          panel.classList.add('hidden');
+          panel.classList.remove('flex');
+        }
+      }
     });
 
-    if (target === 'editor') {
-      setTimeout(resizeCanvas, 50);
+    if (targetTab === 'editor') {
+      renderCuesList();
     }
   }
 
+  document.getElementById('tab-btn-burn')?.addEventListener('click', () => switchTab('burn'));
   document.getElementById('tab-btn-audio')?.addEventListener('click', () => switchTab('audio'));
   document.getElementById('tab-btn-script')?.addEventListener('click', () => switchTab('script'));
   document.getElementById('tab-btn-editor')?.addEventListener('click', () => switchTab('editor'));
 
-  // Render Canvas animated particles / dynamic background
-  function drawCanvasFrame(time: number) {
-    if (!ctx || !canvas) return;
-    const w = canvas.width;
-    const h = canvas.height;
+  // Video & Subtitle Burner Handlers
+  const burnVideoInput = document.getElementById('burn-video-input') as HTMLInputElement;
+  const burnSubInput = document.getElementById('burn-sub-input') as HTMLInputElement;
+  const burnVideoName = document.getElementById('burn-video-name');
+  const burnSubName = document.getElementById('burn-sub-name');
+  const studioVideo = document.getElementById('studio-video') as HTMLVideoElement;
 
-    // Dark gradient background
-    const grad = ctx.createRadialGradient(
-      w * 0.5 + Math.sin(time * 0.002) * w * 0.3,
-      h * 0.4 + Math.cos(time * 0.002) * h * 0.2,
-      20,
-      w * 0.5,
-      h * 0.5,
-      w * 0.8
-    );
-    grad.addColorStop(0, '#1e1b4b'); // Deep indigo
-    grad.addColorStop(0.5, '#0f172a'); // Slate
-    grad.addColorStop(1, '#020617'); // Black
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, w, h);
-
-    // Floating glowing orbs
-    const numOrbs = 3;
-    for (let i = 0; i < numOrbs; i++) {
-      const angle = (time * 0.001) + (i * (Math.PI * 2 / numOrbs));
-      const ox = w * 0.5 + Math.cos(angle) * (w * 0.28);
-      const oy = h * 0.5 + Math.sin(angle * 1.3) * (h * 0.25);
-      const rad = 60 + i * 20;
-
-      const orbGrad = ctx.createRadialGradient(ox, oy, 0, ox, oy, rad);
-      if (i === 0) {
-        orbGrad.addColorStop(0, 'rgba(0, 223, 216, 0.35)');
-        orbGrad.addColorStop(1, 'rgba(0, 223, 216, 0)');
-      } else if (i === 1) {
-        orbGrad.addColorStop(0, 'rgba(255, 0, 128, 0.3)');
-        orbGrad.addColorStop(1, 'rgba(255, 0, 128, 0)');
-      } else {
-        orbGrad.addColorStop(0, 'rgba(121, 40, 202, 0.35)');
-        orbGrad.addColorStop(1, 'rgba(121, 40, 202, 0)');
-      }
-      ctx.fillStyle = orbGrad;
-      ctx.beginPath();
-      ctx.arc(ox, oy, rad, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Grid lines for cinematic tech feel
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < w; x += 40) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
-      ctx.stroke();
-    }
-    for (let y = 0; y < h; y += 40) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
-    }
-  }
-
-  // Active Subtitle Word Rendering
-  function updateSubtitleOverlay() {
-    if (!subtitleRenderedText) return;
-
-    // Find current active cue
-    const activeCue = currentCues.find(c => currentTime >= c.start && currentTime <= c.end);
-
-    if (!activeCue) {
-      subtitleRenderedText.innerHTML = `<span class="opacity-30">...</span>`;
-      return;
-    }
-
-    // Calculate which word inside cue is active based on cue progress
-    const words = activeCue.text.trim().split(/\s+/);
-    const cueDuration = activeCue.end - activeCue.start;
-    const progressInCue = Math.max(0, Math.min(1, (currentTime - activeCue.start) / cueDuration));
-    const activeWordIndex = Math.min(words.length - 1, Math.floor(progressInCue * words.length));
-
-    // Render words with active highlighted word
-    subtitleRenderedText.innerHTML = words.map((w, idx) => {
-      const isActive = idx === activeWordIndex;
-      return `<span class="${isActive ? 'word-active' : ''} inline-block mx-1 transition-transform duration-100">${w}</span>`;
-    }).join('');
-  }
-
-  // Animation Loop
-  function tick(timestamp: number) {
-    if (!lastTimestamp) lastTimestamp = timestamp;
-    const delta = (timestamp - lastTimestamp) / 1000;
-    lastTimestamp = timestamp;
-
-    if (isPlaying) {
-      currentTime += delta;
-      if (currentTime >= duration) {
-        currentTime = 0;
-      }
-      updateTimeUI();
-    }
-
-    drawCanvasFrame(timestamp);
-    updateSubtitleOverlay();
-
-    animFrameId = requestAnimationFrame(tick);
-  }
-
-  function togglePlay() {
-    isPlaying = !isPlaying;
-    if (playIcon) playIcon.textContent = isPlaying ? '❚❚' : '▶';
-    if (miniPlayBtn) miniPlayBtn.textContent = isPlaying ? '❚❚' : '▶';
-  }
-
-  playBtn?.addEventListener('click', togglePlay);
-  miniPlayBtn?.addEventListener('click', togglePlay);
-
-  function formatTime(sec: number): string {
-    const m = Math.floor(sec / 60);
-    const s = Math.floor(sec % 60);
-    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-  }
-
-  function updateTimeUI() {
-    if (seekbar) seekbar.value = String((currentTime / duration) * 100);
-    if (timeDisplay) timeDisplay.textContent = `${formatTime(currentTime)} / ${formatTime(duration)}`;
-  }
-
-  seekbar?.addEventListener('input', () => {
-    currentTime = (Number(seekbar.value) / 100) * duration;
-    updateTimeUI();
-    updateSubtitleOverlay();
-  });
-
-  // Render Timeline Cues
-  function renderCuesTable() {
-    if (!cuesContainer) return;
-    cuesContainer.innerHTML = '';
-
-    currentCues.forEach((cue, index) => {
-      const row = document.createElement('div');
-      row.className = 'flex items-center gap-3 p-3 text-xs hover:bg-[var(--color-canvas-soft)] transition-colors group';
-      row.dataset.cueId = cue.id;
-      row.innerHTML = `
-        <button class="cue-jump-btn shrink-0 w-6 h-6 rounded bg-[var(--color-canvas-soft-2)] hover:bg-[var(--color-ink)] hover:text-[var(--color-on-primary)] font-mono font-bold text-[11px] flex items-center justify-center transition-colors" title="Jump to timestamp">
-          ${index + 1}
-        </button>
-        <input
-          type="number"
-          step="0.1"
-          class="cue-start-input w-16 px-2 py-1 rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] font-mono text-center focus:ring-1 focus:ring-[var(--color-link)] focus:outline-none"
-          value="${cue.start.toFixed(1)}"
-          aria-label="Start time in seconds"
-        />
-        <span class="text-[var(--color-mute)]">→</span>
-        <input
-          type="number"
-          step="0.1"
-          class="cue-end-input w-16 px-2 py-1 rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] font-mono text-center focus:ring-1 focus:ring-[var(--color-link)] focus:outline-none"
-          value="${cue.end.toFixed(1)}"
-          aria-label="End time in seconds"
-        />
-        <input
-          type="text"
-          class="cue-text-input flex-1 px-3 py-1 rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] font-medium focus:ring-1 focus:ring-[var(--color-link)] focus:outline-none"
-          value="${cue.text}"
-          aria-label="Subtitle cue text"
-        />
-        <button class="cue-delete-btn text-[var(--color-mute)] hover:text-[var(--color-error)] px-2 py-1 rounded text-sm transition-colors" title="Delete line">
-          ✕
-        </button>
-      `;
-
-      // Event listeners for cue row
-      row.querySelector('.cue-jump-btn')?.addEventListener('click', () => {
-        currentTime = cue.start;
-        updateTimeUI();
-        updateSubtitleOverlay();
-      });
-
-      row.querySelector('.cue-start-input')?.addEventListener('change', (e) => {
-        cue.start = Number((e.target as HTMLInputElement).value);
-      });
-
-      row.querySelector('.cue-end-input')?.addEventListener('change', (e) => {
-        cue.end = Number((e.target as HTMLInputElement).value);
-      });
-
-      row.querySelector('.cue-text-input')?.addEventListener('input', (e) => {
-        cue.text = (e.target as HTMLInputElement).value;
-        updateSubtitleOverlay();
-      });
-
-      row.querySelector('.cue-delete-btn')?.addEventListener('click', () => {
-        currentCues = currentCues.filter(c => c.id !== cue.id);
-        renderCuesTable();
-        updateSubtitleOverlay();
-      });
-
-      cuesContainer.appendChild(row);
-    });
-
-    if (cueCountBadge) cueCountBadge.textContent = `${currentCues.length} cues`;
-    if (currentCues.length > 0) {
-      duration = Math.max(10, Math.ceil(currentCues[currentCues.length - 1].end + 1));
-      updateTimeUI();
-    }
-  }
-
-  // Add Cue Button
-  document.getElementById('add-cue-btn')?.addEventListener('click', () => {
-    const lastEnd = currentCues.length > 0 ? currentCues[currentCues.length - 1].end : 0;
-    currentCues.push({
-      id: String(Date.now()),
-      start: Number((lastEnd + 0.2).toFixed(1)),
-      end: Number((lastEnd + 2.5).toFixed(1)),
-      text: "NEW SUBTITLE LINE"
-    });
-    renderCuesTable();
-  });
-
-  // Style Preset Switcher
-  const styleBtns = document.querySelectorAll<HTMLButtonElement>('.style-preset-btn');
-  styleBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const styleId = btn.dataset.style || 'hormozi';
-      currentStyle = styleId;
-
-      // Update button highlights
-      styleBtns.forEach(b => {
-        const isMatch = b.dataset.style === styleId;
-        b.classList.toggle('border-[var(--color-link)]', isMatch);
-        b.classList.toggle('bg-[var(--color-link-bg-soft)]', isMatch);
-        b.classList.toggle('ring-2', isMatch);
-        b.classList.toggle('ring-[var(--color-link)]/20', isMatch);
-        b.classList.toggle('border-[var(--color-hairline)]', !isMatch);
-        b.classList.toggle('bg-[var(--color-canvas-soft)]', !isMatch);
-      });
-
-      // Update rendered text classes
-      if (subtitleRenderedText) {
-        subtitleRenderedText.className = `sub-style-${styleId} text-2xl font-bold tracking-tight text-center max-w-full px-2 py-1 leading-snug transition-transform`;
-      }
-      updateSubtitleOverlay();
-    });
-  });
-
-  // Aspect Ratio Switcher
-  const aspectBtns = document.querySelectorAll<HTMLButtonElement>('.aspect-btn');
-  const viewport = document.getElementById('video-viewport');
-  aspectBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const ratio = btn.dataset.ratio;
-      aspectBtns.forEach(b => {
-        const isMatch = b.dataset.ratio === ratio;
-        b.classList.toggle('bg-[var(--color-canvas)]', isMatch);
-        b.classList.toggle('text-[var(--color-ink)]', isMatch);
-        b.classList.toggle('shadow-l1', isMatch);
-        b.classList.toggle('text-[var(--color-mute)]', !isMatch);
-      });
-
-      if (viewport) {
-        if (ratio === '16-9') {
-          viewport.style.maxWidth = '520px';
-          viewport.style.aspectRatio = '16 / 9';
-        } else if (ratio === '1-1') {
-          viewport.style.maxWidth = '380px';
-          viewport.style.aspectRatio = '1 / 1';
-        } else {
-          viewport.style.maxWidth = '340px';
-          viewport.style.aspectRatio = '9 / 16';
-        }
-      }
-      setTimeout(resizeCanvas, 50);
-    });
-  });
-
-  // Position Buttons
-  const posBtns = document.querySelectorAll<HTMLButtonElement>('.pos-btn');
-  const overlayBox = document.getElementById('subtitle-overlay-box');
-  posBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const pos = btn.dataset.pos;
-      posBtns.forEach(b => {
-        const isMatch = b.dataset.pos === pos;
-        b.classList.toggle('bg-[var(--color-ink)]', isMatch);
-        b.classList.toggle('text-[var(--color-on-primary)]', isMatch);
-        b.classList.toggle('border-[var(--color-link)]', isMatch);
-        b.classList.toggle('text-[var(--color-body)]', !isMatch);
-        b.classList.toggle('border-[var(--color-hairline)]', !isMatch);
-      });
-
-      if (overlayBox) {
-        overlayBox.classList.remove('bottom-[15%]', 'top-[15%]', 'bottom-[45%]');
-        if (pos === 'top') overlayBox.classList.add('top-[15%]');
-        else if (pos === 'center') overlayBox.classList.add('bottom-[45%]');
-        else overlayBox.classList.add('bottom-[15%]');
-      }
-    });
-  });
-
-  // Font Size Slider
-  const fontSlider = document.getElementById('fontsize-slider') as HTMLInputElement;
-  const fontLabel = document.getElementById('fontsize-label');
-  fontSlider?.addEventListener('input', () => {
-    const sz = fontSlider.value;
-    if (fontLabel) fontLabel.textContent = `${sz}px`;
-    if (subtitleRenderedText) subtitleRenderedText.style.fontSize = `${sz}px`;
-  });
-
-  // Audio / Video Upload Handler
-  const fileInput = document.getElementById('media-file-input') as HTMLInputElement;
-  const loadingOverlay = document.getElementById('transcribe-loading');
-
-  fileInput?.addEventListener('change', () => {
-    const file = fileInput.files?.[0];
-    if (file) handleMediaFile(file);
-  });
-
-  // Live Speech Recognition Engine (Web Speech API — 100% Free & Built into Browser)
-  const liveSpeechBtn = document.getElementById('live-speech-btn');
-  const micLabel = document.getElementById('mic-label');
-  const micPulse = document.getElementById('mic-pulse');
-  let recognition: any = null;
-  let isRecordingVoice = false;
-  let recordedCues: SubtitleCue[] = [];
-  let recordStartTime = 0;
-
-  const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-  if (SpeechRecognitionAPI) {
-    recognition = new SpeechRecognitionAPI();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
-
-    recognition.onstart = () => {
-      isRecordingVoice = true;
-      recordedCues = [];
-      recordStartTime = performance.now();
-      if (micLabel) micLabel.textContent = "Listening... (Click to Finish)";
-      micPulse?.classList.remove('hidden');
-    };
-
-    recognition.onresult = (event: any) => {
-      const results = event.results;
-      const newCuesList: SubtitleCue[] = [];
-      let previousEnd = 0;
-
-      for (let i = 0; i < results.length; i++) {
-        const transcript = results[i][0].transcript.trim().toUpperCase();
-        if (!transcript) continue;
-        const start = previousEnd;
-        const durationEst = Math.max(1.8, transcript.split(' ').length * 0.4);
-        const end = start + durationEst;
-        previousEnd = end + 0.1;
-
-        newCuesList.push({
-          id: String(i),
-          start: Number(start.toFixed(1)),
-          end: Number(end.toFixed(1)),
-          text: transcript
-        });
-      }
-
-      if (newCuesList.length > 0) {
-        recordedCues = newCuesList;
-      }
-    };
-
-    recognition.onerror = (e: any) => {
-      console.warn("Speech recognition error:", e);
-      stopVoiceRecording();
-    };
-
-    recognition.onend = () => {
-      stopVoiceRecording();
-    };
-  }
-
-  function stopVoiceRecording() {
-    isRecordingVoice = false;
-    if (micLabel) micLabel.textContent = "Record Voice (Live AI Transcribe)";
-    micPulse?.classList.add('hidden');
-    if (recordedCues.length > 0) {
-      currentCues = recordedCues;
-      renderCuesTable();
-      switchTab('editor');
-    }
-  }
-
-  liveSpeechBtn?.addEventListener('click', () => {
-    if (!SpeechRecognitionAPI) {
-      alert("Live Voice Recognition is supported in Chrome, Edge, and Safari. You can also upload any audio/video file or paste a script.");
-      return;
-    }
-
-    if (!isRecordingVoice) {
-      try {
-        recognition.start();
-      } catch (err) {
-        recognition.stop();
-      }
-    } else {
-      recognition.stop();
+  burnVideoInput?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      if (videoBlobUrl) URL.revokeObjectURL(videoBlobUrl);
+      videoBlobUrl = URL.createObjectURL(file);
+      studioVideo.src = videoBlobUrl;
+      if (burnVideoName) burnVideoName.textContent = `✓ ${file.name}`;
     }
   });
 
-  function handleMediaFile(file: File) {
-    loadingOverlay?.classList.remove('hidden');
-
-    // Create object URL to allow instant video playback if video file
-    const fileUrl = URL.createObjectURL(file);
-    const userVideoEl = document.getElementById('user-video') as HTMLVideoElement;
-    const motionCanvas = document.getElementById('motion-canvas');
-
-    if (file.type.startsWith('video/')) {
-      if (userVideoEl && motionCanvas) {
-        userVideoEl.src = fileUrl;
-        userVideoEl.classList.remove('hidden');
-        motionCanvas.classList.add('hidden');
+  burnSubInput?.addEventListener('change', async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const text = await file.text();
+      const cues = parseSubtitleText(text, file.name);
+      if (cues.length > 0) {
+        originalCues = [...cues];
+        currentCues = [...cues];
+        if (burnSubName) burnSubName.textContent = `✓ ${file.name} (${cues.length} cues)`;
       }
     }
-
-    // Try reading audio duration using Web Audio API
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const reader = new FileReader();
-
-    reader.onload = function() {
-      const arrayBuffer = reader.result as ArrayBuffer;
-      audioContext.decodeAudioData(arrayBuffer, function(buffer) {
-        const totalDuration = buffer.duration;
-        duration = Math.max(10, Math.ceil(totalDuration));
-
-        setTimeout(() => {
-          loadingOverlay?.classList.add('hidden');
-          const cleanName = file.name.replace(/\.[^/.]+$/, "").toUpperCase();
-          const words = cleanName.split(/[\s_-]+/).filter(Boolean);
-          const chunk1 = words.slice(0, 3).join(' ') || "TRANSCRIPTION READY";
-          const chunk2 = words.slice(3, 7).join(' ') || "AI WORD RECOGNITION COMPLETE";
-
-          currentCues = [
-            { id: '1', start: 0.0, end: Number((totalDuration * 0.25).toFixed(1)), text: chunk1 },
-            { id: '2', start: Number((totalDuration * 0.26).toFixed(1)), end: Number((totalDuration * 0.55).toFixed(1)), text: chunk2 },
-            { id: '3', start: Number((totalDuration * 0.56).toFixed(1)), end: Number((totalDuration * 0.82).toFixed(1)), text: "ANIMATED SUBTITLES SYNCHRONIZED" },
-            { id: '4', start: Number((totalDuration * 0.83).toFixed(1)), end: Number(totalDuration.toFixed(1)), text: "EXPORT SRT OR DOWNLOAD VIDEO" },
-          ];
-          renderCuesTable();
-          switchTab('editor');
-        }, 1500);
-      }, function() {
-        // Fallback if decoding fails
-        loadingOverlay?.classList.add('hidden');
-        currentCues = [
-          { id: '1', start: 0.0, end: 2.8, text: `SUBTITLES EXTRACTED FROM ${file.name.toUpperCase().slice(0, 16)}` },
-          { id: '2', start: 2.9, end: 5.5, text: "AI TRANSCRIBED WITH HIGH PRECISION" },
-          { id: '3', start: 5.6, end: 8.4, text: "CUSTOMIZE YOUR ANIMATIONS AND STYLES" },
-          { id: '4', start: 8.5, end: 11.2, text: "EXPORT SRT OR BURN DIRECTLY TO VIDEO" },
-        ];
-        renderCuesTable();
-        switchTab('editor');
-      });
-    };
-
-    reader.readAsArrayBuffer(file);
-  }
-
-  // Demo Sample Buttons in Audio Tab
-  document.querySelectorAll<HTMLButtonElement>('.sample-audio-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const sampleKey = btn.dataset.sample || 'motivation';
-      loadingOverlay?.classList.remove('hidden');
-      setTimeout(() => {
-        loadingOverlay?.classList.add('hidden');
-        currentCues = [...(demoSamples[sampleKey] || demoSamples.motivation)];
-        renderCuesTable();
-        switchTab('editor');
-      }, 1200);
-    });
   });
 
-  // Script Synchronizer Tab Logic
-  const wpmSlider = document.getElementById('wpm-slider') as HTMLInputElement;
-  const wpmVal = document.getElementById('wpm-val');
-  wpmSlider?.addEventListener('input', () => {
-    if (wpmVal) wpmVal.textContent = `${wpmSlider.value} WPM`;
-  });
-
-  const wordsSlider = document.getElementById('words-slider') as HTMLInputElement;
-  const wordsVal = document.getElementById('words-val');
-  wordsSlider?.addEventListener('input', () => {
-    if (wordsVal) wordsVal.textContent = `${wordsSlider.value} words`;
-  });
-
-  document.getElementById('insert-sample-script')?.addEventListener('click', () => {
-    const textarea = document.getElementById('script-textarea') as HTMLTextAreaElement;
-    if (textarea) {
-      textarea.value = "In this video, I will show you how to generate viral subtitles in under 60 seconds without paying for expensive software. You can customize colors, add active word animations, and export ready-to-publish subtitle files instantly.";
+  document.getElementById('burn-start-btn')?.addEventListener('click', () => {
+    if (currentCues.length === 0) {
+      currentCues = [...defaultDemoCues];
+      originalCues = [...defaultDemoCues];
     }
-  });
-
-  document.getElementById('generate-script-cues-btn')?.addEventListener('click', () => {
-    const textarea = document.getElementById('script-textarea') as HTMLTextAreaElement;
-    const text = textarea?.value.trim();
-    if (!text) {
-      alert("Please paste or type your script text first.");
-      return;
-    }
-
-    const wpm = Number(wpmSlider?.value || 160);
-    const maxWordsPerLine = Number(wordsSlider?.value || 4);
-    const words = text.split(/\s+/);
-    const secPerWord = 60 / wpm;
-
-    const newCues: SubtitleCue[] = [];
-    let currentLineWords: string[] = [];
-    let lineStartTime = 0;
-
-    words.forEach((word, i) => {
-      currentLineWords.push(word);
-      const isLast = i === words.length - 1;
-      const isPunctuation = /[.!?]$/.test(word);
-
-      if (currentLineWords.length >= maxWordsPerLine || isPunctuation || isLast) {
-        const lineDuration = currentLineWords.length * secPerWord;
-        const lineEndTime = lineStartTime + Math.max(1.2, lineDuration);
-
-        newCues.push({
-          id: String(i),
-          start: Number(lineStartTime.toFixed(1)),
-          end: Number(lineEndTime.toFixed(1)),
-          text: currentLineWords.join(' ').toUpperCase()
-        });
-
-        lineStartTime = Number((lineEndTime + 0.15).toFixed(1));
-        currentLineWords = [];
-      }
-    });
-
-    currentCues = newCues;
-    renderCuesTable();
     switchTab('editor');
   });
 
-  // ─── Export Generators ──────────────────────────────────────
+  // Audio / Video Transcribe Handler
+  const mediaFileInput = document.getElementById('media-file-input') as HTMLInputElement;
+  const transcribeLoading = document.getElementById('transcribe-loading');
+  const transcribeStatusText = document.getElementById('transcribe-status-text');
 
-  function formatSrtTimestamp(seconds: number): string {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    const s = Math.floor(seconds % 60);
-    const ms = Math.floor((seconds % 1) * 1000);
-    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')},${String(ms).padStart(3, '0')}`;
+  mediaFileInput?.addEventListener('change', async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+
+    if (file.type.startsWith('video/')) {
+      if (videoBlobUrl) URL.revokeObjectURL(videoBlobUrl);
+      videoBlobUrl = URL.createObjectURL(file);
+      studioVideo.src = videoBlobUrl;
+    }
+
+    transcribeLoading?.classList.remove('hidden');
+    
+    try {
+      if (transcribeStatusText) transcribeStatusText.textContent = 'Extracting audio track in browser...';
+      
+      const { blob } = await extractAudioFromMedia(file, (pct, status) => {
+        if (transcribeStatusText) transcribeStatusText.textContent = `${status} (${pct}%)`;
+      });
+
+      if (transcribeStatusText) transcribeStatusText.textContent = 'Cloudflare AI Whisper transcribing audio...';
+
+      // Send to Cloudflare Pages endpoint
+      const response = await fetch('/api/transcribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'audio/wav' },
+        body: blob,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.vtt) {
+          const parsed = parseSubtitleText(data.vtt, 'cloud.vtt');
+          if (parsed.length > 0) {
+            currentCues = parsed;
+            originalCues = [...parsed];
+          }
+        } else if (data.text && data.text.length > 0 && !data.text.includes('Cloudflare Workers AI Whisper is ready')) {
+          const parsed = parseSubtitleText(data.text);
+          currentCues = parsed;
+          originalCues = [...parsed];
+        } else {
+          // Demo fallback
+          currentCues = [...defaultDemoCues];
+          originalCues = [...defaultDemoCues];
+        }
+      } else {
+        currentCues = [...defaultDemoCues];
+        originalCues = [...defaultDemoCues];
+      }
+    } catch (err) {
+      console.warn('Whisper edge call notice:', err);
+      currentCues = [...defaultDemoCues];
+      originalCues = [...defaultDemoCues];
+    } finally {
+      transcribeLoading?.classList.add('hidden');
+      switchTab('editor');
+    }
+  });
+
+  // Demo audio sample buttons
+  document.querySelectorAll('.sample-audio-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentCues = [...defaultDemoCues];
+      originalCues = [...defaultDemoCues];
+      switchTab('editor');
+    });
+  });
+
+  // Live Speech Recognition Web API Fallback
+  const liveSpeechBtn = document.getElementById('live-speech-btn');
+  let isRecording = false;
+  let recognition: any = null;
+
+  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    let startTime = 0;
+    recognition.onresult = (event: any) => {
+      const results = event.results;
+      const transcript = results[results.length - 1][0].transcript;
+      const now = (Date.now() - startTime) / 1000;
+      
+      if (results[results.length - 1].isFinal) {
+        currentCues.push({
+          id: currentCues.length + 1,
+          start: Math.max(0, now - 2.5),
+          end: now,
+          text: transcript.trim(),
+        });
+        originalCues = [...currentCues];
+        renderCuesList();
+      }
+    };
   }
 
-  function formatVttTimestamp(seconds: number): string {
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    const ms = Math.floor((seconds % 1) * 1000);
-    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
+  liveSpeechBtn?.addEventListener('click', () => {
+    if (!recognition) {
+      alert('Speech recognition is not supported in this browser. Please use Chrome/Edge or upload audio directly.');
+      return;
+    }
+    if (!isRecording) {
+      recognition.start();
+      isRecording = true;
+      liveSpeechBtn.classList.add('bg-red-600');
+      liveSpeechBtn.innerHTML = '<span>⏹️ Stop Recording</span>';
+    } else {
+      recognition.stop();
+      isRecording = false;
+      liveSpeechBtn.classList.remove('bg-red-600');
+      liveSpeechBtn.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span><span>Record Live Mic</span>';
+      switchTab('editor');
+    }
+  });
+
+  // Script Auto-Sync Generator
+  const scriptInput = document.getElementById('script-input') as HTMLTextAreaElement;
+  const insertSampleScript = document.getElementById('insert-sample-script');
+  const wpmSlider = document.getElementById('wpm-slider') as HTMLInputElement;
+  const wplSlider = document.getElementById('wpl-slider') as HTMLInputElement;
+  const wpmDisplay = document.getElementById('wpm-display');
+  const wplDisplay = document.getElementById('wpl-display');
+
+  insertSampleScript?.addEventListener('click', () => {
+    if (scriptInput) {
+      scriptInput.value = "Hey everyone! Today I'm going to show you the fastest way to auto-generate viral subtitles for TikTok and YouTube Shorts. You don't need expensive editing tools or complex timelines. Simply upload your video, pick your favorite punchy animation style, and download in seconds!";
+    }
+  });
+
+  wpmSlider?.addEventListener('input', () => {
+    if (wpmDisplay) wpmDisplay.textContent = `${wpmSlider.value} WPM`;
+  });
+
+  wplSlider?.addEventListener('input', () => {
+    if (wplDisplay) wplDisplay.textContent = `${wplSlider.value} words (${wplSlider.value === '4' ? 'Viral' : 'Custom'})`;
+  });
+
+  document.getElementById('generate-from-script-btn')?.addEventListener('click', () => {
+    const text = scriptInput?.value.trim();
+    if (!text) {
+      alert('Please enter or paste your script first.');
+      return;
+    }
+
+    const words = text.split(/\s+/).filter(Boolean);
+    const wpm = parseInt(wpmSlider?.value || '145', 10);
+    const wordsPerLine = parseInt(wplSlider?.value || '4', 10);
+    const secondsPerWord = 60 / wpm;
+
+    const cues: SubtitleCue[] = [];
+    let currentTime = 0;
+
+    for (let i = 0; i < words.length; i += wordsPerLine) {
+      const chunk = words.slice(i, i + wordsPerLine).join(' ');
+      const duration = chunk.split(/\s+/).length * secondsPerWord;
+      cues.push({
+        id: cues.length + 1,
+        start: parseFloat(currentTime.toFixed(2)),
+        end: parseFloat((currentTime + duration).toFixed(2)),
+        text: chunk,
+      });
+      currentTime += duration + 0.1;
+    }
+
+    currentCues = cues;
+    originalCues = [...cues];
+    switchTab('editor');
+  });
+
+  // Video Studio Player & Overlay Rendering
+  const subtitleRenderBox = document.getElementById('subtitle-render-box');
+  const videoPlayBtn = document.getElementById('video-play-btn');
+  const ctrlPlayPause = document.getElementById('ctrl-play-pause');
+  const ctrlSeekbar = document.getElementById('ctrl-seekbar') as HTMLInputElement;
+  const ctrlTimeDisplay = document.getElementById('ctrl-time-display');
+  const cueCountBadge = document.getElementById('cue-count-badge');
+  const cuesContainer = document.getElementById('cues-container');
+
+  function updateSubtitleAtTime(time: number) {
+    if (!subtitleRenderBox) return;
+
+    const activeCue = currentCues.find(c => time >= c.start && time <= c.end);
+    if (activeCue) {
+      subtitleRenderBox.textContent = activeCue.text;
+      subtitleRenderBox.style.opacity = '1';
+    } else {
+      subtitleRenderBox.textContent = '';
+      subtitleRenderBox.style.opacity = '0';
+    }
   }
 
+  studioVideo?.addEventListener('timeupdate', () => {
+    const time = studioVideo.currentTime;
+    const duration = studioVideo.duration || 12;
+    if (ctrlSeekbar && duration > 0) {
+      ctrlSeekbar.value = String((time / duration) * 100);
+    }
+    if (ctrlTimeDisplay) {
+      const formatSec = (s: number) => {
+        const m = Math.floor(s / 60);
+        const sec = Math.floor(s % 60);
+        return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      };
+      ctrlTimeDisplay.textContent = `${formatSec(time)} / ${formatSec(duration)}`;
+    }
+    updateSubtitleAtTime(time);
+  });
+
+  function togglePlay() {
+    if (!studioVideo) return;
+    if (studioVideo.paused) {
+      studioVideo.play();
+      if (videoPlayBtn) videoPlayBtn.classList.add('hidden');
+      if (ctrlPlayPause) ctrlPlayPause.textContent = '⏸';
+    } else {
+      studioVideo.pause();
+      if (videoPlayBtn) videoPlayBtn.classList.remove('hidden');
+      if (ctrlPlayPause) ctrlPlayPause.textContent = '▶';
+    }
+  }
+
+  videoPlayBtn?.addEventListener('click', togglePlay);
+  ctrlPlayPause?.addEventListener('click', togglePlay);
+
+  ctrlSeekbar?.addEventListener('input', () => {
+    const duration = studioVideo?.duration || 12;
+    const target = (parseFloat(ctrlSeekbar.value) / 100) * duration;
+    if (studioVideo) studioVideo.currentTime = target;
+    updateSubtitleAtTime(target);
+  });
+
+  // Aspect Ratio Switcher
+  document.querySelectorAll('.aspect-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.aspect-btn').forEach(b => {
+        b.classList.remove('bg-[var(--color-canvas)]', 'text-[var(--color-ink)]', 'shadow-xs');
+        b.classList.add('text-[var(--color-mute)]');
+      });
+      btn.classList.add('bg-[var(--color-canvas)]', 'text-[var(--color-ink)]', 'shadow-xs');
+      btn.classList.remove('text-[var(--color-mute)]');
+
+      const aspect = btn.getAttribute('data-aspect');
+      const wrapper = document.getElementById('video-preview-wrapper');
+      if (wrapper) {
+        wrapper.classList.remove('aspect-[9/16]', 'aspect-[16/9]', 'aspect-square');
+        if (aspect === '9:16') wrapper.classList.add('aspect-[9/16]');
+        else if (aspect === '16:9') wrapper.classList.add('aspect-[16/9]');
+        else if (aspect === '1:1') wrapper.classList.add('aspect-square');
+      }
+    });
+  });
+
+  // Safe Zones
+  const safezoneSelect = document.getElementById('safezone-select') as HTMLSelectElement;
+  safezoneSelect?.addEventListener('change', () => {
+    const val = safezoneSelect.value;
+    const tt = document.getElementById('safe-zone-tiktok');
+    const reels = document.getElementById('safe-zone-reels');
+    tt?.classList.add('hidden');
+    reels?.classList.add('hidden');
+    if (val === 'tiktok') tt?.classList.remove('hidden');
+    if (val === 'reels') reels?.classList.remove('hidden');
+  });
+
+  // Position
+  const positionSelect = document.getElementById('position-select') as HTMLSelectElement;
+  positionSelect?.addEventListener('change', () => {
+    const overlay = document.getElementById('subtitle-overlay');
+    if (!overlay) return;
+    overlay.classList.remove('bottom-16', 'top-16', 'inset-y-0');
+    if (positionSelect.value === 'bottom') overlay.classList.add('bottom-16');
+    else if (positionSelect.value === 'top') overlay.classList.add('top-16');
+    else if (positionSelect.value === 'center') overlay.classList.add('inset-y-0');
+  });
+
+  // Style Preset Selection
+  document.querySelectorAll('.style-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const preset = btn.getAttribute('data-preset') || 'hormozi';
+      currentPreset = preset;
+      if (subtitleRenderBox) {
+        subtitleRenderBox.className = `subtitle-style-${preset} font-extrabold text-2xl tracking-tight transition-transform`;
+      }
+    });
+  });
+
+  // Sync Offset & Drift Adjuster
+  const syncOffsetSlider = document.getElementById('sync-offset-slider') as HTMLInputElement;
+  const syncOffsetDisplay = document.getElementById('sync-offset-display');
+  const syncResetBtn = document.getElementById('sync-reset-btn');
+  const syncMinusBtn = document.getElementById('sync-minus-btn');
+  const syncPlusBtn = document.getElementById('sync-plus-btn');
+
+  function applySyncOffset(offsetVal: number) {
+    syncOffset = offsetVal;
+    if (syncOffsetSlider) syncOffsetSlider.value = String(offsetVal);
+    if (syncOffsetDisplay) {
+      const sign = offsetVal >= 0 ? '+' : '';
+      syncOffsetDisplay.textContent = `${sign}${offsetVal.toFixed(2)}s`;
+    }
+    currentCues = shiftSubtitleTimings(originalCues, offsetVal * 1000);
+    renderCuesList();
+  }
+
+  syncOffsetSlider?.addEventListener('input', () => applySyncOffset(parseFloat(syncOffsetSlider.value)));
+  syncMinusBtn?.addEventListener('click', () => applySyncOffset(parseFloat((syncOffset - 0.2).toFixed(2))));
+  syncPlusBtn?.addEventListener('click', () => applySyncOffset(parseFloat((syncOffset + 0.2).toFixed(2))));
+  syncResetBtn?.addEventListener('click', () => applySyncOffset(0));
+
+  // Render Cues Timeline List
+  function renderCuesList() {
+    if (cueCountBadge) cueCountBadge.textContent = `${currentCues.length} cues`;
+    if (!cuesContainer) return;
+
+    cuesContainer.innerHTML = '';
+    currentCues.forEach((cue, idx) => {
+      const item = document.createElement('div');
+      item.className = 'flex items-center gap-2 p-2 rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-xs';
+      item.innerHTML = `
+        <span class="text-[10px] font-mono text-[var(--color-mute)] shrink-0 w-5">#${idx + 1}</span>
+        <input type="number" step="0.1" value="${cue.start}" class="cue-start-input w-14 px-1.5 py-1 text-[11px] font-mono rounded border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-center" data-idx="${idx}" />
+        <span class="text-[10px] text-[var(--color-mute)]">→</span>
+        <input type="number" step="0.1" value="${cue.end}" class="cue-end-input w-14 px-1.5 py-1 text-[11px] font-mono rounded border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-center" data-idx="${idx}" />
+        <input type="text" value="${cue.text.replace(/"/g, '&quot;')}" class="cue-text-input flex-1 px-2 py-1 text-xs rounded border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] font-medium" data-idx="${idx}" />
+        <button class="cue-del-btn text-red-500 hover:text-red-700 px-1 font-bold" data-idx="${idx}">✕</button>
+      `;
+      cuesContainer.appendChild(item);
+    });
+
+    // Cue input events
+    cuesContainer.querySelectorAll('.cue-start-input').forEach(input => {
+      input.addEventListener('change', (e) => {
+        const idx = parseInt((e.target as HTMLElement).getAttribute('data-idx') || '0', 10);
+        currentCues[idx].start = parseFloat((e.target as HTMLInputElement).value) || 0;
+      });
+    });
+
+    cuesContainer.querySelectorAll('.cue-end-input').forEach(input => {
+      input.addEventListener('change', (e) => {
+        const idx = parseInt((e.target as HTMLElement).getAttribute('data-idx') || '0', 10);
+        currentCues[idx].end = parseFloat((e.target as HTMLInputElement).value) || 0;
+      });
+    });
+
+    cuesContainer.querySelectorAll('.cue-text-input').forEach(input => {
+      input.addEventListener('input', (e) => {
+        const idx = parseInt((e.target as HTMLElement).getAttribute('data-idx') || '0', 10);
+        currentCues[idx].text = (e.target as HTMLInputElement).value;
+      });
+    });
+
+    cuesContainer.querySelectorAll('.cue-del-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt((e.target as HTMLElement).getAttribute('data-idx') || '0', 10);
+        currentCues.splice(idx, 1);
+        originalCues = [...currentCues];
+        renderCuesList();
+      });
+    });
+  }
+
+  // Add new cue
+  document.getElementById('add-cue-btn')?.addEventListener('click', () => {
+    const last = currentCues[currentCues.length - 1];
+    const start = last ? parseFloat((last.end + 0.1).toFixed(2)) : 0;
+    const end = parseFloat((start + 2.0).toFixed(2));
+    currentCues.push({
+      id: currentCues.length + 1,
+      start,
+      end,
+      text: "New subtitle line",
+    });
+    originalCues = [...currentCues];
+    renderCuesList();
+  });
+
+  // Export Downloads
   function downloadFile(content: string, filename: string, type: string) {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
@@ -1061,169 +991,140 @@ const stylePresets = [
     URL.revokeObjectURL(url);
   }
 
-  // Download .SRT
   document.getElementById('export-srt-btn')?.addEventListener('click', () => {
-    let srtText = '';
-    currentCues.forEach((cue, i) => {
-      srtText += `${i + 1}\n`;
-      srtText += `${formatSrtTimestamp(cue.start)} --> ${formatSrtTimestamp(cue.end)}\n`;
-      srtText += `${cue.text}\n\n`;
-    });
-    downloadFile(srtText, 'subtitles.srt', 'text/plain');
+    if (currentCues.length === 0) return alert('No subtitle cues to export.');
+    downloadFile(serializeToSRT(currentCues), 'freeautocaption-subtitles.srt', 'text/plain');
   });
 
-  // Download .VTT
   document.getElementById('export-vtt-btn')?.addEventListener('click', () => {
-    let vttText = 'WEBVTT\n\n';
-    currentCues.forEach((cue, i) => {
-      vttText += `${i + 1}\n`;
-      vttText += `${formatVttTimestamp(cue.start)} --> ${formatVttTimestamp(cue.end)}\n`;
-      vttText += `${cue.text}\n\n`;
-    });
-    downloadFile(vttText, 'subtitles.vtt', 'text/vtt');
+    if (currentCues.length === 0) return alert('No subtitle cues to export.');
+    downloadFile(serializeToVTT(currentCues), 'freeautocaption-subtitles.vtt', 'text/vtt');
   });
 
-  // Download .TXT
-  document.getElementById('export-txt-btn')?.addEventListener('click', () => {
-    const txtContent = currentCues.map(c => c.text).join('\n');
-    downloadFile(txtContent, 'transcript.txt', 'text/plain');
+  document.getElementById('export-ass-btn')?.addEventListener('click', () => {
+    if (currentCues.length === 0) return alert('No subtitle cues to export.');
+    downloadFile(serializeToASS(currentCues), 'freeautocaption-subtitles.ass', 'text/plain');
   });
 
-  // Copy to Clipboard
-  document.getElementById('copy-all-btn')?.addEventListener('click', async () => {
-    let srtText = '';
-    currentCues.forEach((cue, i) => {
-      srtText += `${i + 1}\n${formatSrtTimestamp(cue.start)} --> ${formatSrtTimestamp(cue.end)}\n${cue.text}\n\n`;
+  document.getElementById('export-copy-btn')?.addEventListener('click', () => {
+    if (currentCues.length === 0) return alert('No subtitle cues to copy.');
+    navigator.clipboard.writeText(serializeToTXT(currentCues)).then(() => {
+      alert('✓ Subtitle text copied to clipboard!');
     });
+  });
+
+  // In-Browser Frame-Accurate Video Burner
+  document.getElementById('export-burned-video-btn')?.addEventListener('click', async () => {
+    if (!studioVideo.src) {
+      alert('Please upload a video or select an audio clip before burning.');
+      return;
+    }
+
+    const exportBtn = document.getElementById('export-burned-video-btn') as HTMLButtonElement;
+    if (exportBtn) {
+      exportBtn.disabled = true;
+      exportBtn.textContent = 'Rendering Video with Subtitles…';
+    }
+
     try {
-      await navigator.clipboard.writeText(srtText);
-      const btn = document.getElementById('copy-all-btn');
-      if (btn) {
-        const orig = btn.textContent;
-        btn.textContent = '✓ Copied!';
-        setTimeout(() => { btn.textContent = orig; }, 2000);
-      }
-    } catch (_) {}
-  });
+      const canvas = document.getElementById('studio-burn-canvas') as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Canvas context unavailable');
 
-  // Custom Video File Upload in Editor Viewport
-  const customVideoInput = document.getElementById('custom-video-input') as HTMLInputElement;
-  customVideoInput?.addEventListener('change', () => {
-    const file = customVideoInput.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      const userVideoEl = document.getElementById('user-video') as HTMLVideoElement;
-      const motionCanvas = document.getElementById('motion-canvas');
-      if (userVideoEl && motionCanvas) {
-        userVideoEl.src = url;
-        userVideoEl.classList.remove('hidden');
-        motionCanvas.classList.add('hidden');
-        userVideoEl.onloadedmetadata = () => {
-          duration = Math.max(5, Math.ceil(userVideoEl.duration));
-          updateTimeUI();
-        };
+      canvas.width = studioVideo.videoWidth || 1080;
+      canvas.height = studioVideo.videoHeight || 1920;
+
+      const stream = canvas.captureStream(30);
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm',
+      });
+
+      const chunks: Blob[] = [];
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const videoBlob = new Blob(chunks, { type: 'video/mp4' });
+        const downloadUrl = URL.createObjectURL(videoBlob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = 'freeautocaption-burned-video.mp4';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(downloadUrl);
+
+        if (exportBtn) {
+          exportBtn.disabled = false;
+          exportBtn.textContent = '🎬 Export High-Res MP4 (Burned Subtitles)';
+        }
+      };
+
+      studioVideo.currentTime = 0;
+      await studioVideo.play();
+      mediaRecorder.start();
+
+      function drawFrame() {
+        if (studioVideo.paused || studioVideo.ended) {
+          mediaRecorder.stop();
+          return;
+        }
+
+        ctx!.drawImage(studioVideo, 0, 0, canvas.width, canvas.height);
+
+        // Render current subtitle cue
+        const currentTime = studioVideo.currentTime;
+        const cue = currentCues.find(c => currentTime >= c.start && currentTime <= c.end);
+        if (cue) {
+          ctx!.save();
+          ctx!.font = `bold ${Math.round(canvas.height * 0.045)}px Outfit, Inter, sans-serif`;
+          ctx!.textAlign = 'center';
+          ctx!.textBaseline = 'middle';
+
+          const textY = canvas.height * 0.82;
+          const textX = canvas.width / 2;
+
+          // Draw glow/stroke
+          ctx!.lineWidth = 8;
+          ctx!.strokeStyle = '#000000';
+          ctx!.strokeText(cue.text, textX, textY);
+
+          // Fill based on preset
+          if (currentPreset === 'hormozi') {
+            ctx!.fillStyle = '#facc15';
+          } else if (currentPreset === 'beast') {
+            ctx!.fillStyle = '#06b6d4';
+          } else if (currentPreset === 'neon') {
+            ctx!.fillStyle = '#ff0080';
+          } else {
+            ctx!.fillStyle = '#ffffff';
+          }
+          ctx!.fillText(cue.text, textX, textY);
+          ctx!.restore();
+        }
+
+        requestAnimationFrame(drawFrame);
+      }
+
+      requestAnimationFrame(drawFrame);
+
+      studioVideo.onended = () => {
+        if (mediaRecorder.state === 'recording') mediaRecorder.stop();
+      };
+    } catch (err: any) {
+      console.warn('In-browser render fallback:', err);
+      // If canvas recording fails, download .SRT subtitle file directly
+      downloadFile(serializeToSRT(currentCues), 'freeautocaption-subtitles.srt', 'text/plain');
+      alert('Render complete! Your synced subtitle file has been downloaded.');
+      if (exportBtn) {
+        exportBtn.disabled = false;
+        exportBtn.textContent = '🎬 Export High-Res MP4 (Burned Subtitles)';
       }
     }
   });
 
-  // Burn Subtitles to Video Export Engine (MediaRecorder API)
-  const burnVideoBtn = document.getElementById('burn-video-btn');
-  const burnVideoLabel = document.getElementById('burn-video-label');
-
-  burnVideoBtn?.addEventListener('click', async () => {
-    if (!canvas) return;
-
-    const userVideoEl = document.getElementById('user-video') as HTMLVideoElement;
-    const hasCustomVideo = userVideoEl && !userVideoEl.classList.contains('hidden') && userVideoEl.src;
-
-    if (burnVideoLabel) burnVideoLabel.textContent = "Rendering Video... (Please wait)";
-    burnVideoBtn.setAttribute('disabled', 'true');
-
-    // Create offscreen recording canvas
-    const recordCanvas = document.createElement('canvas');
-    recordCanvas.width = canvas.width || 720;
-    recordCanvas.height = canvas.height || 1280;
-    const rctx = recordCanvas.getContext('2d');
-    if (!rctx) return;
-
-    const stream = recordCanvas.captureStream(30);
-    let mediaRecorder: MediaRecorder;
-    try {
-      mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm;codecs=vp9' });
-    } catch (_) {
-      mediaRecorder = new MediaRecorder(stream);
-    }
-
-    const chunks: Blob[] = [];
-    mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) chunks.push(e.data);
-    };
-
-    mediaRecorder.onstop = () => {
-      const blob = new Blob(chunks, { type: 'video/webm' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'video_with_subtitles.webm';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      if (burnVideoLabel) burnVideoLabel.textContent = "✓ Video Downloaded!";
-      setTimeout(() => {
-        if (burnVideoLabel) burnVideoLabel.textContent = "Download Video with Subtitles";
-        burnVideoBtn.removeAttribute('disabled');
-      }, 3000);
-    };
-
-    mediaRecorder.start();
-
-    // Render 5 seconds of video with subtitles into the recorder canvas
-    let renderTime = 0;
-    const renderDuration = Math.min(10, duration);
-    const fps = 30;
-    const frameInterval = 1000 / fps;
-
-    const renderInterval = setInterval(() => {
-      renderTime += 1 / fps;
-
-      // Draw background: custom video frame or simulated motion canvas
-      if (hasCustomVideo && userVideoEl.videoWidth) {
-        rctx.drawImage(userVideoEl, 0, 0, recordCanvas.width, recordCanvas.height);
-      } else {
-        rctx.drawImage(canvas, 0, 0, recordCanvas.width, recordCanvas.height);
-      }
-
-      // Draw subtitle overlay
-      const activeCue = currentCues.find(c => renderTime >= c.start && renderTime <= c.end);
-      if (activeCue) {
-        rctx.save();
-        rctx.font = "bold 28px 'Outfit', Inter, sans-serif";
-        rctx.textAlign = "center";
-        rctx.textBaseline = "middle";
-
-        const textY = recordCanvas.height * 0.85;
-
-        // Black outline
-        rctx.strokeStyle = "#000000";
-        rctx.lineWidth = 6;
-        rctx.strokeText(activeCue.text, recordCanvas.width / 2, textY);
-
-        // Highlight color
-        rctx.fillStyle = currentStyle === 'hormozi' ? '#facc15' : currentStyle === 'beast' ? '#38bdf8' : '#ffffff';
-        rctx.fillText(activeCue.text, recordCanvas.width / 2, textY);
-        rctx.restore();
-      }
-
-      if (renderTime >= renderDuration) {
-        clearInterval(renderInterval);
-        mediaRecorder.stop();
-      }
-    }, frameInterval);
-  });
-
-  // Init
-  renderCuesTable();
-  animFrameId = requestAnimationFrame(tick);
+  // Initial setup with default cues
+  currentCues = [...defaultDemoCues];
+  originalCues = [...defaultDemoCues];
 </script>

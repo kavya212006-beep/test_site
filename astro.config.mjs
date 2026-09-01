@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://subtitlegeneratorfree.com',
+  site: 'https://freeautocaption.com',
   i18n: {
     defaultLocale: 'en',
     locales: [
@@ -13,7 +13,7 @@ export default defineConfig({
     ],
     routing: {
       prefixDefaultLocale: false,
-      fallbackType: 'rewrite',
+      fallbackType: 'redirect',
     },
     fallback: {
       es: 'en', fr: 'en', de: 'en',

@@ -1,0 +1,71 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SubtitleStudio from '../components/SubtitleStudio/SubtitleStudio.astro';
+import FeaturesGrid from '../components/FeaturesGrid.astro';
+import CompetitorComparison from '../components/CompetitorComparison.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+
+const lang = 'en';
+
+const pageTitle = "Burn Subtitles into Video Online Free — SRT to MP4 Hardcoder | FreeAutoCaption";
+const pageDesc = "Upload your MP4 video and existing subtitle file (.SRT, .VTT, .ASS) to burn and hardcode animated captions directly in your browser. 100% free with zero watermark.";
+---
+
+<Layout
+  lang={lang}
+  title={pageTitle}
+  description={pageDesc}
+  path="/burn-subtitles-into-video"
+>
+  <div class="relative overflow-hidden pt-12 pb-20">
+    <!-- Background glow -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-gradient-to-b from-[var(--color-grad-coral-start)]/10 via-[var(--color-grad-purple-start)]/5 to-transparent blur-3xl -z-10 pointer-events-none"></div>
+
+    <div class="container-page flex flex-col gap-12">
+      <!-- Hero Header -->
+      <div class="flex flex-col items-center text-center max-w-3xl mx-auto gap-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--color-hairline)] bg-[var(--color-canvas)] shadow-xs">
+          <span class="w-2 h-2 rounded-full bg-[var(--color-grad-coral-start)] animate-pulse"></span>
+          <span class="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider">Universal Subtitle Video Burner</span>
+        </div>
+
+        <h1 class="display-xl text-[var(--color-ink)] tracking-tight">
+          Burn Subtitles into Video Online Free
+        </h1>
+
+        <p class="body-lg text-[var(--color-body)] max-w-2xl">
+          Already have an <strong>.SRT, .VTT, or .ASS</strong> file? Upload your video and subtitle file to sync, apply viral TikTok/Hormozi animations, and export a high-resolution hardcoded MP4 with <strong>zero watermarks</strong>.
+        </p>
+      </div>
+
+      <!-- Studio Component Loaded directly in Burner mode -->
+      <SubtitleStudio lang={lang} />
+
+      <!-- Step-by-Step Guide -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 py-8">
+        <div class="p-6 rounded-2xl border border-[var(--color-hairline)] bg-[var(--color-canvas)] shadow-l1 flex flex-col gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[var(--color-canvas-soft-2)] flex items-center justify-center font-bold text-lg text-[var(--color-ink)]">1</div>
+          <h3 class="text-base font-bold text-[var(--color-ink)]">Upload Video & Subtitles</h3>
+          <p class="text-sm text-[var(--color-body)]">Drop your MP4, MOV, or WebM video along with your .SRT, .VTT, or .ASS subtitle file. Both stay 100% on your local device.</p>
+        </div>
+
+        <div class="p-6 rounded-2xl border border-[var(--color-hairline)] bg-[var(--color-canvas)] shadow-l1 flex flex-col gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[var(--color-canvas-soft-2)] flex items-center justify-center font-bold text-lg text-[var(--color-ink)]">2</div>
+          <h3 class="text-base font-bold text-[var(--color-ink)]">Customize Style & Sync</h3>
+          <p class="text-sm text-[var(--color-body)]">Choose from trending viral animations (Hormozi, MrBeast, Neon Glow), adjust safe zone margins, and fix any millisecond timing offsets.</p>
+        </div>
+
+        <div class="p-6 rounded-2xl border border-[var(--color-hairline)] bg-[var(--color-canvas)] shadow-l1 flex flex-col gap-3">
+          <div class="w-10 h-10 rounded-xl bg-[var(--color-canvas-soft-2)] flex items-center justify-center font-bold text-lg text-[var(--color-ink)]">3</div>
+          <h3 class="text-base font-bold text-[var(--color-ink)]">Export Hardcoded MP4</h3>
+          <p class="text-sm text-[var(--color-body)]">Click 'Export Video' to render your subtitled video right in your browser. Download watermark-free at full resolution.</p>
+        </div>
+      </div>
+
+      <!-- Feature Matrix & FAQ -->
+      <FeaturesGrid lang={lang} />
+      <CompetitorComparison lang={lang} />
+      <FaqAccordion lang={lang} />
+    </div>
+  </div>
+</Layout>

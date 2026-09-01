@@ -1,0 +1,278 @@
+---
+import Layout from '../layouts/Layout.astro';
+import FaqAccordion from '../components/FaqAccordion.astro';
+
+const lang = 'en';
+
+const pageTitle = "SRT Timing Adjuster — Shift Subtitle Sync & Offset Online | FreeAutoCaption";
+const pageDesc = "Shift, delay, advance, or stretch subtitle timestamps (.SRT, .VTT, .ASS) online for free. Fix audio sync lag and frame rate drift in seconds.";
+---
+
+<Layout
+  lang={lang}
+  title={pageTitle}
+  description={pageDesc}
+  path="/srt-timing-adjuster"
+>
+  <div class="relative overflow-hidden pt-12 pb-20">
+    <!-- Ambient blur -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-gradient-to-b from-[var(--color-grad-blue-start)]/10 via-[var(--color-violet)]/5 to-transparent blur-3xl -z-10 pointer-events-none"></div>
+
+    <div class="container-page flex flex-col gap-12">
+      <!-- Header -->
+      <div class="flex flex-col items-center text-center max-w-3xl mx-auto gap-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--color-hairline)] bg-[var(--color-canvas)] shadow-xs">
+          <span class="w-2 h-2 rounded-full bg-[var(--color-link)] animate-pulse"></span>
+          <span class="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider">Subtitle Timing Sync Tool</span>
+        </div>
+
+        <h1 class="display-xl text-[var(--color-ink)] tracking-tight">
+          SRT Timing & Sync Adjuster
+        </h1>
+
+        <p class="body-lg text-[var(--color-body)] max-w-2xl">
+          Fix subtitle sync lag, delay, or drift instantly. Shift all timestamps by exact milliseconds, scale playback speeds (23.976fps to 25fps), and download fixed <strong>.SRT, .VTT, or .ASS</strong> files.
+        </p>
+      </div>
+
+      <!-- Interactive Adjuster Card -->
+      <div class="bg-[var(--color-canvas)] rounded-2xl border border-[var(--color-hairline)] shadow-l3 p-6 md:p-8 flex flex-col gap-8">
+        
+        <!-- Upload or Paste Subtitle -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="flex flex-col gap-2">
+            <label class="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider">1. Upload Subtitle File</label>
+            <label
+              for="adjuster-file-input"
+              class="flex flex-col items-center justify-center gap-3 w-full min-h-[160px] p-6 border-2 border-dashed border-[var(--color-hairline)] hover:border-[var(--color-link)] hover:bg-[var(--color-link-bg-soft)]/30 rounded-2xl cursor-pointer transition-all text-center bg-[var(--color-canvas-soft)] group"
+            >
+              <div class="w-12 h-12 rounded-xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-l1 flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
+                📄
+              </div>
+              <p id="adjuster-file-status" class="text-sm font-semibold text-[var(--color-ink)]">Choose .SRT, .VTT, or .ASS file</p>
+              <input id="adjuster-file-input" type="file" accept=".srt,.vtt,.ass,.ssa,.sub,.json,.txt" class="sr-only" />
+            </label>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider">Or Paste Raw Subtitles</label>
+              <button id="adjuster-load-sample" class="text-xs text-[var(--color-link)] font-semibold hover:underline">Load Sample</button>
+            </div>
+            <textarea
+              id="adjuster-raw-input"
+              rows="6"
+              placeholder="1&#10;00:00:01,000 --> 00:00:03,500&#10;Paste your subtitle text here..."
+              class="w-full p-3 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-xs font-mono text-[var(--color-ink)] focus:outline-none focus:border-[var(--color-link)]"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Shift & Stretch Controls -->
+        <div class="p-6 rounded-2xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <!-- Offset Shifter -->
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-bold text-[var(--color-ink)]">Time Offset Shift (Delay / Advance)</span>
+              <span id="adjuster-offset-badge" class="px-2.5 py-1 text-xs font-mono font-bold rounded-md bg-[var(--color-ink)] text-[var(--color-on-primary)]">+0.000s</span>
+            </div>
+            <p class="text-xs text-[var(--color-mute)]">Positive numbers delay subtitles (appear later), negative numbers advance subtitles (appear earlier).</p>
+            <div class="flex items-center gap-2">
+              <button id="offset-minus-1s" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:bg-[var(--color-canvas-soft-2)]">-1.0s</button>
+              <button id="offset-minus-100ms" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:bg-[var(--color-canvas-soft-2)]">-0.1s</button>
+              <input id="adjuster-offset-slider" type="range" min="-10" max="10" step="0.05" value="0" class="w-full accent-[var(--color-link)] cursor-pointer" />
+              <button id="offset-plus-100ms" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:bg-[var(--color-canvas-soft-2)]">+0.1s</button>
+              <button id="offset-plus-1s" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:bg-[var(--color-canvas-soft-2)]">+1.0s</button>
+            </div>
+          </div>
+
+          <!-- Speed / Drift Stretch -->
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-bold text-[var(--color-ink)]">Speed / FPS Drift Ratio</span>
+              <span id="adjuster-speed-badge" class="px-2.5 py-1 text-xs font-mono font-bold rounded-md bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-[var(--color-ink)]">1.000x</span>
+            </div>
+            <p class="text-xs text-[var(--color-mute)]">Scale timing for framerate conversions (e.g. 23.976fps to 25fps = 0.959x).</p>
+            <div class="flex items-center gap-2">
+              <button id="preset-23to25" class="px-2.5 py-1.5 text-[11px] font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:bg-[var(--color-canvas-soft-2)]">23.976 → 25fps</button>
+              <button id="preset-25to23" class="px-2.5 py-1.5 text-[11px] font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:bg-[var(--color-canvas-soft-2)]">25 → 23.976fps</button>
+              <button id="preset-reset-speed" class="px-2.5 py-1.5 text-[11px] font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:bg-[var(--color-canvas-soft-2)]">Reset</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Preview & Download Section -->
+        <div class="flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold text-[var(--color-ink)]">Adjusted Subtitle Output Preview</h3>
+            <span id="adjuster-cue-count" class="text-xs text-[var(--color-mute)] font-medium">0 cues</span>
+          </div>
+
+          <textarea
+            id="adjuster-output-preview"
+            rows="8"
+            readonly
+            class="w-full p-4 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-xs font-mono text-[var(--color-ink)] select-all"
+          ></textarea>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <button id="adj-download-srt" class="px-5 py-2.5 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-xs font-semibold hover:opacity-90 transition-all shadow-l1">
+              Download Adjusted .SRT
+            </button>
+            <button id="adj-download-vtt" class="px-4 py-2.5 rounded-pill bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] text-xs font-semibold transition-all">
+              Download .WebVTT
+            </button>
+            <button id="adj-download-ass" class="px-4 py-2.5 rounded-pill bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] text-xs font-semibold transition-all">
+              Download .ASS
+            </button>
+            <button id="adj-copy-btn" class="px-4 py-2.5 rounded-pill bg-[var(--color-canvas)] border border-[var(--color-hairline)] hover:border-[var(--color-hairline-strong)] text-[var(--color-ink)] text-xs font-semibold transition-all">
+              📋 Copy to Clipboard
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- FAQ -->
+      <FaqAccordion lang={lang} />
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { parseSubtitleText, serializeToSRT, serializeToVTT, serializeToASS, shiftSubtitleTimings, stretchSubtitleTimings, type SubtitleCue } from '../utils/subtitleParser';
+
+  let rawCues: SubtitleCue[] = [];
+  let adjustedCues: SubtitleCue[] = [];
+  let currentOffset = 0;
+  let currentSpeed = 1.0;
+
+  const fileInput = document.getElementById('adjuster-file-input') as HTMLInputElement;
+  const fileStatus = document.getElementById('adjuster-file-status');
+  const rawInput = document.getElementById('adjuster-raw-input') as HTMLTextAreaElement;
+  const outputPreview = document.getElementById('adjuster-output-preview') as HTMLTextAreaElement;
+  const cueCount = document.getElementById('adjuster-cue-count');
+  const offsetSlider = document.getElementById('adjuster-offset-slider') as HTMLInputElement;
+  const offsetBadge = document.getElementById('adjuster-offset-badge');
+  const speedBadge = document.getElementById('adjuster-speed-badge');
+
+  function updateCalculations() {
+    if (rawCues.length === 0) {
+      if (outputPreview) outputPreview.value = '';
+      if (cueCount) cueCount.textContent = '0 cues';
+      return;
+    }
+
+    let processed = shiftSubtitleTimings(rawCues, currentOffset * 1000);
+    if (currentSpeed !== 1.0) {
+      processed = stretchSubtitleTimings(processed, currentSpeed);
+    }
+    adjustedCues = processed;
+
+    if (outputPreview) outputPreview.value = serializeToSRT(adjustedCues);
+    if (cueCount) cueCount.textContent = `${adjustedCues.length} cues adjusted`;
+  }
+
+  function loadCuesFromText(text: string, filename = '') {
+    rawCues = parseSubtitleText(text, filename);
+    currentOffset = 0;
+    currentSpeed = 1.0;
+    if (offsetSlider) offsetSlider.value = '0';
+    if (offsetBadge) offsetBadge.textContent = '+0.000s';
+    if (speedBadge) speedBadge.textContent = '1.000x';
+    updateCalculations();
+  }
+
+  fileInput?.addEventListener('change', async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const content = await file.text();
+      if (rawInput) rawInput.value = content;
+      if (fileStatus) fileStatus.textContent = `✓ ${file.name}`;
+      loadCuesFromText(content, file.name);
+    }
+  });
+
+  rawInput?.addEventListener('input', () => {
+    loadCuesFromText(rawInput.value);
+  });
+
+  document.getElementById('adjuster-load-sample')?.addEventListener('click', () => {
+    const sample = `1\n00:00:01,200 --> 00:00:03,800\nWelcome to FreeAutoCaption!\n\n2\n00:00:04,000 --> 00:00:07,100\nThis tool lets you shift subtitle timing by milliseconds.\n\n3\n00:00:07,300 --> 00:00:10,500\nPerfect for fixing audio sync delays and frame rate drift.`;
+    if (rawInput) rawInput.value = sample;
+    loadCuesFromText(sample);
+  });
+
+  // Offset Controls
+  function setOffset(val: number) {
+    currentOffset = parseFloat(val.toFixed(3));
+    if (offsetSlider) offsetSlider.value = String(currentOffset);
+    if (offsetBadge) {
+      const sign = currentOffset >= 0 ? '+' : '';
+      offsetBadge.textContent = `${sign}${currentOffset.toFixed(3)}s`;
+    }
+    updateCalculations();
+  }
+
+  offsetSlider?.addEventListener('input', () => setOffset(parseFloat(offsetSlider.value)));
+  document.getElementById('offset-minus-1s')?.addEventListener('click', () => setOffset(currentOffset - 1.0));
+  document.getElementById('offset-minus-100ms')?.addEventListener('click', () => setOffset(currentOffset - 0.1));
+  document.getElementById('offset-plus-100ms')?.addEventListener('click', () => setOffset(currentOffset + 0.1));
+  document.getElementById('offset-plus-1s')?.addEventListener('click', () => setOffset(currentOffset + 1.0));
+
+  // Speed Presets
+  document.getElementById('preset-23to25')?.addEventListener('click', () => {
+    currentSpeed = 23.976 / 25;
+    if (speedBadge) speedBadge.textContent = `${currentSpeed.toFixed(4)}x`;
+    updateCalculations();
+  });
+
+  document.getElementById('preset-25to23')?.addEventListener('click', () => {
+    currentSpeed = 25 / 23.976;
+    if (speedBadge) speedBadge.textContent = `${currentSpeed.toFixed(4)}x`;
+    updateCalculations();
+  });
+
+  document.getElementById('preset-reset-speed')?.addEventListener('click', () => {
+    currentSpeed = 1.0;
+    if (speedBadge) speedBadge.textContent = '1.000x';
+    updateCalculations();
+  });
+
+  // Downloads
+  function triggerDownload(content: string, filename: string, type: string) {
+    if (!content) return alert('No subtitles to download.');
+    const blob = new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  document.getElementById('adj-download-srt')?.addEventListener('click', () => {
+    triggerDownload(serializeToSRT(adjustedCues), 'synced-subtitles.srt', 'text/plain');
+  });
+
+  document.getElementById('adj-download-vtt')?.addEventListener('click', () => {
+    triggerDownload(serializeToVTT(adjustedCues), 'synced-subtitles.vtt', 'text/vtt');
+  });
+
+  document.getElementById('adj-download-ass')?.addEventListener('click', () => {
+    triggerDownload(serializeToASS(adjustedCues), 'synced-subtitles.ass', 'text/plain');
+  });
+
+  document.getElementById('adj-copy-btn')?.addEventListener('click', () => {
+    const text = serializeToSRT(adjustedCues);
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => alert('✓ Copied to clipboard!'));
+  });
+
+  // Trigger sample initially
+  document.getElementById('adjuster-load-sample')?.click();
+</script>

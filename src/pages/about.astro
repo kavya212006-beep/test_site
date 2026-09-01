@@ -47,6 +47,44 @@ const sections = [
           </p>
         </div>
       ))}
+
+      <!-- Privacy Policy Section -->
+      <div id="privacy" class="p-8 rounded-2xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-l1 flex flex-col gap-4 scroll-mt-24">
+        <h2 class="display-sm text-[var(--color-ink)] font-bold">Privacy Policy</h2>
+        <p class="text-sm text-[var(--color-body)] leading-relaxed">
+          FreeAutoCaption is designed with a strict privacy-first architecture. All media processing, including video rendering, subtitle merging, timestamp synchronization, and subtitle conversions happen entirely on your local machine using client-side Web APIs (HTML5 Canvas, Web Audio API, and MediaRecorder).
+        </p>
+        <p class="text-sm text-[var(--color-body)] leading-relaxed">
+          When using the cloud-powered transcription feature, audio chunks are sent securely over HTTPS to Cloudflare Workers AI edge GPUs for transcription and are immediately discarded. We do not store, log, or sell your files or transcripts.
+        </p>
+      </div>
+
+      <!-- Terms of Service Section -->
+      <div id="terms" class="p-8 rounded-2xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-l1 flex flex-col gap-4 scroll-mt-24">
+        <h2 class="display-sm text-[var(--color-ink)] font-bold">Terms of Service</h2>
+        <p class="text-sm text-[var(--color-body)] leading-relaxed">
+          FreeAutoCaption is provided free of charge for personal and commercial content creators. You retain full ownership of all videos, audio files, and subtitle files you upload or generate.
+        </p>
+        <p class="text-sm text-[var(--color-body)] leading-relaxed">
+          The service is provided "as is" without warranty of any kind. You agree not to use the service for generating or distributing unlawful or infringing material.
+        </p>
+      </div>
+
+      <!-- Contact Section -->
+      <div id="contact" class="p-8 rounded-2xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-l1 flex flex-col gap-4 scroll-mt-24">
+        <h2 class="display-sm text-[var(--color-ink)] font-bold">Contact & Support</h2>
+        <p class="text-sm text-[var(--color-body)] leading-relaxed">
+          Have questions, suggestions, or need assistance? Reach out to our community and development team:
+        </p>
+        <div class="flex items-center gap-3">
+          <a
+            href="mailto:support@freeautocaption.com"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-sm font-semibold text-[var(--color-ink)] hover:border-[var(--color-link)] transition-colors"
+          >
+            ✉️ support@freeautocaption.com
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 

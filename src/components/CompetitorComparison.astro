@@ -7,13 +7,13 @@ interface Props {
 const { lang } = Astro.props;
 
 const rows = [
-  { key: 'comparison.row1.name', us: true, invideo: 'Paid ($25/mo)', capcut: 'Paid Pro', kapwing: 'Watermarked' },
-  { key: 'comparison.row2.name', us: true, invideo: false, capcut: false, kapwing: false },
-  { key: 'comparison.row3.name', us: true, invideo: false, capcut: false, kapwing: false },
-  { key: 'comparison.row4.name', us: true, invideo: true, capcut: true, kapwing: 'Paid Only' },
-  { key: 'comparison.row5.name', us: true, invideo: 'Complex', capcut: false, kapwing: false },
-  { key: 'comparison.row6.name', us: true, invideo: true, capcut: true, kapwing: true },
-  { key: 'comparison.row7.name', us: true, invideo: 'Cloud Queue', capcut: 'App Install', kapwing: 'Cloud Queue' },
+  { key: 'comparison.row1.name', us: true, captionx: 'Paid Tier for Pro', capcut: 'Paid Pro', kapwing: 'Watermarked' },
+  { key: 'comparison.row2.name', us: true, captionx: 'Watermark on Free', capcut: false, kapwing: false },
+  { key: 'comparison.row3.name', us: true, captionx: true, capcut: false, kapwing: false },
+  { key: 'comparison.row4.name', us: true, captionx: true, capcut: true, kapwing: 'Paid Only' },
+  { key: 'comparison.row5.name', us: true, captionx: false, capcut: false, kapwing: false },
+  { key: 'comparison.row6.name', us: true, captionx: 'Cloud Audio Upload', capcut: 'App Install', kapwing: 'Cloud Queue' },
+  { key: 'comparison.row7.name', us: true, captionx: true, capcut: 'SRT Only', kapwing: 'Paid Only' },
 ];
 ---
 
@@ -37,7 +37,7 @@ const rows = [
           <tr class="border-b border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-xs font-bold uppercase tracking-wider text-[var(--color-mute)]">
             <th class="p-4 sm:p-5">{t(lang, 'comparison.feature')}</th>
             <th class="p-4 sm:p-5 text-center bg-[var(--color-link-bg-soft)] text-[var(--color-link)] font-extrabold">{t(lang, 'comparison.us')}</th>
-            <th class="p-4 sm:p-5 text-center">{t(lang, 'comparison.invideo')}</th>
+            <th class="p-4 sm:p-5 text-center">{t(lang, 'comparison.captionx')}</th>
             <th class="p-4 sm:p-5 text-center">{t(lang, 'comparison.capcut')}</th>
             <th class="p-4 sm:p-5 text-center">{t(lang, 'comparison.kapwing')}</th>
           </tr>
@@ -50,7 +50,7 @@ const rows = [
                 {row.us === true ? <span class="text-emerald-500 text-lg">✓</span> : row.us}
               </td>
               <td class="p-4 sm:p-5 text-center text-[var(--color-body)]">
-                {row.invideo === true ? <span class="text-emerald-500 text-lg">✓</span> : row.invideo === false ? <span class="text-rose-400 text-lg">✕</span> : row.invideo}
+                {row.captionx === true ? <span class="text-emerald-500 text-lg">✓</span> : row.captionx === false ? <span class="text-rose-400 text-lg">✕</span> : row.captionx}
               </td>
               <td class="p-4 sm:p-5 text-center text-[var(--color-body)]">
                 {row.capcut === true ? <span class="text-emerald-500 text-lg">✓</span> : row.capcut === false ? <span class="text-rose-400 text-lg">✕</span> : row.capcut}

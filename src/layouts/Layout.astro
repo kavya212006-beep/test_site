@@ -17,18 +17,18 @@ interface Props {
 
 const {
   lang = 'en',
-  title = 'Subtitle Generator Free — AI Audio, Video & Script Subtitles',
-  description = '100% Free AI Subtitle Generator: Transcribe speech from audio & video or auto-sync scripts. Animate viral Hormozi & Beast styles, preview live on video, and export SRT, VTT or MP4 in seconds.',
-  keywords = 'subtitle generator free, ai subtitle generator, auto subtitle generator, free subtitle generator, subtitle generator from audio, script to subtitle, video subtitle generator, invideo alternative free, auto captions, hormozi subtitles generator',
+  title = 'FreeAutoCaption — Free AI Auto Caption Generator & Subtitle Burner',
+  description = '100% Free AI Auto Caption Generator & Subtitle Video Burner. Upload video and subtitles (.SRT, .VTT, .ASS) to sync and burn captions, or auto-transcribe with AI Whisper. Watermark-free MP4 exports.',
+  keywords = 'free autocaption, free auto caption, subtitle generator free, burn subtitles into video, srt to mp4, srt timing adjuster, subtitle converter, caption x alternative free, auto captions tiktok reels',
   path = '/',
-  ogImage = 'https://subtitlegeneratorfree.com/og-image.png',
+  ogImage = 'https://freeautocaption.com/og-image.png',
   ogType = 'website',
   schema,
 } = Astro.props;
 
 const dir = isRTL(lang) ? 'rtl' : 'ltr';
 const alternates = getAlternateUrls(path);
-const canonicalUrl = `https://subtitlegeneratorfree.com${path === '/' ? '' : path}`;
+const canonicalUrl = `https://freeautocaption.com${path === '/' ? '' : path}`;
 
 // Locale mapping for Open Graph
 const ogLocaleMap: Record<string, string> = {
@@ -48,14 +48,14 @@ const baseSchemas = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Subtitle Generator Free',
-    url: 'https://subtitlegeneratorfree.com/',
-    description: 'Free AI-powered Subtitle Generator tool to transcribe audio/video, synchronize scripts, and export SRT/VTT/video.',
+    name: 'FreeAutoCaption',
+    url: 'https://freeautocaption.com/',
+    description: 'Free AI-powered Auto Caption Generator & Subtitle Video Burner. Sync subtitles, transcribe audio/video, and export watermark-free MP4.',
   },
   {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
-    name: 'Subtitle Generator Free',
+    name: 'FreeAutoCaption',
     applicationCategory: 'MultimediaApplication',
     operatingSystem: 'Any',
     offers: {
@@ -116,9 +116,9 @@ const allSchemas = schema
 
     <!-- Hreflang Multi-Language Alternates -->
     {alternates.map(({ hreflang, href }) => (
-      <link rel="alternate" hreflang={hreflang} href={`https://subtitlegeneratorfree.com${href}`} />
+      <link rel="alternate" hreflang={hreflang} href={`https://freeautocaption.com${href}`} />
     ))}
-    <link rel="alternate" hreflang="x-default" href={`https://subtitlegeneratorfree.com${path === '/' ? '' : path}`} />
+    <link rel="alternate" hreflang="x-default" href={`https://freeautocaption.com${path === '/' ? '' : path}`} />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content={ogType} />
@@ -128,8 +128,8 @@ const allSchemas = schema
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Subtitle Generator Free — AI Captioning & Script Sync Studio" />
-    <meta property="og:site_name" content="Subtitle Generator Free" />
+    <meta property="og:image:alt" content="FreeAutoCaption — Free AI Auto Caption Generator & Subtitle Burner" />
+    <meta property="og:site_name" content="FreeAutoCaption" />
     <meta property="og:locale" content={currentOgLocale} />
 
     <!-- Twitter Cards -->
