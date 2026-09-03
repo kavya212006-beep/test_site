@@ -35,669 +35,496 @@ const fontFamilies = [
 ];
 ---
 
-<div id="subtitle-studio" class="w-full flex flex-col gap-8">
+<div id="subtitle-studio" class="w-full flex flex-col gap-6">
 
   <!-- Notification Toast Container -->
-  <div id="studio-toast" class="hidden fixed top-6 right-6 z-50 max-w-md p-4 rounded-xl shadow-l3 border transition-all flex items-center gap-3">
+  <div id="studio-toast" class="hidden fixed top-6 right-6 z-50 max-w-md p-4 rounded-2xl shadow-2xl border transition-all flex items-center gap-3">
     <span id="studio-toast-icon" class="text-xl"></span>
     <p id="studio-toast-msg" class="text-sm font-medium"></p>
   </div>
 
-  <!-- ─── Studio Main Card ─────────────────────────────────── -->
-  <div class="bg-[var(--color-canvas)] rounded-2xl border border-[var(--color-hairline)] shadow-l3 overflow-hidden">
-
-    <!-- Top Workflow Tabs Bar -->
-    <div class="flex items-center border-b border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] px-4 pt-3 overflow-x-auto scrollbar-hide gap-1" role="tablist">
-      <button
-        id="tab-btn-burn"
-        role="tab"
-        aria-selected="true"
-        aria-controls="panel-burn"
-        class="studio-tab-btn flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 border-[var(--color-ink)] text-[var(--color-ink)] transition-colors whitespace-nowrap -mb-px"
-      >
-        <span>🔥</span>
-        <span>{t(lang, 'studio.tab.burn')}</span>
-        <span class="px-1.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded bg-[var(--color-ink)] text-[var(--color-canvas)]">Top</span>
-      </button>
-
-      <button
-        id="tab-btn-audio"
-        role="tab"
-        aria-selected="false"
-        aria-controls="panel-audio"
-        class="studio-tab-btn flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 border-transparent text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-colors whitespace-nowrap -mb-px"
-      >
-        <span>🎙️</span>
-        <span>{t(lang, 'studio.tab.audio')}</span>
-        <span class="px-1.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded bg-[var(--color-grad-blue-start)]/10 text-[var(--color-grad-blue-start)]">Cloudflare AI</span>
-      </button>
-
-      <button
-        id="tab-btn-script"
-        role="tab"
-        aria-selected="false"
-        aria-controls="panel-script"
-        class="studio-tab-btn flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 border-transparent text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-colors whitespace-nowrap -mb-px"
-      >
-        <span>📝</span>
-        <span>{t(lang, 'studio.tab.script')}</span>
-      </button>
-
-      <button
-        id="tab-btn-editor"
-        role="tab"
-        aria-selected="false"
-        aria-controls="panel-editor"
-        class="studio-tab-btn flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 border-transparent text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-colors whitespace-nowrap -mb-px"
-      >
-        <span>🎬</span>
-        <span>{t(lang, 'studio.tab.editor')}</span>
-        <span class="ms-1 px-1.5 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-md bg-[var(--color-link-bg-soft)] text-[var(--color-link)]">Live</span>
-      </button>
-    </div>
-
-    <!-- ─── TAB 1: Video + Subtitle Burner (Upload Video & Subtitles) ─── -->
-    <div id="panel-burn" role="tabpanel" class="p-6 md:p-8 flex flex-col gap-6">
-      <div class="flex flex-col gap-1">
-        <div class="flex items-center gap-2">
-          <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-[var(--color-link-bg-soft)] text-[var(--color-link)] uppercase tracking-wider">Fastest Workflow</span>
-          <h3 class="display-sm text-[var(--color-ink)]">Upload Video & Subtitle File</h3>
-        </div>
-        <p class="text-sm text-[var(--color-body)]">Have a video file? Upload your video and subtitle file to sync, style, and burn them into high-res MP4 with zero watermark.</p>
+  <!-- ─── 1. CLEAN HERO UPLOAD VIEW (Exact match to reference design) ─── -->
+  <div id="studio-upload-view" class="w-full max-w-3xl mx-auto flex flex-col items-center gap-4 transition-all">
+    
+    <!-- Hero Dropzone Card -->
+    <label
+      id="hero-dropzone"
+      for="hero-media-input"
+      class="relative w-full border-2 border-dashed border-sky-400/80 hover:border-sky-500 bg-white/70 dark:bg-[#141417]/80 backdrop-blur-md rounded-3xl p-10 md:p-14 text-center cursor-pointer transition-all hover:bg-sky-50/40 dark:hover:bg-sky-950/30 shadow-l2 group flex flex-col items-center justify-center gap-3"
+    >
+      <!-- Upload Icon inside clean squircle -->
+      <div class="w-14 h-14 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700 shadow-sm flex items-center justify-center text-sky-600 dark:text-sky-400 group-hover:scale-110 transition-transform">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- 1. Video Dropzone -->
-        <div class="flex flex-col gap-2">
-          <label class="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider">{t(lang, 'burn.upload.videoTitle')}</label>
-          <label
-            id="burn-video-dropzone"
-            for="burn-video-input"
-            class="flex flex-col items-center justify-center gap-3 w-full min-h-[190px] p-6 border-2 border-dashed border-[var(--color-hairline)] hover:border-[var(--color-link)] hover:bg-[var(--color-link-bg-soft)]/40 rounded-2xl cursor-pointer transition-all group bg-[var(--color-canvas-soft)] relative text-center"
-          >
-            <div class="w-12 h-12 rounded-xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-l1 flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
-              🎥
-            </div>
-            <div>
-              <p id="burn-video-name" class="text-sm font-semibold text-[var(--color-ink)]">Click to choose video or drop here</p>
-              <p class="text-xs text-[var(--color-mute)] mt-0.5">{t(lang, 'burn.upload.videoSubtitle')}</p>
-            </div>
-            <input id="burn-video-input" type="file" accept="video/mp4,video/quicktime,video/webm,video/mkv,video/*" class="sr-only" />
-          </label>
-        </div>
+      <!-- Main Headline & Subtitle -->
+      <div class="flex flex-col gap-0.5">
+        <h3 class="text-base sm:text-lg font-bold text-[var(--color-ink)]">
+          Drag & drop your video or song
+        </h3>
+        <p class="text-xs sm:text-sm text-[var(--color-link)] font-medium">
+          or click to browse
+        </p>
+      </div>
 
-        <!-- 2. Subtitle File Dropzone -->
-        <div class="flex flex-col gap-2">
-          <label class="text-xs font-semibold text-[var(--color-ink)] uppercase tracking-wider">{t(lang, 'burn.upload.subTitle')}</label>
-          <label
-            id="burn-sub-dropzone"
-            for="burn-sub-input"
-            class="flex flex-col items-center justify-center gap-3 w-full min-h-[190px] p-6 border-2 border-dashed border-[var(--color-hairline)] hover:border-[var(--color-violet)] hover:bg-[var(--color-violet-soft)]/30 rounded-2xl cursor-pointer transition-all group bg-[var(--color-canvas-soft)] relative text-center"
-          >
-            <div class="w-12 h-12 rounded-xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-l1 flex items-center justify-center text-2xl group-hover:scale-105 transition-transform">
-              📄
-            </div>
-            <div>
-              <p id="burn-sub-name" class="text-sm font-semibold text-[var(--color-ink)]">Click to upload .SRT, .VTT, .ASS</p>
-              <p class="text-xs text-[var(--color-mute)] mt-0.5">{t(lang, 'burn.upload.subSubtitle')}</p>
-            </div>
-            <input id="burn-sub-input" type="file" accept=".srt,.vtt,.ass,.ssa,.sub,.json,.txt" class="sr-only" />
-          </label>
+      <!-- Format constraints note -->
+      <p class="text-xs text-[var(--color-mute)] max-w-md mt-1 leading-relaxed">
+        Video (MP4, MOV, WebM) or audio (MP3, WAV) · up to 10 min · under 2 GB · stays on your device
+      </p>
+
+      <!-- Hidden Input for file browsing -->
+      <input
+        id="hero-media-input"
+        type="file"
+        accept="video/*,audio/*,.mp4,.mov,.webm,.mkv,.mp3,.wav,.m4a,.srt,.vtt,.ass"
+        class="sr-only"
+      />
+
+      <!-- Transcribe Loading Overlay inside Dropzone -->
+      <div id="transcribe-loading-overlay" class="hidden absolute inset-0 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center gap-4 z-20">
+        <div class="flex items-center gap-1.5 h-8">
+          <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-1 h-6 animate-pulse"></div>
+          <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-2 h-8 animate-pulse"></div>
+          <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-3 h-4 animate-pulse"></div>
+          <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-4 h-7 animate-pulse"></div>
+          <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-5 h-5 animate-pulse"></div>
+        </div>
+        <p id="transcribe-status-text" class="text-sm font-semibold text-[var(--color-ink)] animate-pulse">
+          Transcribing speech with AI…
+        </p>
+      </div>
+    </label>
+
+    <!-- 3 Step Process Cards (Clean horizontal row below dropzone) -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-2 w-full">
+      <!-- Step 1 -->
+      <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
+        <div class="w-7 h-7 rounded-full bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 font-bold text-xs flex items-center justify-center shrink-0">
+          1
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xs font-bold text-[var(--color-ink)]">Upload</span>
+          <span class="text-[11px] text-[var(--color-mute)]">Your clip</span>
         </div>
       </div>
 
-      <!-- Quick Action / Auto-Transcribe Option -->
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
-        <div class="flex items-center gap-3">
-          <span class="text-xl">⚡</span>
-          <p class="text-xs text-[var(--color-body)]">Don't have subtitles yet? <strong>Cloudflare Whisper AI</strong> can automatically extract and generate timestamped subtitles from your video audio.</p>
+      <!-- Step 2 -->
+      <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
+        <div class="w-7 h-7 rounded-full bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 font-bold text-xs flex items-center justify-center shrink-0">
+          2
         </div>
-        <div class="flex items-center gap-2 w-full sm:w-auto">
-          <button id="burn-auto-whisper-btn" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-pill bg-[var(--color-link)] text-white text-sm font-semibold hover:opacity-90 transition-all shadow-l1 whitespace-nowrap">
-            ⚡ Auto-Transcribe with Whisper
-          </button>
-          <button id="burn-start-btn" type="button" class="w-full sm:w-auto px-5 py-2.5 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-sm font-semibold hover:opacity-90 transition-all shadow-l1 whitespace-nowrap">
-            Open in Studio Editor →
-          </button>
+        <div class="flex flex-col">
+          <span class="text-xs font-bold text-[var(--color-ink)]">Edit & style</span>
+          <span class="text-[11px] text-[var(--color-mute)]">Review + template</span>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
+        <div class="w-7 h-7 rounded-full bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 font-bold text-xs flex items-center justify-center shrink-0">
+          3
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xs font-bold text-[var(--color-ink)]">Export</span>
+          <span class="text-[11px] text-[var(--color-mute)]">Captioned MP4</span>
         </div>
       </div>
     </div>
 
-    <!-- ─── TAB 2: AI Audio / Video Transcriber (Whisper Edge GPU) ─── -->
-    <div id="panel-audio" role="tabpanel" class="hidden p-6 md:p-8 flex-col gap-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div class="flex flex-col gap-1">
+    <!-- Instant Sample Demos -->
+    <div class="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs text-[var(--color-mute)]">
+      <span>Or try an instant sample:</span>
+      <button type="button" class="sample-audio-btn text-xs font-semibold text-[var(--color-link)] hover:underline" data-sample="motivation">🔥 Viral Reel</button>
+      <span>·</span>
+      <button type="button" class="sample-audio-btn text-xs font-semibold text-[var(--color-link)] hover:underline" data-sample="podcast">🎙️ Tech Podcast</button>
+      <span>·</span>
+      <button type="button" class="sample-audio-btn text-xs font-semibold text-[var(--color-link)] hover:underline" data-sample="tutorial">⚡ Coding Tutorial</button>
+    </div>
+
+    <!-- Bottom note -->
+    <p class="text-center text-xs text-[var(--color-mute)] pt-2">
+      Editing in Premiere Pro? <a href="/subtitle-styles" class="text-[var(--color-ink)] font-semibold underline hover:text-[var(--color-link)] transition-colors">Explore viral caption styles</a> for your timeline.
+    </p>
+
+  </div>
+
+  <!-- ─── 2. STUDIO EDITOR VIEW (Revealed after upload or sample selection) ─── -->
+  <div id="studio-editor-view" class="hidden w-full bg-[var(--color-canvas)] rounded-3xl border border-[var(--color-hairline)] shadow-l3 overflow-hidden flex-col gap-6 p-6 md:p-8 transition-all">
+    
+    <!-- Top Action Bar -->
+    <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[var(--color-hairline)]">
+      <div class="flex items-center gap-3">
+        <button
+          id="back-to-upload-btn"
+          type="button"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] hover:border-[var(--color-hairline-strong)] transition-all"
+        >
+          <span>←</span>
+          <span>Upload Another Video</span>
+        </button>
+        <span id="current-file-badge" class="px-3 py-1 text-xs font-mono font-medium rounded-full bg-[var(--color-link-bg-soft)] text-[var(--color-link)] max-w-[200px] truncate">
+          ✓ demo-video.mp4
+        </span>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          id="editor-whisper-btn"
+          type="button"
+          class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-full bg-[var(--color-link)] text-white hover:opacity-90 transition-all shadow-xs"
+        >
+          <span>⚡</span>
+          <span>Auto-Transcribe with Whisper</span>
+        </button>
+
+        <label for="studio-replace-file-input" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft)] cursor-pointer transition-all shadow-xs">
+          <span>📁</span>
+          <span>Change Media</span>
+          <input id="studio-replace-file-input" type="file" accept="video/*,audio/*,.mp4,.mov,.webm,.mkv,.mp3,.wav,.m4a,.srt,.vtt,.ass" class="sr-only" />
+        </label>
+      </div>
+    </div>
+
+    <!-- Studio Grid: Video Player + Controls -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left Column: Video Preview Player & Controls -->
+      <div class="lg:col-span-7 flex flex-col gap-4">
+        
+        <!-- Video Options Bar (Aspect Ratio + Fit Mode) -->
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-1 p-1 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-xs">
+            <button class="aspect-btn px-2.5 py-1 rounded-lg font-medium text-[var(--color-ink)] bg-[var(--color-canvas)] shadow-xs transition-all" data-aspect="original" title="Original Aspect Ratio">
+              🎯 Auto
+            </button>
+            <button class="aspect-btn px-2.5 py-1 rounded-lg font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="9:16">
+              9:16
+            </button>
+            <button class="aspect-btn px-2.5 py-1 rounded-lg font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="16:9">
+              16:9
+            </button>
+            <button class="aspect-btn px-2.5 py-1 rounded-lg font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="1:1">
+              1:1
+            </button>
+          </div>
+
           <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 text-[11px] font-bold rounded-full bg-[var(--color-grad-blue-start)]/10 text-[var(--color-grad-blue-start)] uppercase tracking-wider">Cloudflare Whisper AI</span>
-            <h3 class="display-sm text-[var(--color-ink)]">{t(lang, 'studio.tab.audio')}</h3>
-          </div>
-          <p class="text-sm text-[var(--color-body)]">{t(lang, 'audio.drop.formats')}</p>
-        </div>
-
-        <!-- Spoken Language Selector -->
-        <div class="flex items-center gap-2 shrink-0">
-          <label for="whisper-lang-select" class="text-xs font-semibold text-[var(--color-mute)] uppercase tracking-wider">Language:</label>
-          <select
-            id="whisper-lang-select"
-            class="px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] focus:outline-none focus:border-[var(--color-link)] transition-all cursor-pointer"
-          >
-            <option value="auto">🌐 Auto-Detect Language</option>
-            <option value="en">🇺🇸 English</option>
-            <option value="es">🇪🇸 Spanish (Español)</option>
-            <option value="fr">🇫🇷 French (Français)</option>
-            <option value="de">🇩🇪 German (Deutsch)</option>
-            <option value="pt">🇧🇷 Portuguese (Português)</option>
-            <option value="ja">🇯🇵 Japanese (日本語)</option>
-            <option value="zh">🇨🇳 Chinese (中文)</option>
-            <option value="ar">🇸🇦 Arabic (العربية)</option>
-            <option value="it">🇮🇹 Italian (Italiano)</option>
-            <option value="hi">🇮🇳 Hindi (हिन्दी)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Drag & Drop Upload Zone -->
-      <label
-        id="audio-dropzone"
-        for="media-file-input"
-        class="flex flex-col items-center justify-center gap-4 w-full min-h-[220px] p-6 border-2 border-dashed border-[var(--color-hairline)] hover:border-[var(--color-link)] hover:bg-[var(--color-link-bg-soft)] rounded-2xl cursor-pointer transition-all group relative bg-[var(--color-canvas-soft)] text-center"
-      >
-        <div class="w-16 h-16 rounded-2xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-l1 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
-          🎙️
-        </div>
-        <div>
-          <p class="text-base font-semibold text-[var(--color-ink)]">{t(lang, 'audio.drop.title')}</p>
-          <p class="text-xs text-[var(--color-mute)] mt-1">{t(lang, 'audio.drop.subtitle')}</p>
-        </div>
-
-        <input
-          id="media-file-input"
-          type="file"
-          accept="audio/*,video/*,.mp4,.mov,.webm,.mkv,.mp3,.wav,.m4a"
-          class="sr-only"
-        />
-
-        <!-- Loading Overlay -->
-        <div id="transcribe-loading" class="hidden absolute inset-0 bg-[var(--color-canvas)]/95 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center gap-4 z-20">
-          <div class="flex items-center gap-1.5 h-8">
-            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-1 h-6 animate-pulse"></div>
-            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-2 h-8 animate-pulse"></div>
-            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-3 h-4 animate-pulse"></div>
-            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-4 h-7 animate-pulse"></div>
-            <div class="w-1.5 bg-[var(--color-link)] rounded-full waveform-bar-5 h-5 animate-pulse"></div>
-          </div>
-          <p id="transcribe-status-text" class="text-sm font-semibold text-[var(--color-ink)] animate-pulse">{t(lang, 'audio.analyzing')}</p>
-        </div>
-      </label>
-
-      <!-- Live Voice AI Recording & Demo Samples -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-medium text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'audio.sample.heading')}</span>
-          <button class="sample-audio-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)] hover:border-[var(--color-hairline-strong)] hover:shadow-l1 transition-all" data-sample="podcast">
-            {t(lang, 'audio.sample.podcast')}
-          </button>
-          <button class="sample-audio-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)] hover:border-[var(--color-hairline-strong)] hover:shadow-l1 transition-all" data-sample="motivation">
-            {t(lang, 'audio.sample.motivation')}
-          </button>
-          <button class="sample-audio-btn px-3 py-1.5 text-xs font-medium rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)] hover:border-[var(--color-hairline-strong)] hover:shadow-l1 transition-all" data-sample="tutorial">
-            {t(lang, 'audio.sample.tutorial')}
-          </button>
-        </div>
-
-        <button
-          id="live-speech-btn"
-          type="button"
-          class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] hover:opacity-85 transition-all shadow-l1 shrink-0"
-        >
-          <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
-          <span>Record Live Mic</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- ─── TAB 3: Script to Subtitles ───────────────────────── -->
-    <div id="panel-script" role="tabpanel" class="hidden p-6 md:p-8 flex-col gap-6">
-      <div class="flex flex-col gap-1">
-        <h3 class="display-sm text-[var(--color-ink)]">{t(lang, 'script.title')}</h3>
-        <p class="text-sm text-[var(--color-body)]">{t(lang, 'script.subtitle')}</p>
-      </div>
-
-      <div class="relative">
-        <textarea
-          id="script-input"
-          rows="6"
-          placeholder={t(lang, 'script.placeholder')}
-          class="w-full p-4 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-[var(--color-ink)] text-sm font-mono focus:outline-none focus:border-[var(--color-link)] focus:ring-2 focus:ring-[var(--color-link-bg-soft)] transition-all resize-y"
-        ></textarea>
-        <button
-          id="insert-sample-script"
-          type="button"
-          class="absolute top-3 right-3 px-3 py-1.5 text-xs font-medium rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-[var(--color-body)] hover:text-[var(--color-ink)] shadow-xs transition-all"
-        >
-          {t(lang, 'script.sampleBtn')}
-        </button>
-      </div>
-
-      <!-- Pacing & Segmentation Controls -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
-        <div class="flex flex-col gap-2">
-          <div class="flex items-center justify-between text-xs">
-            <span class="font-medium text-[var(--color-body)]">{t(lang, 'script.wpm')}</span>
-            <span id="wpm-display" class="font-bold text-[var(--color-ink)]">145 WPM</span>
-          </div>
-          <input
-            id="wpm-slider"
-            type="range"
-            min="90"
-            max="220"
-            value="145"
-            class="w-full accent-[var(--color-link)] cursor-pointer"
-          />
-        </div>
-
-        <div class="flex flex-col gap-2">
-          <div class="flex items-center justify-between text-xs">
-            <span class="font-medium text-[var(--color-body)]">{t(lang, 'script.wordsPerLine')}</span>
-            <span id="wpl-display" class="font-bold text-[var(--color-ink)]">4 words (Viral)</span>
-          </div>
-          <input
-            id="wpl-slider"
-            type="range"
-            min="1"
-            max="10"
-            value="4"
-            class="w-full accent-[var(--color-link)] cursor-pointer"
-          />
-        </div>
-      </div>
-
-      <button
-        id="generate-from-script-btn"
-        type="button"
-        class="self-start px-6 py-3 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] text-sm font-semibold hover:opacity-90 transition-all shadow-l1"
-      >
-        {t(lang, 'script.generateBtn')} →
-      </button>
-    </div>
-
-    <!-- ─── TAB 4: Live Video Studio & Editor (Canvas / Burner) ─── -->
-    <div id="panel-editor" role="tabpanel" class="hidden p-6 md:p-8 flex-col gap-8">
-      
-      <!-- Studio Grid: Video Player + Controls -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-        <!-- Left Column: Video Preview Player & Canvas -->
-        <div class="lg:col-span-7 flex flex-col gap-4">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-              <h4 class="text-sm font-semibold text-[var(--color-ink)]">{t(lang, 'editor.heading')}</h4>
-              <button id="editor-rewhisper-btn" type="button" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-[var(--color-link-bg-soft)] text-[var(--color-link)] hover:bg-[var(--color-link)] hover:text-white transition-all">
-                ⚡ Auto-Transcribe with Whisper
-              </button>
-            </div>
-            
-            <div class="flex flex-wrap items-center gap-1.5">
-              <!-- Aspect Ratio Selector -->
-              <div class="flex items-center gap-1 p-1 rounded-lg bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-xs">
-                <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-ink)] bg-[var(--color-canvas)] shadow-xs transition-all" data-aspect="original" title="Display video in original uncropped aspect ratio">
-                  🎯 Auto / Original
-                </button>
-                <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="9:16">
-                  9:16
-                </button>
-                <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="16:9">
-                  16:9
-                </button>
-                <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="1:1">
-                  1:1
-                </button>
-              </div>
-
-              <!-- Fit / Fill Toggle -->
-              <button id="video-fit-btn" type="button" class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] shadow-xs transition-all" title="Toggle between Fit (no crop, 100% full view) and Fill">
-                Fit (100% View)
-              </button>
-
-              <!-- Upload / Replace Video Button -->
-              <label for="editor-video-upload-input" class="px-2.5 py-1 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-xs font-semibold text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] cursor-pointer transition-all flex items-center gap-1 shadow-xs" title="Upload or replace video">
-                📁 Video
-                <input id="editor-video-upload-input" type="file" accept="video/*,.mp4,.mov,.webm,.mkv,.m4v" class="sr-only" />
-              </label>
-            </div>
-          </div>
-
-          <!-- Video Canvas Container -->
-          <div id="video-preview-wrapper" class="relative w-full max-h-[520px] aspect-[16/9] mx-auto bg-black rounded-2xl overflow-hidden shadow-l3 border border-[var(--color-hairline)] flex items-center justify-center group select-none transition-all duration-300">
-            
-            <!-- Native Video Element -->
-            <video
-              id="studio-video"
-              class="w-full h-full object-contain max-h-[520px] block"
-              playsinline
-              preload="auto"
-              crossorigin="anonymous"
-            ></video>
-
-            <!-- Canvas for subtitle rendering and video export -->
-            <canvas id="studio-burn-canvas" class="hidden"></canvas>
-
-            <!-- Social Media Safe Zone Overlays -->
-            <div id="safe-zone-tiktok" class="hidden absolute inset-0 pointer-events-none border-2 border-dashed border-red-400/40 m-4 flex flex-col justify-between p-3 z-10">
-              <div class="text-[10px] font-mono text-red-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">TikTok Safe Top</div>
-              <div class="text-[10px] font-mono text-red-300/80 bg-black/60 px-1.5 py-0.5 rounded self-end">TikTok Right UI Safe</div>
-              <div class="text-[10px] font-mono text-red-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">TikTok Caption Bounds</div>
-            </div>
-
-            <div id="safe-zone-reels" class="hidden absolute inset-0 pointer-events-none border-2 border-dashed border-purple-400/40 m-4 flex flex-col justify-between p-3 z-10">
-              <div class="text-[10px] font-mono text-purple-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">IG Reels Safe Top</div>
-              <div class="text-[10px] font-mono text-purple-300/80 bg-black/60 px-1.5 py-0.5 rounded self-end">Reels Icons</div>
-              <div class="text-[10px] font-mono text-purple-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">Audio Label Safe</div>
-            </div>
-
-            <!-- Live Subtitle Overlay Layer with Dynamic Styles -->
-            <div id="subtitle-overlay" class="absolute inset-x-0 bottom-16 flex flex-col items-center justify-center p-4 pointer-events-none z-10 text-center transition-all">
-              <div id="subtitle-render-box" class="sub-style-hormozi font-extrabold text-2xl tracking-tight transition-all duration-75 inline-block text-center max-w-[90%]">
-                <span class="inline-block mx-1">FreeAutoCaption</span>
-                <span class="inline-block mx-1 word-active">Studio</span>
-              </div>
-            </div>
-
-            <!-- Custom Play/Pause Overlay Button -->
-            <button
-              id="video-play-btn"
-              type="button"
-              class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 text-white text-4xl transition-all cursor-pointer z-10"
-              aria-label="Play video"
-            >
-              <div class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-l2 group-hover:scale-110 transition-transform">
-                ▶
-              </div>
+            <button id="video-fit-btn" type="button" class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] shadow-xs transition-all">
+              Fit (100% View)
             </button>
           </div>
-
-          <!-- Video Playback & Seek Bar -->
-          <div class="flex items-center gap-3 p-3 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
-            <button id="ctrl-play-pause" type="button" class="p-2 rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] transition-colors" aria-label="Play/Pause">
-              ▶
-            </button>
-            <input
-              id="ctrl-seekbar"
-              type="range"
-              min="0"
-              max="100"
-              value="0"
-              step="0.1"
-              class="flex-1 accent-[var(--color-link)] cursor-pointer"
-            />
-            <span id="ctrl-time-display" class="text-xs font-mono text-[var(--color-body)] min-w-[75px] text-right">
-              00:00 / 00:00
-            </span>
-          </div>
-
-          <!-- Video Options Bar: Safe Zones & Positioning -->
-          <div class="grid grid-cols-2 gap-3 p-3 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-xs">
-            <div class="flex flex-col gap-1">
-              <span class="font-medium text-[var(--color-body)]">{t(lang, 'editor.safezones')}</span>
-              <select id="safezone-select" class="p-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] text-xs">
-                <option value="none">None (Full Canvas)</option>
-                <option value="tiktok">TikTok / Shorts Safe Zone</option>
-                <option value="reels">Instagram Reels Safe Zone</option>
-              </select>
-            </div>
-            <div class="flex flex-col gap-1">
-              <span class="font-medium text-[var(--color-body)]">{t(lang, 'editor.position')}</span>
-              <select id="position-select" class="p-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] text-xs">
-                <option value="bottom">Bottom (80%) - Standard</option>
-                <option value="center">Center - High Focus</option>
-                <option value="top">Top (20%) - Title/Hook</option>
-              </select>
-            </div>
-          </div>
         </div>
 
-        <!-- Right Column: Style Presets, Competitor Font Suite, Timing Sync & Cues Timeline -->
-        <div class="lg:col-span-5 flex flex-col gap-5">
+        <!-- Video Canvas Container -->
+        <div id="video-preview-wrapper" class="relative w-full max-h-[500px] aspect-[16/9] mx-auto bg-black rounded-2xl overflow-hidden shadow-l3 border border-[var(--color-hairline)] flex items-center justify-center group select-none transition-all duration-300">
           
-          <!-- ─── 1. STYLE PRESETS & FONT SUITE (Competitor Feature) ─── -->
-          <div class="flex flex-col gap-3 p-4 rounded-2xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
-            
-            <div class="flex items-center justify-between pb-2 border-b border-[var(--color-hairline)]">
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">{t(lang, 'styles.heading')}</span>
-                <span class="px-1.5 py-0.5 text-[10px] font-bold rounded bg-[var(--color-link-bg-soft)] text-[var(--color-link)] uppercase">Pro Typography</span>
-              </div>
-              <span class="text-[11px] text-[var(--color-mute)] font-medium">Click to apply</span>
+          <!-- Native Video Element -->
+          <video
+            id="studio-video"
+            class="w-full h-full object-contain max-h-[500px] block"
+            playsinline
+            preload="auto"
+            crossorigin="anonymous"
+          ></video>
+
+          <!-- Canvas for subtitle rendering and video export -->
+          <canvas id="studio-burn-canvas" class="hidden"></canvas>
+
+          <!-- Social Media Safe Zone Overlays -->
+          <div id="safe-zone-tiktok" class="hidden absolute inset-0 pointer-events-none border-2 border-dashed border-red-400/40 m-4 flex flex-col justify-between p-3 z-10">
+            <div class="text-[10px] font-mono text-red-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">TikTok Safe Top</div>
+            <div class="text-[10px] font-mono text-red-300/80 bg-black/60 px-1.5 py-0.5 rounded self-end">TikTok UI</div>
+            <div class="text-[10px] font-mono text-red-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">Caption Bounds</div>
+          </div>
+
+          <div id="safe-zone-reels" class="hidden absolute inset-0 pointer-events-none border-2 border-dashed border-purple-400/40 m-4 flex flex-col justify-between p-3 z-10">
+            <div class="text-[10px] font-mono text-purple-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">Reels Top Safe</div>
+            <div class="text-[10px] font-mono text-purple-300/80 bg-black/60 px-1.5 py-0.5 rounded self-end">Reels Icons</div>
+            <div class="text-[10px] font-mono text-purple-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">Audio Label Safe</div>
+          </div>
+
+          <!-- Live Subtitle Overlay Layer with Dynamic Styles -->
+          <div id="subtitle-overlay" class="absolute inset-x-0 bottom-16 flex flex-col items-center justify-center p-4 pointer-events-none z-10 text-center transition-all">
+            <div id="subtitle-render-box" class="sub-style-hormozi font-extrabold text-2xl tracking-tight transition-all duration-75 inline-block text-center max-w-[90%]">
+              <span class="inline-block mx-1">AutoCaption</span>
+              <span class="inline-block mx-1 word-active">Generator</span>
             </div>
-            
-            <!-- Quick Preset Grid -->
-            <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
-              {stylePresets.map(preset => (
-                <button
-                  type="button"
-                  class="style-preset-btn flex flex-col items-center justify-center p-2.5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas)] hover:border-[var(--color-link)] hover:shadow-l1 transition-all text-center gap-1 group relative"
-                  data-preset={preset.id}
-                  data-font={preset.font}
-                  data-color={preset.color}
-                  data-highlight={preset.highlight}
-                  data-stroke={preset.stroke}
-                  data-bg={preset.bg}
-                  data-transform={preset.transform}
-                  title={preset.desc}
+          </div>
+
+          <!-- Custom Play/Pause Overlay Button -->
+          <button
+            id="video-play-btn"
+            type="button"
+            class="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/20 text-white text-4xl transition-all cursor-pointer z-10"
+            aria-label="Play video"
+          >
+            <div class="w-16 h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-l2 group-hover:scale-110 transition-transform">
+              ▶
+            </div>
+          </button>
+        </div>
+
+        <!-- Video Playback & Seek Bar -->
+        <div class="flex items-center gap-3 p-3 rounded-2xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
+          <button id="ctrl-play-pause" type="button" class="p-2 rounded-xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] transition-colors" aria-label="Play/Pause">
+            ▶
+          </button>
+          <input
+            id="ctrl-seekbar"
+            type="range"
+            min="0"
+            max="100"
+            value="0"
+            step="0.1"
+            class="flex-1 accent-[var(--color-link)] cursor-pointer"
+          />
+          <span id="ctrl-time-display" class="text-xs font-mono text-[var(--color-body)] min-w-[75px] text-right">
+            00:00 / 00:00
+          </span>
+        </div>
+
+        <!-- Video Position & Safe Zone Settings -->
+        <div class="grid grid-cols-2 gap-3 p-3 rounded-2xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-xs">
+          <div class="flex flex-col gap-1">
+            <span class="font-medium text-[var(--color-body)]">Social Safe Zones:</span>
+            <select id="safezone-select" class="p-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] text-xs">
+              <option value="none">None (Full View)</option>
+              <option value="tiktok">TikTok / Shorts Overlay</option>
+              <option value="reels">Instagram Reels Overlay</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="font-medium text-[var(--color-body)]">Caption Position:</span>
+            <select id="position-select" class="p-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] text-xs">
+              <option value="bottom">Bottom (80%) - Standard</option>
+              <option value="center">Center - High Focus</option>
+              <option value="top">Top (20%) - Title Hook</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Style Presets, Typography, Timing Sync & Subtitles Timeline -->
+      <div class="lg:col-span-5 flex flex-col gap-5">
+        
+        <!-- Style Presets Grid -->
+        <div class="flex flex-col gap-3 p-4 rounded-2xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
+          <div class="flex items-center justify-between pb-2 border-b border-[var(--color-hairline)]">
+            <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">Trending Styles</span>
+            <span class="text-[11px] text-[var(--color-mute)] font-medium">Click to apply</span>
+          </div>
+          
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+            {stylePresets.map(preset => (
+              <button
+                type="button"
+                class="style-preset-btn flex flex-col items-center justify-center p-2.5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas)] hover:border-[var(--color-link)] hover:shadow-xs transition-all text-center gap-1 group relative"
+                data-preset={preset.id}
+                data-font={preset.font}
+                data-color={preset.color}
+                data-highlight={preset.highlight}
+                data-stroke={preset.stroke}
+                data-bg={preset.bg}
+                data-transform={preset.transform}
+                title={preset.desc}
+              >
+                <span class="text-lg group-hover:scale-110 transition-transform">{preset.icon}</span>
+                <span class="text-[11px] font-bold text-[var(--color-ink)] leading-tight">{t(lang, preset.nameKey as any)}</span>
+              </button>
+            ))}
+          </div>
+
+          <!-- Typography Customizer Accordion -->
+          <details id="custom-font-details" class="group pt-2 border-t border-[var(--color-hairline)]">
+            <summary class="flex items-center justify-between cursor-pointer list-none text-xs font-bold text-[var(--color-ink)] hover:text-[var(--color-link)] transition-colors py-1">
+              <span class="flex items-center gap-1.5">
+                <span>🎨</span>
+                <span>Customize Fonts & Colors</span>
+              </span>
+              <span class="text-[10px] text-[var(--color-mute)] group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+
+            <div class="flex flex-col gap-3 pt-3">
+              <!-- Font Family -->
+              <div class="flex flex-col gap-1">
+                <label for="font-family-select" class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider flex items-center justify-between">
+                  <span>Font Family:</span>
+                  <span id="current-font-badge" class="text-[10px] font-mono text-[var(--color-link)] font-bold">Outfit</span>
+                </label>
+                <select
+                  id="font-family-select"
+                  class="w-full p-2 text-xs font-semibold rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] focus:outline-none focus:border-[var(--color-link)] cursor-pointer shadow-xs transition-all"
                 >
-                  <span class="text-lg group-hover:scale-110 transition-transform">{preset.icon}</span>
-                  <span class="text-[11px] font-bold text-[var(--color-ink)] leading-tight">{t(lang, preset.nameKey as any)}</span>
-                </button>
-              ))}
-            </div>
+                  {fontFamilies.map(f => (
+                    <option value={f.value}>{f.name} — {f.category}</option>
+                  ))}
+                </select>
+              </div>
 
-            <!-- Custom Font & Typography Controls Accordion -->
-            <details id="custom-font-details" class="group pt-2 border-t border-[var(--color-hairline)]">
-              <summary class="flex items-center justify-between cursor-pointer list-none text-xs font-bold text-[var(--color-ink)] hover:text-[var(--color-link)] transition-colors py-1">
-                <span class="flex items-center gap-1.5">
-                  <span>🎨</span>
-                  <span>Customize Fonts, Colors & Outlines</span>
-                </span>
-                <span class="text-[10px] text-[var(--color-mute)] group-open:rotate-180 transition-transform">▼</span>
-              </summary>
+              <!-- Font Size -->
+              <div class="flex flex-col gap-1">
+                <div class="flex items-center justify-between text-[11px]">
+                  <span class="font-semibold text-[var(--color-mute)] uppercase tracking-wider">Font Size:</span>
+                  <span id="font-size-val" class="font-bold font-mono text-[var(--color-ink)]">28px</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input
+                    id="font-size-slider"
+                    type="range"
+                    min="18"
+                    max="54"
+                    value="28"
+                    class="flex-1 accent-[var(--color-link)] cursor-pointer"
+                  />
+                  <div class="flex items-center gap-1">
+                    <button type="button" class="quick-size-btn px-2 py-0.5 text-[10px] font-bold rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)]" data-size="22">S</button>
+                    <button type="button" class="quick-size-btn px-2 py-0.5 text-[10px] font-bold rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)]" data-size="30">M</button>
+                    <button type="button" class="quick-size-btn px-2 py-0.5 text-[10px] font-bold rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)]" data-size="38">L</button>
+                  </div>
+                </div>
+              </div>
 
-              <div class="flex flex-col gap-3 pt-3">
-                <!-- 1. Font Family Selector (Competitor Feature) -->
+              <!-- Colors -->
+              <div class="grid grid-cols-2 gap-3">
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">Base Text:</label>
+                  <div class="flex items-center gap-2">
+                    <input id="base-color-picker" type="color" value="#ffffff" class="w-7 h-7 rounded-lg border border-[var(--color-hairline)] cursor-pointer p-0 bg-transparent" />
+                    <div class="flex items-center gap-1">
+                      <button type="button" class="quick-base-color w-4 h-4 rounded-full bg-white border border-zinc-400 shadow-xs" data-color="#ffffff" title="White"></button>
+                      <button type="button" class="quick-base-color w-4 h-4 rounded-full bg-yellow-400 shadow-xs" data-color="#facc15" title="Yellow"></button>
+                      <button type="button" class="quick-base-color w-4 h-4 rounded-full bg-zinc-900 shadow-xs" data-color="#18181b" title="Dark"></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">Active Highlight:</label>
+                  <div class="flex items-center gap-2">
+                    <input id="highlight-color-picker" type="color" value="#facc15" class="w-7 h-7 rounded-lg border border-[var(--color-hairline)] cursor-pointer p-0 bg-transparent" />
+                    <div class="flex items-center gap-1">
+                      <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-yellow-400 shadow-xs" data-color="#facc15" title="Yellow"></button>
+                      <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-cyan-400 shadow-xs" data-color="#38bdf8" title="Cyan"></button>
+                      <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-pink-500 shadow-xs" data-color="#ff0080" title="Pink"></button>
+                      <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-emerald-400 shadow-xs" data-color="#4ade80" title="Green"></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Stroke & Backdrop Box -->
+              <div class="grid grid-cols-2 gap-3">
                 <div class="flex flex-col gap-1">
-                  <label for="font-family-select" class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider flex items-center justify-between">
-                    <span>{t(lang, 'editor.fontFamily')}</span>
-                    <span id="current-font-badge" class="text-[10px] font-mono text-[var(--color-link)] font-bold">Outfit</span>
-                  </label>
-                  <select
-                    id="font-family-select"
-                    class="w-full p-2 text-xs font-semibold rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] focus:outline-none focus:border-[var(--color-link)] cursor-pointer shadow-xs transition-all"
-                  >
-                    {fontFamilies.map(f => (
-                      <option value={f.value}>{f.name} — {f.category}</option>
-                    ))}
+                  <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">Outline Stroke:</label>
+                  <select id="stroke-width-select" class="p-1.5 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]">
+                    <option value="0">None (0px)</option>
+                    <option value="2">Thin (2px)</option>
+                    <option value="4">Bold (4px)</option>
+                    <option value="6">Thick (6px)</option>
                   </select>
                 </div>
 
-                <!-- 2. Font Size Slider & Quick Buttons -->
                 <div class="flex flex-col gap-1">
-                  <div class="flex items-center justify-between text-[11px]">
-                    <span class="font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.fontSize')}</span>
-                    <span id="font-size-val" class="font-bold font-mono text-[var(--color-ink)]">28px</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <input
-                      id="font-size-slider"
-                      type="range"
-                      min="18"
-                      max="54"
-                      value="28"
-                      class="flex-1 accent-[var(--color-link)] cursor-pointer"
-                    />
-                    <div class="flex items-center gap-1">
-                      <button type="button" class="quick-size-btn px-2 py-0.5 text-[10px] font-bold rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)]" data-size="22">S</button>
-                      <button type="button" class="quick-size-btn px-2 py-0.5 text-[10px] font-bold rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)]" data-size="30">M</button>
-                      <button type="button" class="quick-size-btn px-2 py-0.5 text-[10px] font-bold rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)]" data-size="38">L</button>
-                      <button type="button" class="quick-size-btn px-2 py-0.5 text-[10px] font-bold rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)]" data-size="46">XL</button>
-                    </div>
-                  </div>
+                  <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">Backdrop Box:</label>
+                  <select id="backdrop-box-select" class="p-1.5 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]">
+                    <option value="none">None (Transparent)</option>
+                    <option value="frosted">Frosted Dark Pill</option>
+                    <option value="solid-black">Solid Black Box</option>
+                    <option value="yellow-box">Yellow Highlight Box</option>
+                  </select>
                 </div>
-
-                <!-- 3. Color Pickers (Base Color & Highlight Word Color) -->
-                <div class="grid grid-cols-2 gap-3">
-                  <!-- Base Text Color -->
-                  <div class="flex flex-col gap-1.5">
-                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.textColor')}</label>
-                    <div class="flex items-center gap-2">
-                      <input id="base-color-picker" type="color" value="#ffffff" class="w-7 h-7 rounded-lg border border-[var(--color-hairline)] cursor-pointer p-0 bg-transparent" />
-                      <div class="flex items-center gap-1">
-                        <button type="button" class="quick-base-color w-4 h-4 rounded-full bg-white border border-zinc-400 shadow-xs" data-color="#ffffff" title="White"></button>
-                        <button type="button" class="quick-base-color w-4 h-4 rounded-full bg-yellow-400 shadow-xs" data-color="#facc15" title="Yellow"></button>
-                        <button type="button" class="quick-base-color w-4 h-4 rounded-full bg-cyan-400 shadow-xs" data-color="#38bdf8" title="Cyan"></button>
-                        <button type="button" class="quick-base-color w-4 h-4 rounded-full bg-zinc-900 shadow-xs" data-color="#18181b" title="Dark"></button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Active Word Highlight Color -->
-                  <div class="flex flex-col gap-1.5">
-                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.highlightColor')}</label>
-                    <div class="flex items-center gap-2">
-                      <input id="highlight-color-picker" type="color" value="#facc15" class="w-7 h-7 rounded-lg border border-[var(--color-hairline)] cursor-pointer p-0 bg-transparent" />
-                      <div class="flex items-center gap-1">
-                        <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-yellow-400 shadow-xs" data-color="#facc15" title="Hormozi Yellow"></button>
-                        <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-cyan-400 shadow-xs" data-color="#38bdf8" title="Beast Cyan"></button>
-                        <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-pink-500 shadow-xs" data-color="#ff0080" title="Neon Pink"></button>
-                        <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-emerald-400 shadow-xs" data-color="#4ade80" title="Lime Green"></button>
-                        <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-rose-500 shadow-xs" data-color="#ff0055" title="Punch Red"></button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 4. Outline Stroke & Backdrop Box -->
-                <div class="grid grid-cols-2 gap-3">
-                  <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.strokeWidth')}</label>
-                    <select id="stroke-width-select" class="p-1.5 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]">
-                      <option value="0">None (0px)</option>
-                      <option value="2">Thin (2px Stroke)</option>
-                      <option value="4">Bold (4px Stroke)</option>
-                      <option value="6">Thick (6px Beast)</option>
-                    </select>
-                  </div>
-
-                  <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.bgBox')}</label>
-                    <select id="backdrop-box-select" class="p-1.5 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]">
-                      <option value="none">None (Transparent)</option>
-                      <option value="frosted">Frosted Glass Dark</option>
-                      <option value="solid-black">Solid Black Box</option>
-                      <option value="yellow-box">Yellow Highlight Box</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- 5. Text Transform Case & Word Animation -->
-                <div class="grid grid-cols-2 gap-3">
-                  <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.textCase')}</label>
-                    <select id="text-case-select" class="p-1.5 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]">
-                      <option value="uppercase">UPPERCASE (Viral)</option>
-                      <option value="none">Normal Case</option>
-                      <option value="capitalize">Capitalize Words</option>
-                    </select>
-                  </div>
-
-                  <div class="flex flex-col gap-1">
-                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">Word Animation:</label>
-                    <select id="anim-mode-select" class="p-1.5 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]">
-                      <option value="bounce">Word Bounce Pop</option>
-                      <option value="karaoke">Karaoke Wave</option>
-                      <option value="static">Static Highlight</option>
-                    </select>
-                  </div>
-                </div>
-
               </div>
-            </details>
 
-          </div>
-
-          <!-- ─── 2. MILLISECOND PRECISION TIMING SYNC ─── -->
-          <div class="flex flex-col gap-3 p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">{t(lang, 'sync.heading')}</span>
-              <span id="sync-offset-display" class="text-xs font-mono font-bold text-[var(--color-link)]">+0.00s</span>
-            </div>
-            <p class="text-[11px] text-[var(--color-mute)] leading-relaxed">{t(lang, 'sync.desc')}</p>
-
-            <div class="flex items-center gap-2">
-              <button id="sync-minus-btn" type="button" class="px-3 py-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-xs font-bold hover:bg-[var(--color-canvas-soft-2)]">
-                -0.2s
-              </button>
-              <input
-                id="sync-offset-slider"
-                type="range"
-                min="-5"
-                max="5"
-                step="0.05"
-                value="0"
-                class="flex-1 accent-[var(--color-link)] cursor-pointer"
-              />
-              <button id="sync-plus-btn" type="button" class="px-3 py-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-xs font-bold hover:bg-[var(--color-canvas-soft-2)]">
-                +0.2s
-              </button>
-              <button id="sync-reset-btn" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]">
-                Reset
-              </button>
-            </div>
-          </div>
-
-          <!-- ─── 3. SUBTITLE CUES TIMELINE & EDITOR ─── -->
-          <div class="flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">Subtitle Cues Timeline</span>
-                <span id="cue-count-badge" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-[var(--color-canvas-soft-2)] text-[var(--color-ink)]">0 cues</span>
+              <!-- Letter Case -->
+              <div class="flex flex-col gap-1">
+                <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">Letter Case:</label>
+                <select id="text-case-select" class="p-1.5 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]">
+                  <option value="uppercase">UPPERCASE (Viral)</option>
+                  <option value="none">Normal Case</option>
+                  <option value="capitalize">Capitalize Words</option>
+                </select>
               </div>
-              <button id="add-cue-btn" type="button" class="text-xs font-semibold text-[var(--color-link)] hover:underline">
-                + Add Cue
-              </button>
-            </div>
 
-            <!-- Scrollable Cues List -->
-            <div id="cues-container" class="flex flex-col gap-2 max-h-[220px] overflow-y-auto pr-1">
-              <!-- Dynamically populated -->
             </div>
+          </details>
+        </div>
+
+        <!-- Millisecond Precision Timing Sync -->
+        <div class="flex flex-col gap-3 p-4 rounded-2xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">Timing Sync & Drift Fix</span>
+            <span id="sync-offset-display" class="text-xs font-mono font-bold text-[var(--color-link)]">+0.00s</span>
           </div>
 
-          <!-- ─── 4. EXPORT & DOWNLOAD ACTIONS ─── -->
-          <div class="flex flex-col gap-3 pt-2 border-t border-[var(--color-hairline)]">
-            <button
-              id="export-burned-video-btn"
-              type="button"
-              class="w-full py-3.5 px-6 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] font-bold text-sm hover:opacity-90 transition-all shadow-l2 flex items-center justify-center gap-2"
-            >
-              <span>🎬</span>
-              <span>Export High-Res MP4 (Burned Subtitles)</span>
+          <div class="flex items-center gap-2">
+            <button id="sync-minus-btn" type="button" class="px-3 py-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-xs font-bold hover:bg-[var(--color-canvas-soft-2)]">
+              -0.2s
             </button>
+            <input
+              id="sync-offset-slider"
+              type="range"
+              min="-5"
+              max="5"
+              step="0.05"
+              value="0"
+              class="flex-1 accent-[var(--color-link)] cursor-pointer"
+            />
+            <button id="sync-plus-btn" type="button" class="px-3 py-1.5 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-xs font-bold hover:bg-[var(--color-canvas-soft-2)]">
+              +0.2s
+            </button>
+            <button id="sync-reset-btn" type="button" class="px-2.5 py-1.5 rounded-lg text-xs font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)]">
+              Reset
+            </button>
+          </div>
+        </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              <button id="export-srt-btn" type="button" class="p-2 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
-                ⬇️ Download .SRT
-              </button>
-              <button id="export-vtt-btn" type="button" class="p-2 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
-                ⬇️ Download .VTT
-              </button>
-              <button id="export-ass-btn" type="button" class="p-2 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
-                ⬇️ Download .ASS
-              </button>
-              <button id="export-copy-btn" type="button" class="p-2 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
-                📋 Copy Text
-              </button>
+        <!-- Subtitle Cues Timeline & Editor -->
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">Subtitle Cues Timeline</span>
+              <span id="cue-count-badge" class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-[var(--color-canvas-soft-2)] text-[var(--color-ink)]">4 cues</span>
             </div>
+            <button id="add-cue-btn" type="button" class="text-xs font-semibold text-[var(--color-link)] hover:underline">
+              + Add Cue
+            </button>
           </div>
 
+          <!-- Scrollable Cues List -->
+          <div id="cues-container" class="flex flex-col gap-2 max-h-[220px] overflow-y-auto pr-1">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Export & Download Actions -->
+        <div class="flex flex-col gap-3 pt-2 border-t border-[var(--color-hairline)]">
+          <button
+            id="export-burned-video-btn"
+            type="button"
+            class="w-full py-3.5 px-6 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] font-bold text-sm hover:opacity-90 transition-all shadow-l2 flex items-center justify-center gap-2"
+          >
+            <span>🎬</span>
+            <span>Export High-Res MP4 (Burned Subtitles)</span>
+          </button>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <button id="export-srt-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+              ⬇️ .SRT
+            </button>
+            <button id="export-vtt-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+              ⬇️ .VTT
+            </button>
+            <button id="export-ass-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+              ⬇️ .ASS
+            </button>
+            <button id="export-copy-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+              📋 Copy
+            </button>
+          </div>
         </div>
 
       </div>
@@ -705,6 +532,39 @@ const fontFamilies = [
     </div>
 
   </div>
+
+  <!-- ─── 3. FEEDBACK MODAL ─── -->
+  <dialog id="feedback-modal" class="p-0 rounded-3xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] shadow-2xl backdrop:bg-black/50 backdrop:backdrop-blur-sm max-w-md w-full">
+    <div class="p-6 flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">💬</span>
+          <h3 class="text-base font-bold text-[var(--color-ink)]">Share Feedback</h3>
+        </div>
+        <button id="close-feedback-modal-btn" type="button" class="text-[var(--color-mute)] hover:text-[var(--color-ink)] text-lg">✕</button>
+      </div>
+      <p class="text-xs text-[var(--color-body)] leading-relaxed">
+        Help us make FreeAutoCaption even better! Tell us what features or subtitle styles you'd love to see.
+      </p>
+      <textarea id="feedback-text" rows="4" placeholder="Your suggestions, feedback, or style requests..." class="w-full p-3 rounded-2xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-sm text-[var(--color-ink)] focus:outline-none focus:border-[var(--color-link)]"></textarea>
+      <button id="submit-feedback-btn" type="button" class="w-full py-2.5 rounded-full bg-[var(--color-ink)] text-[var(--color-on-primary)] font-semibold text-xs hover:opacity-90 transition-all">
+        Send Feedback
+      </button>
+    </div>
+  </dialog>
+
+  <!-- ─── 4. FLOATING CHAT / FEEDBACK BUBBLE (Bottom Right matching screenshot) ─── -->
+  <button
+    id="floating-chat-btn"
+    type="button"
+    class="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-[#0070f3] hover:bg-[#0060df] text-white flex items-center justify-center shadow-lg hover:scale-105 transition-all focus:outline-none"
+    aria-label="Feedback and help"
+    title="Have feedback or need help?"
+  >
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  </button>
 
 </div>
 
@@ -743,7 +603,7 @@ const fontFamilies = [
     toastIcon.textContent = type === 'success' ? '✓' : type === 'warning' ? '⚠️' : 'ℹ️';
     toastMsg.textContent = msg;
 
-    toast.className = 'fixed top-6 right-6 z-50 max-w-md p-4 rounded-xl shadow-l3 border transition-all flex items-center gap-3 ' +
+    toast.className = 'fixed top-6 right-6 z-50 max-w-md p-4 rounded-2xl shadow-2xl border transition-all flex items-center gap-3 ' +
       (type === 'success' ? 'bg-emerald-950/90 text-emerald-200 border-emerald-700 backdrop-blur-md' :
        type === 'warning' ? 'bg-amber-950/90 text-amber-200 border-amber-700 backdrop-blur-md' :
        'bg-[var(--color-canvas)] text-[var(--color-ink)] border-[var(--color-hairline)] backdrop-blur-md');
@@ -762,57 +622,31 @@ const fontFamilies = [
     { id: 4, start: 8.1, end: 11.5, text: "Boost your TikTok and Shorts retention by over 80%." }
   ];
 
-  // Tab switching logic
-  const tabBtns = document.querySelectorAll('.studio-tab-btn');
-  const panels = {
-    'burn': document.getElementById('panel-burn'),
-    'audio': document.getElementById('panel-audio'),
-    'script': document.getElementById('panel-script'),
-    'editor': document.getElementById('panel-editor'),
-  };
+  const uploadView = document.getElementById('studio-upload-view');
+  const editorView = document.getElementById('studio-editor-view');
+  const studioVideo = document.getElementById('studio-video') as HTMLVideoElement;
+  const currentFileBadge = document.getElementById('current-file-badge');
 
-  function switchTab(targetTab: 'burn' | 'audio' | 'script' | 'editor') {
-    tabBtns.forEach(btn => {
-      const isSelected = btn.id === `tab-btn-${targetTab}`;
-      btn.setAttribute('aria-selected', String(isSelected));
-      if (isSelected) {
-        btn.classList.add('border-[var(--color-ink)]', 'text-[var(--color-ink)]', 'font-semibold');
-        btn.classList.remove('border-transparent', 'text-[var(--color-mute)]', 'font-medium');
-      } else {
-        btn.classList.remove('border-[var(--color-ink)]', 'text-[var(--color-ink)]', 'font-semibold');
-        btn.classList.add('border-transparent', 'text-[var(--color-mute)]', 'font-medium');
-      }
-    });
+  function showEditor() {
+    uploadView?.classList.add('hidden');
+    editorView?.classList.remove('hidden');
+    editorView?.classList.add('flex');
+    renderCuesList();
+    applyTypographyStyles();
+    // Scroll smoothly to editor if needed
+    editorView?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
-    Object.entries(panels).forEach(([key, panel]) => {
-      if (panel) {
-        if (key === targetTab) {
-          panel.classList.remove('hidden');
-          panel.classList.add('flex');
-        } else {
-          panel.classList.add('hidden');
-          panel.classList.remove('flex');
-        }
-      }
-    });
-
-    if (targetTab === 'editor') {
-      renderCuesList();
-      applyTypographyStyles();
+  function showUpload() {
+    editorView?.classList.add('hidden');
+    editorView?.classList.remove('flex');
+    uploadView?.classList.remove('hidden');
+    if (studioVideo) {
+      studioVideo.pause();
     }
   }
 
-  document.getElementById('tab-btn-burn')?.addEventListener('click', () => switchTab('burn'));
-  document.getElementById('tab-btn-audio')?.addEventListener('click', () => switchTab('audio'));
-  document.getElementById('tab-btn-script')?.addEventListener('click', () => switchTab('script'));
-  document.getElementById('tab-btn-editor')?.addEventListener('click', () => switchTab('editor'));
-
-  // Video & Subtitle Burner Handlers
-  const burnVideoInput = document.getElementById('burn-video-input') as HTMLInputElement;
-  const burnSubInput = document.getElementById('burn-sub-input') as HTMLInputElement;
-  const burnVideoName = document.getElementById('burn-video-name');
-  const burnSubName = document.getElementById('burn-sub-name');
-  const studioVideo = document.getElementById('studio-video') as HTMLVideoElement;
+  document.getElementById('back-to-upload-btn')?.addEventListener('click', showUpload);
 
   function loadVideoToPlayer(file: File) {
     activeVideoFile = file;
@@ -820,66 +654,80 @@ const fontFamilies = [
     videoBlobUrl = URL.createObjectURL(file);
     studioVideo.src = videoBlobUrl;
     studioVideo.load();
-    if (burnVideoName) burnVideoName.textContent = `✓ ${file.name}`;
+    if (currentFileBadge) currentFileBadge.textContent = `✓ ${file.name}`;
   }
 
-  burnVideoInput?.addEventListener('change', (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) loadVideoToPlayer(file);
-  });
+  // Dropzone handling
+  const heroDropzone = document.getElementById('hero-dropzone');
+  const heroMediaInput = document.getElementById('hero-media-input') as HTMLInputElement;
+  const replaceFileInput = document.getElementById('studio-replace-file-input') as HTMLInputElement;
+  const transcribeLoadingOverlay = document.getElementById('transcribe-loading-overlay');
+  const transcribeStatusText = document.getElementById('transcribe-status-text');
 
-  burnSubInput?.addEventListener('change', async (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) {
+  async function handleIncomingFile(file: File) {
+    if (!file) return;
+
+    if (file.type.startsWith('video/') || file.name.match(/\.(mp4|mov|webm|mkv|avi|m4v)$/i)) {
+      loadVideoToPlayer(file);
+      if (currentCues.length === 0) {
+        currentCues = [...defaultDemoCues];
+        originalCues = [...defaultDemoCues];
+      }
+      showEditor();
+      showToast(`✓ Video loaded: ${file.name}`, 'success');
+      // Trigger transcription automatically if video audio present
+      transcribeMediaFile(file);
+    } else if (file.type.startsWith('audio/') || file.name.match(/\.(mp3|wav|m4a|aac|flac|ogg)$/i)) {
+      if (currentCues.length === 0) {
+        currentCues = [...defaultDemoCues];
+        originalCues = [...defaultDemoCues];
+      }
+      showEditor();
+      transcribeMediaFile(file);
+    } else if (file.name.match(/\.(srt|vtt|ass|ssa|sub|json|txt)$/i)) {
       const text = await file.text();
       const cues = parseSubtitleText(text, file.name);
       if (cues.length > 0) {
         originalCues = [...cues];
         currentCues = [...cues];
-        if (burnSubName) burnSubName.textContent = `✓ ${file.name} (${cues.length} cues)`;
-        showToast(`✓ Loaded ${cues.length} cues from ${file.name}`, 'success');
+        showEditor();
+        showToast(`✓ Loaded ${cues.length} subtitle cues from ${file.name}`, 'success');
       }
     }
+  }
+
+  heroMediaInput?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) handleIncomingFile(file);
   });
 
-  document.getElementById('burn-start-btn')?.addEventListener('click', () => {
-    if (currentCues.length === 0) {
-      currentCues = [...defaultDemoCues];
-      originalCues = [...defaultDemoCues];
-    }
-    switchTab('editor');
+  replaceFileInput?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) handleIncomingFile(file);
   });
 
-  document.getElementById('burn-auto-whisper-btn')?.addEventListener('click', () => {
-    if (activeVideoFile) {
-      transcribeMediaFile(activeVideoFile);
-    } else {
-      burnVideoInput?.click();
-    }
+  // Drag & drop on Hero Dropzone
+  heroDropzone?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    heroDropzone.classList.add('border-sky-500', 'bg-sky-50/60');
   });
 
-  document.getElementById('editor-rewhisper-btn')?.addEventListener('click', () => {
-    if (activeVideoFile) {
-      transcribeMediaFile(activeVideoFile);
-    } else {
-      mediaFileInput?.click();
-    }
+  heroDropzone?.addEventListener('dragleave', () => {
+    heroDropzone.classList.remove('border-sky-500', 'bg-sky-50/60');
   });
 
-  // Core Cloudflare Whisper AI Audio/Video Transcriber
-  const mediaFileInput = document.getElementById('media-file-input') as HTMLInputElement;
-  const transcribeLoading = document.getElementById('transcribe-loading');
-  const transcribeStatusText = document.getElementById('transcribe-status-text');
-  const whisperLangSelect = document.getElementById('whisper-lang-select') as HTMLSelectElement;
+  heroDropzone?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    heroDropzone.classList.remove('border-sky-500', 'bg-sky-50/60');
+    const file = e.dataTransfer?.files?.[0];
+    if (file) handleIncomingFile(file);
+  });
 
+  // Whisper AI Transcriber
   async function transcribeMediaFile(file: File) {
     if (!file) return;
 
-    if (file.type.startsWith('video/') || file.name.match(/\.(mp4|mov|webm|mkv|avi|m4v)$/i)) {
-      loadVideoToPlayer(file);
-    }
-
-    transcribeLoading?.classList.remove('hidden');
+    transcribeLoadingOverlay?.classList.remove('hidden');
 
     try {
       if (transcribeStatusText) transcribeStatusText.textContent = 'Extracting audio track from media in browser...';
@@ -889,24 +737,20 @@ const fontFamilies = [
       });
 
       const { chunks } = extraction;
-      const selectedLanguage = whisperLangSelect?.value || 'auto';
       const allExtractedCues: SubtitleCue[] = [];
 
       for (let i = 0; i < chunks.length; i++) {
         const chunk = chunks[i];
         if (transcribeStatusText) {
           transcribeStatusText.textContent = chunks.length > 1
-            ? `Cloudflare Whisper AI: Transcribing part ${i + 1} of ${chunks.length} (${Math.round(chunk.startSec)}s - ${Math.round(chunk.endSec)}s)...`
-            : `Cloudflare Whisper AI: Transcribing speech with GPU acceleration...`;
+            ? `Cloudflare Whisper AI: Transcribing part ${i + 1} of ${chunks.length}…`
+            : `Cloudflare Whisper AI: Transcribing speech…`;
         }
 
         const headers: Record<string, string> = {
           'Content-Type': 'audio/wav',
           'X-Audio-Offset': String(chunk.startSec),
         };
-        if (selectedLanguage && selectedLanguage !== 'auto') {
-          headers['X-Language'] = selectedLanguage;
-        }
 
         const response = await fetch('/api/transcribe', {
           method: 'POST',
@@ -916,7 +760,7 @@ const fontFamilies = [
 
         if (!response.ok) {
           const errData = await response.json().catch(() => ({}));
-          throw new Error(errData.message || errData.error || `Whisper API failed with HTTP ${response.status}`);
+          throw new Error(errData.message || errData.error || `Whisper API HTTP ${response.status}`);
         }
 
         const data = await response.json();
@@ -929,140 +773,40 @@ const fontFamilies = [
       if (allExtractedCues.length > 0) {
         currentCues = allExtractedCues.map((c, idx) => ({ ...c, id: idx + 1 }));
         originalCues = [...currentCues];
-        showToast(`✓ Cloudflare Whisper AI successfully transcribed ${currentCues.length} subtitle cues!`, 'success');
-      } else {
-        throw new Error('No spoken words were recognized in the audio file.');
+        renderCuesList();
+        showToast(`✓ Cloudflare Whisper AI transcribed ${currentCues.length} subtitle cues!`, 'success');
       }
     } catch (err: any) {
-      console.warn('Whisper transcription notice:', err);
-      showToast(`Notice: ${err?.message || 'Could not complete AI transcription.'}`, 'warning');
+      console.warn('Whisper notice:', err);
+      showToast(`Notice: ${err?.message || 'Using demo subtitles.'}`, 'warning');
       if (currentCues.length === 0) {
         currentCues = [...defaultDemoCues];
         originalCues = [...defaultDemoCues];
+        renderCuesList();
       }
     } finally {
-      transcribeLoading?.classList.add('hidden');
-      switchTab('editor');
+      transcribeLoadingOverlay?.classList.add('hidden');
+      showEditor();
     }
   }
 
-  mediaFileInput?.addEventListener('change', async (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) transcribeMediaFile(file);
+  document.getElementById('editor-whisper-btn')?.addEventListener('click', () => {
+    if (activeVideoFile) {
+      transcribeMediaFile(activeVideoFile);
+    } else {
+      replaceFileInput?.click();
+    }
   });
 
-  // Demo audio sample buttons
+  // Sample Audio demo buttons
   document.querySelectorAll('.sample-audio-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       currentCues = [...defaultDemoCues];
       originalCues = [...defaultDemoCues];
-      showToast('✓ Loaded sample demo subtitles', 'info');
-      switchTab('editor');
+      if (currentFileBadge) currentFileBadge.textContent = '✓ demo-sample.mp4';
+      showEditor();
+      showToast('✓ Loaded sample demo video & subtitles', 'info');
     });
-  });
-
-  // Live Speech Recognition Web API Fallback
-  const liveSpeechBtn = document.getElementById('live-speech-btn');
-  let isRecording = false;
-  let recognition: any = null;
-
-  if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-
-    let startTime = 0;
-    recognition.onresult = (event: any) => {
-      const results = event.results;
-      const transcript = results[results.length - 1][0].transcript;
-      const now = (Date.now() - startTime) / 1000;
-      
-      if (results[results.length - 1].isFinal) {
-        currentCues.push({
-          id: currentCues.length + 1,
-          start: Math.max(0, now - 2.5),
-          end: now,
-          text: transcript.trim(),
-        });
-        originalCues = [...currentCues];
-        renderCuesList();
-      }
-    };
-  }
-
-  liveSpeechBtn?.addEventListener('click', () => {
-    if (!recognition) {
-      showToast('Speech recognition is not supported in this browser. Please use Chrome/Edge or upload audio directly.', 'warning');
-      return;
-    }
-    if (!isRecording) {
-      recognition.start();
-      isRecording = true;
-      liveSpeechBtn.classList.add('bg-red-600');
-      liveSpeechBtn.innerHTML = '<span>⏹️ Stop Recording</span>';
-    } else {
-      recognition.stop();
-      isRecording = false;
-      liveSpeechBtn.classList.remove('bg-red-600');
-      liveSpeechBtn.innerHTML = '<span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span><span>Record Live Mic</span>';
-      switchTab('editor');
-    }
-  });
-
-  // Script Auto-Sync Generator
-  const scriptInput = document.getElementById('script-input') as HTMLTextAreaElement;
-  const insertSampleScript = document.getElementById('insert-sample-script');
-  const wpmSlider = document.getElementById('wpm-slider') as HTMLInputElement;
-  const wplSlider = document.getElementById('wpl-slider') as HTMLInputElement;
-  const wpmDisplay = document.getElementById('wpm-display');
-  const wplDisplay = document.getElementById('wpl-display');
-
-  insertSampleScript?.addEventListener('click', () => {
-    if (scriptInput) {
-      scriptInput.value = "Hey everyone! Today I'm going to show you the fastest way to auto-generate viral subtitles for TikTok and YouTube Shorts. You don't need expensive editing tools or complex timelines. Simply upload your video, pick your favorite punchy animation style, and download in seconds!";
-    }
-  });
-
-  wpmSlider?.addEventListener('input', () => {
-    if (wpmDisplay) wpmDisplay.textContent = `${wpmSlider.value} WPM`;
-  });
-
-  wplSlider?.addEventListener('input', () => {
-    if (wplDisplay) wplDisplay.textContent = `${wplSlider.value} words (${wplSlider.value === '4' ? 'Viral' : 'Custom'})`;
-  });
-
-  document.getElementById('generate-from-script-btn')?.addEventListener('click', () => {
-    const text = scriptInput?.value.trim();
-    if (!text) {
-      showToast('Please enter or paste your script first.', 'warning');
-      return;
-    }
-
-    const words = text.split(/\s+/).filter(Boolean);
-    const wpm = parseInt(wpmSlider?.value || '145', 10);
-    const wordsPerLine = parseInt(wplSlider?.value || '4', 10);
-    const secondsPerWord = 60 / wpm;
-
-    const cues: SubtitleCue[] = [];
-    let currentTime = 0;
-
-    for (let i = 0; i < words.length; i += wordsPerLine) {
-      const chunk = words.slice(i, i + wordsPerLine).join(' ');
-      const duration = chunk.split(/\s+/).length * secondsPerWord;
-      cues.push({
-        id: cues.length + 1,
-        start: parseFloat(currentTime.toFixed(2)),
-        end: parseFloat((currentTime + duration).toFixed(2)),
-        text: chunk,
-      });
-      currentTime += duration + 0.1;
-    }
-
-    currentCues = cues;
-    originalCues = [...cues];
-    showToast(`✓ Generated ${cues.length} subtitle cues from script!`, 'success');
-    switchTab('editor');
   });
 
   // ─── TYPOGRAPHY ENGINE & LIVE WORD ANIMATION ───
@@ -1076,30 +820,24 @@ const fontFamilies = [
   const strokeWidthSelect = document.getElementById('stroke-width-select') as HTMLSelectElement;
   const backdropBoxSelect = document.getElementById('backdrop-box-select') as HTMLSelectElement;
   const textCaseSelect = document.getElementById('text-case-select') as HTMLSelectElement;
-  const animModeSelect = document.getElementById('anim-mode-select') as HTMLSelectElement;
 
   function applyTypographyStyles() {
     if (!subtitleRenderBox) return;
 
-    // Font Family
     subtitleRenderBox.style.fontFamily = `"${typoState.fontFamily}", sans-serif`;
     if (currentFontBadge) currentFontBadge.textContent = typoState.fontFamily;
     if (fontFamilySelect) fontFamilySelect.value = typoState.fontFamily;
 
-    // Font Size
     subtitleRenderBox.style.fontSize = `${typoState.fontSize}px`;
     if (fontSizeVal) fontSizeVal.textContent = `${typoState.fontSize}px`;
     if (fontSizeSlider) fontSizeSlider.value = String(typoState.fontSize);
 
-    // Text Color
     subtitleRenderBox.style.color = typoState.baseColor;
     if (baseColorPicker) baseColorPicker.value = typoState.baseColor;
 
-    // Text Transform
     subtitleRenderBox.style.textTransform = typoState.textCase as any;
     if (textCaseSelect) textCaseSelect.value = typoState.textCase;
 
-    // Stroke / Outline
     if (typoState.strokeWidth > 0) {
       subtitleRenderBox.style.webkitTextStroke = `${typoState.strokeWidth}px #000000`;
     } else {
@@ -1107,14 +845,12 @@ const fontFamilies = [
     }
     if (strokeWidthSelect) strokeWidthSelect.value = String(typoState.strokeWidth);
 
-    // Text Shadow
     if (typoState.shadow) {
       subtitleRenderBox.style.textShadow = '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 4px 12px rgba(0,0,0,0.85)';
     } else {
       subtitleRenderBox.style.textShadow = 'none';
     }
 
-    // Backdrop Box
     if (typoState.backdropBox === 'frosted') {
       subtitleRenderBox.style.background = 'rgba(0, 0, 0, 0.72)';
       subtitleRenderBox.style.backdropFilter = 'blur(12px)';
@@ -1142,12 +878,11 @@ const fontFamilies = [
     }
     if (backdropBoxSelect) backdropBoxSelect.value = typoState.backdropBox;
 
-    // Refresh current subtitle rendering
     const currentTime = studioVideo ? studioVideo.currentTime : 0;
     updateSubtitleAtTime(currentTime);
   }
 
-  // Preset Selection Event Handlers
+  // Preset Selection Handlers
   document.querySelectorAll('.style-preset-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.style-preset-btn').forEach(b => b.classList.remove('ring-2', 'ring-[var(--color-link)]', 'border-[var(--color-link)]'));
@@ -1165,23 +900,20 @@ const fontFamilies = [
       typoState.shadow = presetId !== 'minimal';
 
       applyTypographyStyles();
-      showToast(`✓ Applied ${presetId.toUpperCase()} style preset with ${typoState.fontFamily} font!`, 'success');
+      showToast(`✓ Applied ${presetId.toUpperCase()} preset with ${typoState.fontFamily} font!`, 'success');
     });
   });
 
-  // Custom Font Select
   fontFamilySelect?.addEventListener('change', () => {
     typoState.fontFamily = fontFamilySelect.value;
     applyTypographyStyles();
   });
 
-  // Font Size Slider
   fontSizeSlider?.addEventListener('input', () => {
     typoState.fontSize = parseInt(fontSizeSlider.value, 10);
     applyTypographyStyles();
   });
 
-  // Quick Font Size Buttons
   document.querySelectorAll('.quick-size-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const sz = parseInt(btn.getAttribute('data-size') || '28', 10);
@@ -1190,7 +922,6 @@ const fontFamilies = [
     });
   });
 
-  // Base Color Picker & Quick Swatches
   baseColorPicker?.addEventListener('input', () => {
     typoState.baseColor = baseColorPicker.value;
     applyTypographyStyles();
@@ -1203,7 +934,6 @@ const fontFamilies = [
     });
   });
 
-  // Highlight Color Picker & Quick Swatches
   highlightColorPicker?.addEventListener('input', () => {
     typoState.highlightColor = highlightColorPicker.value;
     applyTypographyStyles();
@@ -1216,7 +946,6 @@ const fontFamilies = [
     });
   });
 
-  // Stroke, Backdrop & Case Selects
   strokeWidthSelect?.addEventListener('change', () => {
     typoState.strokeWidth = parseInt(strokeWidthSelect.value, 10);
     applyTypographyStyles();
@@ -1229,11 +958,6 @@ const fontFamilies = [
 
   textCaseSelect?.addEventListener('change', () => {
     typoState.textCase = textCaseSelect.value;
-    applyTypographyStyles();
-  });
-
-  animModeSelect?.addEventListener('change', () => {
-    typoState.animMode = animModeSelect.value;
     applyTypographyStyles();
   });
 
@@ -1259,12 +983,10 @@ const fontFamilies = [
     const words = activeCue.text.trim().split(/\s+/).filter(Boolean);
     if (words.length === 0) return;
 
-    // Calculate which word is currently spoken based on progress through the cue
     const cueDuration = Math.max(0.1, activeCue.end - activeCue.start);
     const progress = Math.min(0.99, Math.max(0, (time - activeCue.start) / cueDuration));
     const activeWordIdx = Math.floor(progress * words.length);
 
-    // Build rich animated HTML for each word
     const wordsHtml = words.map((w, idx) => {
       const isWordActive = idx === activeWordIdx;
       let wordStyle = '';
@@ -1361,7 +1083,6 @@ const fontFamilies = [
     }
   });
 
-  // Aspect Ratio Switcher
   document.querySelectorAll('.aspect-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.aspect-btn').forEach(b => {
@@ -1376,59 +1097,18 @@ const fontFamilies = [
     });
   });
 
-  // Video Fit / Fill Toggle
   const videoFitBtn = document.getElementById('video-fit-btn');
   videoFitBtn?.addEventListener('click', () => {
     if (currentFitMode === 'contain') {
       currentFitMode = 'cover';
-      studioVideo.className = 'w-full h-full object-cover max-h-[520px] block';
+      studioVideo.className = 'w-full h-full object-cover max-h-[500px] block';
       videoFitBtn.textContent = 'Fill (Cropped)';
-      showToast('Fill Mode: Video fills container (outer edges may be cropped)', 'info');
+      showToast('Fill Mode: Video fills container', 'info');
     } else {
       currentFitMode = 'contain';
-      studioVideo.className = 'w-full h-full object-contain max-h-[520px] block';
+      studioVideo.className = 'w-full h-full object-contain max-h-[500px] block';
       videoFitBtn.textContent = 'Fit (100% View)';
-      showToast('Fit Mode: 100% full uncropped video at original quality', 'success');
-    }
-  });
-
-  // Editor Video Upload / Replace input
-  const editorVideoUploadInput = document.getElementById('editor-video-upload-input') as HTMLInputElement;
-  editorVideoUploadInput?.addEventListener('change', (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) {
-      loadVideoToPlayer(file);
-      showToast(`✓ Loaded video: ${file.name}`, 'success');
-    }
-  });
-
-  // Drag and Drop directly on Video Player Wrapper
-  const videoWrapper = document.getElementById('video-preview-wrapper');
-  videoWrapper?.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    videoWrapper.classList.add('ring-2', 'ring-[var(--color-link)]');
-  });
-  videoWrapper?.addEventListener('dragleave', () => {
-    videoWrapper.classList.remove('ring-2', 'ring-[var(--color-link)]');
-  });
-  videoWrapper?.addEventListener('drop', async (e) => {
-    e.preventDefault();
-    videoWrapper.classList.remove('ring-2', 'ring-[var(--color-link)]');
-    const file = e.dataTransfer?.files?.[0];
-    if (!file) return;
-
-    if (file.type.startsWith('video/') || file.name.match(/\.(mp4|mov|webm|mkv|m4v)$/i)) {
-      loadVideoToPlayer(file);
-      showToast(`✓ Loaded video: ${file.name}`, 'success');
-    } else if (file.name.match(/\.(srt|vtt|ass|ssa|sub|json|txt)$/i)) {
-      const text = await file.text();
-      const cues = parseSubtitleText(text, file.name);
-      if (cues.length > 0) {
-        originalCues = [...cues];
-        currentCues = [...cues];
-        renderCuesList();
-        showToast(`✓ Loaded ${cues.length} cues from ${file.name}`, 'success');
-      }
+      showToast('Fit Mode: 100% full uncropped video', 'success');
     }
   });
 
@@ -1455,7 +1135,7 @@ const fontFamilies = [
     else if (positionSelect.value === 'center') overlay.classList.add('inset-y-0');
   });
 
-  // Sync Offset & Drift Adjuster
+  // Timing Sync
   const syncOffsetSlider = document.getElementById('sync-offset-slider') as HTMLInputElement;
   const syncOffsetDisplay = document.getElementById('sync-offset-display');
   const syncResetBtn = document.getElementById('sync-reset-btn');
@@ -1478,7 +1158,7 @@ const fontFamilies = [
   syncPlusBtn?.addEventListener('click', () => applySyncOffset(parseFloat((syncOffset + 0.2).toFixed(2))));
   syncResetBtn?.addEventListener('click', () => applySyncOffset(0));
 
-  // Render Cues Timeline List
+  // Render Cues List
   function renderCuesList() {
     if (cueCountBadge) cueCountBadge.textContent = `${currentCues.length} cues`;
     if (!cuesContainer) return;
@@ -1486,19 +1166,18 @@ const fontFamilies = [
     cuesContainer.innerHTML = '';
     currentCues.forEach((cue, idx) => {
       const item = document.createElement('div');
-      item.className = 'flex items-center gap-2 p-2 rounded-lg bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-xs';
+      item.className = 'flex items-center gap-2 p-2 rounded-xl bg-[var(--color-canvas)] border border-[var(--color-hairline)] text-xs';
       item.innerHTML = `
         <span class="text-[10px] font-mono text-[var(--color-mute)] shrink-0 w-5">#${idx + 1}</span>
-        <input type="number" step="0.1" value="${cue.start}" class="cue-start-input w-14 px-1.5 py-1 text-[11px] font-mono rounded border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-center" data-idx="${idx}" />
+        <input type="number" step="0.1" value="${cue.start}" class="cue-start-input w-14 px-1.5 py-1 text-[11px] font-mono rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-center" data-idx="${idx}" />
         <span class="text-[10px] text-[var(--color-mute)]">→</span>
-        <input type="number" step="0.1" value="${cue.end}" class="cue-end-input w-14 px-1.5 py-1 text-[11px] font-mono rounded border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-center" data-idx="${idx}" />
-        <input type="text" value="${cue.text.replace(/"/g, '&quot;')}" class="cue-text-input flex-1 px-2 py-1 text-xs rounded border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] font-medium" data-idx="${idx}" />
+        <input type="number" step="0.1" value="${cue.end}" class="cue-end-input w-14 px-1.5 py-1 text-[11px] font-mono rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] text-center" data-idx="${idx}" />
+        <input type="text" value="${cue.text.replace(/"/g, '&quot;')}" class="cue-text-input flex-1 px-2 py-1 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] font-medium" data-idx="${idx}" />
         <button class="cue-del-btn text-red-500 hover:text-red-700 px-1 font-bold" data-idx="${idx}">✕</button>
       `;
       cuesContainer.appendChild(item);
     });
 
-    // Cue input events
     cuesContainer.querySelectorAll('.cue-start-input').forEach(input => {
       input.addEventListener('change', (e) => {
         const idx = parseInt((e.target as HTMLElement).getAttribute('data-idx') || '0', 10);
@@ -1530,7 +1209,6 @@ const fontFamilies = [
     });
   }
 
-  // Add new cue
   document.getElementById('add-cue-btn')?.addEventListener('click', () => {
     const last = currentCues[currentCues.length - 1];
     const start = last ? parseFloat((last.end + 0.1).toFixed(2)) : 0;
@@ -1583,10 +1261,10 @@ const fontFamilies = [
     });
   });
 
-  // ─── HIGH-FIDELITY IN-BROWSER MP4 VIDEO BURNER ───
+  // MP4 Video Burner Exporter
   document.getElementById('export-burned-video-btn')?.addEventListener('click', async () => {
     if (!studioVideo.src) {
-      showToast('Please upload a video or select an audio clip before burning.', 'warning');
+      showToast('Please upload a video before burning.', 'warning');
       return;
     }
 
@@ -1601,7 +1279,6 @@ const fontFamilies = [
       const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true }) || canvas.getContext('2d');
       if (!ctx) throw new Error('Canvas context unavailable');
 
-      // Native resolution matching uploaded video for 100% quality retention
       const nativeWidth = studioVideo.videoWidth || 1920;
       const nativeHeight = studioVideo.videoHeight || 1080;
       canvas.width = nativeWidth;
@@ -1610,11 +1287,9 @@ const fontFamilies = [
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
 
-      // Capture canvas stream at 60fps for crisp video
       const canvasStream = canvas.captureStream(60);
       const combinedTracks: MediaStreamTrack[] = [...canvasStream.getVideoTracks()];
 
-      // Capture audio from video element if present
       try {
         let audioStream: MediaStream | null = null;
         if (typeof (studioVideo as any).captureStream === 'function') {
@@ -1626,11 +1301,10 @@ const fontFamilies = [
           combinedTracks.push(...audioStream.getAudioTracks());
         }
       } catch (audioErr) {
-        console.warn('Audio stream capture notice:', audioErr);
+        console.warn('Audio capture notice:', audioErr);
       }
 
       const combinedStream = new MediaStream(combinedTracks);
-
       const mimeTypes = [
         'video/webm;codecs=vp9,opus',
         'video/webm;codecs=vp8,opus',
@@ -1642,7 +1316,7 @@ const fontFamilies = [
 
       const mediaRecorder = new MediaRecorder(combinedStream, {
         mimeType: selectedMime,
-        videoBitsPerSecond: 16_000_000, // 16 Mbps for full 1080p/4K bitrate
+        videoBitsPerSecond: 16_000_000,
         audioBitsPerSecond: 192_000,
       });
 
@@ -1683,7 +1357,6 @@ const fontFamilies = [
 
         ctx!.drawImage(studioVideo, 0, 0, canvas.width, canvas.height);
 
-        // Render current subtitle cue with custom fonts & colors
         const currentTime = studioVideo.currentTime;
         const cue = currentCues.find(c => currentTime >= c.start && currentTime <= c.end);
         if (cue) {
@@ -1693,7 +1366,6 @@ const fontFamilies = [
           ctx!.textAlign = 'center';
           ctx!.textBaseline = 'middle';
 
-          // Y position according to position setting
           let textY = canvas.height * 0.82;
           const posVal = (document.getElementById('position-select') as HTMLSelectElement)?.value || 'bottom';
           if (posVal === 'top') textY = canvas.height * 0.18;
@@ -1709,11 +1381,9 @@ const fontFamilies = [
           const progress = Math.min(0.99, Math.max(0, (currentTime - cue.start) / cueDuration));
           const activeWordIdx = Math.floor(progress * words.length);
 
-          // Measure total width
           const wordMetrics = words.map(w => ctx!.measureText(w + ' ').width);
           const totalWidth = wordMetrics.reduce((a, b) => a + b, 0);
 
-          // Draw Backdrop Box if enabled
           if (typoState.backdropBox === 'frosted' || typoState.backdropBox === 'solid-black') {
             const padX = 24;
             const padY = 14;
@@ -1734,14 +1404,12 @@ const fontFamilies = [
             ctx!.fill();
           }
 
-          // Draw word by word with active word highlight
           let currentX = textX - totalWidth / 2;
           words.forEach((word, idx) => {
             const isWordActive = idx === activeWordIdx;
             const wordW = wordMetrics[idx];
             const wordCenterX = currentX + wordW / 2;
 
-            // Draw outline stroke if active
             const strokeW = typoState.strokeWidth > 0 ? Math.max(3, typoState.strokeWidth * (baseFontSize / 28)) : (typoState.shadow ? Math.max(4, Math.round(baseFontSize * 0.16)) : 0);
             if (strokeW > 0) {
               ctx!.lineWidth = strokeW;
@@ -1749,7 +1417,6 @@ const fontFamilies = [
               ctx!.strokeText(word, wordCenterX, textY);
             }
 
-            // Fill color
             if (isWordActive) {
               ctx!.fillStyle = typoState.highlightColor;
             } else {
@@ -1772,8 +1439,7 @@ const fontFamilies = [
         if (mediaRecorder.state === 'recording') mediaRecorder.stop();
       };
     } catch (err: any) {
-      console.warn('In-browser render fallback:', err);
-      // If canvas recording fails, download .SRT subtitle file directly
+      console.warn('Render notice:', err);
       downloadFile(serializeToSRT(currentCues), 'freeautocaption-subtitles.srt', 'text/plain');
       showToast('Render complete! Your synced subtitle file has been downloaded.', 'info');
       if (exportBtn) {
@@ -1783,7 +1449,37 @@ const fontFamilies = [
     }
   });
 
-  // Initial setup with default demo cues & typography styling
+  // Feedback Modal handlers
+  const feedbackModal = document.getElementById('feedback-modal') as HTMLDialogElement;
+  const openFeedbackBtn = document.getElementById('open-feedback-modal-btn');
+  const floatingChatBtn = document.getElementById('floating-chat-btn');
+  const closeFeedbackBtn = document.getElementById('close-feedback-modal-btn');
+  const submitFeedbackBtn = document.getElementById('submit-feedback-btn');
+  const feedbackText = document.getElementById('feedback-text') as HTMLTextAreaElement;
+
+  function openFeedback() {
+    feedbackModal?.showModal();
+  }
+
+  function closeFeedback() {
+    feedbackModal?.close();
+  }
+
+  openFeedbackBtn?.addEventListener('click', openFeedback);
+  floatingChatBtn?.addEventListener('click', openFeedback);
+  closeFeedbackBtn?.addEventListener('click', closeFeedback);
+
+  submitFeedbackBtn?.addEventListener('click', () => {
+    if (feedbackText && feedbackText.value.trim().length > 0) {
+      showToast('✓ Thank you for your feedback! We appreciate your input.', 'success');
+      feedbackText.value = '';
+      closeFeedback();
+    } else {
+      showToast('Please enter your feedback first.', 'warning');
+    }
+  });
+
+  // Initial setup
   currentCues = [...defaultDemoCues];
   originalCues = [...defaultDemoCues];
   applyTypographyStyles();
