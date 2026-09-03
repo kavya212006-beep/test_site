@@ -7,12 +7,31 @@ interface Props {
 const { lang } = Astro.props;
 
 const stylePresets = [
-  { id: 'hormozi', nameKey: 'styles.hormozi', icon: '🔥', desc: 'Bold yellow pop, high-energy viral retention' },
-  { id: 'beast', nameKey: 'styles.beast', icon: '⚡', desc: 'Thick black stroke with cyan bounce' },
-  { id: 'cinematic', nameKey: 'styles.cinematic', icon: '🎬', desc: 'Frosted dark pill box for film & docs' },
-  { id: 'neon', nameKey: 'styles.neon', icon: '💜', desc: 'Cyberpunk glowing cyan & pink neon' },
-  { id: 'karaoke', nameKey: 'styles.karaoke', icon: '🎤', desc: 'Smooth progressive highlight sweep' },
-  { id: 'minimal', nameKey: 'styles.minimal', icon: '✨', desc: 'Clean modern typography' },
+  { id: 'hormozi', nameKey: 'styles.hormozi', icon: '🔥', font: 'Outfit', color: '#ffffff', highlight: '#facc15', stroke: 0, shadow: true, bg: 'none', transform: 'uppercase', desc: 'Bold yellow pop, high-energy viral retention' },
+  { id: 'beast', nameKey: 'styles.beast', icon: '⚡', font: 'Syne', color: '#ffffff', highlight: '#38bdf8', stroke: 2, shadow: true, bg: 'none', transform: 'uppercase', desc: 'Thick black stroke with cyan bounce' },
+  { id: 'cinematic', nameKey: 'styles.cinematic', icon: '🎬', font: 'Inter', color: '#ffffff', highlight: '#60a5fa', stroke: 0, shadow: false, bg: 'frosted', transform: 'none', desc: 'Frosted dark pill box for film & docs' },
+  { id: 'neon', nameKey: 'styles.neon', icon: '💜', font: 'Space Grotesk', color: '#ffffff', highlight: '#ff0080', stroke: 0, shadow: true, bg: 'none', transform: 'uppercase', desc: 'Cyberpunk glowing cyan & pink neon' },
+  { id: 'bangers', nameKey: 'styles.bangers', icon: '💥', font: 'Bangers', color: '#facc15', highlight: '#ff0055', stroke: 2, shadow: true, bg: 'none', transform: 'uppercase', desc: 'Comic action pop with heavy stroke' },
+  { id: 'marker', nameKey: 'styles.marker', icon: '✍️', font: 'Permanent Marker', color: '#ffffff', highlight: '#a855f7', stroke: 0, shadow: true, bg: 'none', transform: 'none', desc: 'Urban handwritten graffiti style' },
+  { id: 'bebas', nameKey: 'styles.bebas', icon: '🚀', font: 'Bebas Neue', color: '#ffffff', highlight: '#fb923c', stroke: 0, shadow: true, bg: 'none', transform: 'uppercase', desc: 'Tall condensed viral headline punch' },
+  { id: 'karaoke', nameKey: 'styles.karaoke', icon: '🎤', font: 'Outfit', color: 'rgba(255,255,255,0.7)', highlight: '#4ade80', stroke: 0, shadow: true, bg: 'none', transform: 'none', desc: 'Smooth progressive green highlight' },
+  { id: 'minimal', nameKey: 'styles.minimal', icon: '✨', font: 'Inter', color: '#ffffff', highlight: '#ffffff', stroke: 0, shadow: false, bg: 'none', transform: 'none', desc: 'Clean modern typography' },
+];
+
+const fontFamilies = [
+  { name: 'Outfit (Viral Standard)', value: 'Outfit', category: 'Modern Geometric Sans' },
+  { name: 'Anton (Ultra Bold Impact)', value: 'Anton', category: 'Headline Bold' },
+  { name: 'Montserrat (Heavy Black 900)', value: 'Montserrat', category: 'Bold Punch' },
+  { name: 'Bebas Neue (Tall Condensed)', value: 'Bebas Neue', category: 'Cinematic Hook' },
+  { name: 'Syne (High-Energy Punch)', value: 'Syne', category: 'Trendy Viral' },
+  { name: 'Bangers (Comic Action / Beast)', value: 'Bangers', category: 'Comic Cartoon' },
+  { name: 'Luckiest Guy (Playful Bold)', value: 'Luckiest Guy', category: 'Playful Punch' },
+  { name: 'Permanent Marker (Graffiti / Urban)', value: 'Permanent Marker', category: 'Handwritten' },
+  { name: 'Space Grotesk (Cyberpunk Neon)', value: 'Space Grotesk', category: 'Futuristic' },
+  { name: 'Cinzel (Epic Cinematic)', value: 'Cinzel', category: 'Luxury Film' },
+  { name: 'Playfair Display (Editorial Serif)', value: 'Playfair Display', category: 'Classic Luxury' },
+  { name: 'JetBrains Mono (Tech & Code)', value: 'JetBrains Mono', category: 'Monospace' },
+  { name: 'Inter (Clean Minimalist)', value: 'Inter', category: 'Neutral Sans' },
 ];
 ---
 
@@ -310,7 +329,7 @@ const stylePresets = [
 
         <!-- Left Column: Video Preview Player & Canvas -->
         <div class="lg:col-span-7 flex flex-col gap-4">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <div class="flex items-center gap-2">
               <h4 class="text-sm font-semibold text-[var(--color-ink)]">{t(lang, 'editor.heading')}</h4>
               <button id="editor-rewhisper-btn" type="button" class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-[var(--color-link-bg-soft)] text-[var(--color-link)] hover:bg-[var(--color-link)] hover:text-white transition-all">
@@ -318,27 +337,43 @@ const stylePresets = [
               </button>
             </div>
             
-            <!-- Aspect Ratio Selector -->
-            <div class="flex items-center gap-1.5 p-1 rounded-lg bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-xs">
-              <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-ink)] bg-[var(--color-canvas)] shadow-xs transition-all" data-aspect="9:16">
-                9:16 Shorts
+            <div class="flex flex-wrap items-center gap-1.5">
+              <!-- Aspect Ratio Selector -->
+              <div class="flex items-center gap-1 p-1 rounded-lg bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-xs">
+                <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-ink)] bg-[var(--color-canvas)] shadow-xs transition-all" data-aspect="original" title="Display video in original uncropped aspect ratio">
+                  🎯 Auto / Original
+                </button>
+                <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="9:16">
+                  9:16
+                </button>
+                <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="16:9">
+                  16:9
+                </button>
+                <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="1:1">
+                  1:1
+                </button>
+              </div>
+
+              <!-- Fit / Fill Toggle -->
+              <button id="video-fit-btn" type="button" class="px-2.5 py-1 text-xs font-semibold rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] shadow-xs transition-all" title="Toggle between Fit (no crop, 100% full view) and Fill">
+                Fit (100% View)
               </button>
-              <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="16:9">
-                16:9 YT
-              </button>
-              <button class="aspect-btn px-2.5 py-1 rounded font-medium text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-all" data-aspect="1:1">
-                1:1 Square
-              </button>
+
+              <!-- Upload / Replace Video Button -->
+              <label for="editor-video-upload-input" class="px-2.5 py-1 rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-xs font-semibold text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] cursor-pointer transition-all flex items-center gap-1 shadow-xs" title="Upload or replace video">
+                📁 Video
+                <input id="editor-video-upload-input" type="file" accept="video/*,.mp4,.mov,.webm,.mkv,.m4v" class="sr-only" />
+              </label>
             </div>
           </div>
 
           <!-- Video Canvas Container -->
-          <div id="video-preview-wrapper" class="relative w-full aspect-[9/16] max-h-[520px] mx-auto bg-black rounded-2xl overflow-hidden shadow-l3 border border-[var(--color-hairline)] flex items-center justify-center group select-none">
+          <div id="video-preview-wrapper" class="relative w-full max-h-[520px] aspect-[16/9] mx-auto bg-black rounded-2xl overflow-hidden shadow-l3 border border-[var(--color-hairline)] flex items-center justify-center group select-none transition-all duration-300">
             
             <!-- Native Video Element -->
             <video
               id="studio-video"
-              class="w-full h-full object-cover"
+              class="w-full h-full object-contain max-h-[520px] block"
               playsinline
               preload="auto"
               crossorigin="anonymous"
@@ -360,10 +395,11 @@ const stylePresets = [
               <div class="text-[10px] font-mono text-purple-300/80 bg-black/60 px-1.5 py-0.5 rounded self-start">Audio Label Safe</div>
             </div>
 
-            <!-- Live Subtitle Overlay Layer -->
+            <!-- Live Subtitle Overlay Layer with Dynamic Styles -->
             <div id="subtitle-overlay" class="absolute inset-x-0 bottom-16 flex flex-col items-center justify-center p-4 pointer-events-none z-10 text-center transition-all">
-              <div id="subtitle-render-box" class="subtitle-style-hormozi font-extrabold text-2xl tracking-tight transition-transform">
-                <span>FreeAutoCaption Studio</span>
+              <div id="subtitle-render-box" class="sub-style-hormozi font-extrabold text-2xl tracking-tight transition-all duration-75 inline-block text-center max-w-[90%]">
+                <span class="inline-block mx-1">FreeAutoCaption</span>
+                <span class="inline-block mx-1 word-active">Studio</span>
               </div>
             </div>
 
@@ -420,31 +456,174 @@ const stylePresets = [
           </div>
         </div>
 
-        <!-- Right Column: Style Presets, Timing Sync & Subtitle Cues Timeline -->
-        <div class="lg:col-span-5 flex flex-col gap-6">
+        <!-- Right Column: Style Presets, Competitor Font Suite, Timing Sync & Cues Timeline -->
+        <div class="lg:col-span-5 flex flex-col gap-5">
           
-          <!-- 1. Style Preset Selector -->
-          <div class="flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">{t(lang, 'styles.heading')}</span>
-              <span class="text-[11px] text-[var(--color-link)] font-medium">6 Viral Styles</span>
+          <!-- ─── 1. STYLE PRESETS & FONT SUITE (Competitor Feature) ─── -->
+          <div class="flex flex-col gap-3 p-4 rounded-2xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
+            
+            <div class="flex items-center justify-between pb-2 border-b border-[var(--color-hairline)]">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">{t(lang, 'styles.heading')}</span>
+                <span class="px-1.5 py-0.5 text-[10px] font-bold rounded bg-[var(--color-link-bg-soft)] text-[var(--color-link)] uppercase">Pro Typography</span>
+              </div>
+              <span class="text-[11px] text-[var(--color-mute)] font-medium">Click to apply</span>
             </div>
             
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <!-- Quick Preset Grid -->
+            <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {stylePresets.map(preset => (
                 <button
                   type="button"
-                  class="style-preset-btn flex flex-col items-center justify-center p-3 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:border-[var(--color-link)] hover:bg-[var(--color-canvas)] transition-all text-center gap-1 group"
+                  class="style-preset-btn flex flex-col items-center justify-center p-2.5 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas)] hover:border-[var(--color-link)] hover:shadow-l1 transition-all text-center gap-1 group relative"
                   data-preset={preset.id}
+                  data-font={preset.font}
+                  data-color={preset.color}
+                  data-highlight={preset.highlight}
+                  data-stroke={preset.stroke}
+                  data-bg={preset.bg}
+                  data-transform={preset.transform}
+                  title={preset.desc}
                 >
-                  <span class="text-xl group-hover:scale-110 transition-transform">{preset.icon}</span>
-                  <span class="text-xs font-bold text-[var(--color-ink)]">{t(lang, preset.nameKey)}</span>
+                  <span class="text-lg group-hover:scale-110 transition-transform">{preset.icon}</span>
+                  <span class="text-[11px] font-bold text-[var(--color-ink)] leading-tight">{t(lang, preset.nameKey as any)}</span>
                 </button>
               ))}
             </div>
+
+            <!-- Custom Font & Typography Controls Accordion -->
+            <details id="custom-font-details" class="group pt-2 border-t border-[var(--color-hairline)]">
+              <summary class="flex items-center justify-between cursor-pointer list-none text-xs font-bold text-[var(--color-ink)] hover:text-[var(--color-link)] transition-colors py-1">
+                <span class="flex items-center gap-1.5">
+                  <span>🎨</span>
+                  <span>Customize Fonts, Colors & Outlines</span>
+                </span>
+                <span class="text-[10px] text-[var(--color-mute)] group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+
+              <div class="flex flex-col gap-3 pt-3">
+                <!-- 1. Font Family Selector (Competitor Feature) -->
+                <div class="flex flex-col gap-1">
+                  <label for="font-family-select" class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider flex items-center justify-between">
+                    <span>{t(lang, 'editor.fontFamily')}</span>
+                    <span id="current-font-badge" class="text-[10px] font-mono text-[var(--color-link)] font-bold">Outfit</span>
+                  </label>
+                  <select
+                    id="font-family-select"
+                    class="w-full p-2 text-xs font-semibold rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] focus:outline-none focus:border-[var(--color-link)] cursor-pointer shadow-xs transition-all"
+                  >
+                    {fontFamilies.map(f => (
+                      <option value={f.value}>{f.name} — {f.category}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <!-- 2. Font Size Slider & Quick Buttons -->
+                <div class="flex flex-col gap-1">
+                  <div class="flex items-center justify-between text-[11px]">
+                    <span class="font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.fontSize')}</span>
+                    <span id="font-size-val" class="font-bold font-mono text-[var(--color-ink)]">28px</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <input
+                      id="font-size-slider"
+                      type="range"
+                      min="18"
+                      max="54"
+                      value="28"
+                      class="flex-1 accent-[var(--color-link)] cursor-pointer"
+                    />
+                    <div class="flex items-center gap-1">
+                      <button type="button" class="quick-size-btn px-2 py-0.5 text-[10px] font-bold rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)]" data-size="22">S</button>
+                      <button type="button" class="quick-size-btn px-2 py-0.5 text-[10px] font-bold rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)]" data-size="30">M</button>
+                      <button type="button" class="quick-size-btn px-2 py-0.5 text-[10px] font-bold rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)]" data-size="38">L</button>
+                      <button type="button" class="quick-size-btn px-2 py-0.5 text-[10px] font-bold rounded border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-body)] hover:text-[var(--color-ink)]" data-size="46">XL</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. Color Pickers (Base Color & Highlight Word Color) -->
+                <div class="grid grid-cols-2 gap-3">
+                  <!-- Base Text Color -->
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.textColor')}</label>
+                    <div class="flex items-center gap-2">
+                      <input id="base-color-picker" type="color" value="#ffffff" class="w-7 h-7 rounded-lg border border-[var(--color-hairline)] cursor-pointer p-0 bg-transparent" />
+                      <div class="flex items-center gap-1">
+                        <button type="button" class="quick-base-color w-4 h-4 rounded-full bg-white border border-zinc-400 shadow-xs" data-color="#ffffff" title="White"></button>
+                        <button type="button" class="quick-base-color w-4 h-4 rounded-full bg-yellow-400 shadow-xs" data-color="#facc15" title="Yellow"></button>
+                        <button type="button" class="quick-base-color w-4 h-4 rounded-full bg-cyan-400 shadow-xs" data-color="#38bdf8" title="Cyan"></button>
+                        <button type="button" class="quick-base-color w-4 h-4 rounded-full bg-zinc-900 shadow-xs" data-color="#18181b" title="Dark"></button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Active Word Highlight Color -->
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.highlightColor')}</label>
+                    <div class="flex items-center gap-2">
+                      <input id="highlight-color-picker" type="color" value="#facc15" class="w-7 h-7 rounded-lg border border-[var(--color-hairline)] cursor-pointer p-0 bg-transparent" />
+                      <div class="flex items-center gap-1">
+                        <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-yellow-400 shadow-xs" data-color="#facc15" title="Hormozi Yellow"></button>
+                        <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-cyan-400 shadow-xs" data-color="#38bdf8" title="Beast Cyan"></button>
+                        <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-pink-500 shadow-xs" data-color="#ff0080" title="Neon Pink"></button>
+                        <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-emerald-400 shadow-xs" data-color="#4ade80" title="Lime Green"></button>
+                        <button type="button" class="quick-high-color w-4 h-4 rounded-full bg-rose-500 shadow-xs" data-color="#ff0055" title="Punch Red"></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4. Outline Stroke & Backdrop Box -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.strokeWidth')}</label>
+                    <select id="stroke-width-select" class="p-1.5 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]">
+                      <option value="0">None (0px)</option>
+                      <option value="2">Thin (2px Stroke)</option>
+                      <option value="4">Bold (4px Stroke)</option>
+                      <option value="6">Thick (6px Beast)</option>
+                    </select>
+                  </div>
+
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.bgBox')}</label>
+                    <select id="backdrop-box-select" class="p-1.5 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]">
+                      <option value="none">None (Transparent)</option>
+                      <option value="frosted">Frosted Glass Dark</option>
+                      <option value="solid-black">Solid Black Box</option>
+                      <option value="yellow-box">Yellow Highlight Box</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- 5. Text Transform Case & Word Animation -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">{t(lang, 'editor.textCase')}</label>
+                    <select id="text-case-select" class="p-1.5 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]">
+                      <option value="uppercase">UPPERCASE (Viral)</option>
+                      <option value="none">Normal Case</option>
+                      <option value="capitalize">Capitalize Words</option>
+                    </select>
+                  </div>
+
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[11px] font-semibold text-[var(--color-mute)] uppercase tracking-wider">Word Animation:</label>
+                    <select id="anim-mode-select" class="p-1.5 text-xs rounded-lg border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)]">
+                      <option value="bounce">Word Bounce Pop</option>
+                      <option value="karaoke">Karaoke Wave</option>
+                      <option value="static">Static Highlight</option>
+                    </select>
+                  </div>
+                </div>
+
+              </div>
+            </details>
+
           </div>
 
-          <!-- 2. Millisecond Precision Sync & Drift Control -->
+          <!-- ─── 2. MILLISECOND PRECISION TIMING SYNC ─── -->
           <div class="flex flex-col gap-3 p-4 rounded-xl bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)]">
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold uppercase tracking-wider text-[var(--color-ink)]">{t(lang, 'sync.heading')}</span>
@@ -474,7 +653,7 @@ const stylePresets = [
             </div>
           </div>
 
-          <!-- 3. Subtitle Timeline & Cue Editor -->
+          <!-- ─── 3. SUBTITLE CUES TIMELINE & EDITOR ─── -->
           <div class="flex flex-col gap-3">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
@@ -492,7 +671,7 @@ const stylePresets = [
             </div>
           </div>
 
-          <!-- 4. Export & Download Actions -->
+          <!-- ─── 4. EXPORT & DOWNLOAD ACTIONS ─── -->
           <div class="flex flex-col gap-3 pt-2 border-t border-[var(--color-hairline)]">
             <button
               id="export-burned-video-btn"
@@ -540,6 +719,19 @@ const stylePresets = [
   let syncOffset = 0;
   let videoBlobUrl = '';
   let activeVideoFile: File | null = null;
+
+  // Custom Typography State
+  const typoState = {
+    fontFamily: 'Outfit',
+    fontSize: 28,
+    baseColor: '#ffffff',
+    highlightColor: '#facc15',
+    strokeWidth: 0,
+    backdropBox: 'none',
+    textCase: 'uppercase',
+    animMode: 'bounce',
+    shadow: true,
+  };
 
   // Toast Notification System
   function showToast(msg: string, type: 'success' | 'warning' | 'info' = 'info') {
@@ -606,6 +798,7 @@ const stylePresets = [
 
     if (targetTab === 'editor') {
       renderCuesList();
+      applyTypographyStyles();
     }
   }
 
@@ -695,7 +888,7 @@ const stylePresets = [
         if (transcribeStatusText) transcribeStatusText.textContent = `${status} (${pct}%)`;
       });
 
-      const { chunks, duration } = extraction;
+      const { chunks } = extraction;
       const selectedLanguage = whisperLangSelect?.value || 'auto';
       const allExtractedCues: SubtitleCue[] = [];
 
@@ -872,8 +1065,179 @@ const stylePresets = [
     switchTab('editor');
   });
 
-  // Video Studio Player & Overlay Rendering
+  // ─── TYPOGRAPHY ENGINE & LIVE WORD ANIMATION ───
   const subtitleRenderBox = document.getElementById('subtitle-render-box');
+  const fontFamilySelect = document.getElementById('font-family-select') as HTMLSelectElement;
+  const currentFontBadge = document.getElementById('current-font-badge');
+  const fontSizeSlider = document.getElementById('font-size-slider') as HTMLInputElement;
+  const fontSizeVal = document.getElementById('font-size-val');
+  const baseColorPicker = document.getElementById('base-color-picker') as HTMLInputElement;
+  const highlightColorPicker = document.getElementById('highlight-color-picker') as HTMLInputElement;
+  const strokeWidthSelect = document.getElementById('stroke-width-select') as HTMLSelectElement;
+  const backdropBoxSelect = document.getElementById('backdrop-box-select') as HTMLSelectElement;
+  const textCaseSelect = document.getElementById('text-case-select') as HTMLSelectElement;
+  const animModeSelect = document.getElementById('anim-mode-select') as HTMLSelectElement;
+
+  function applyTypographyStyles() {
+    if (!subtitleRenderBox) return;
+
+    // Font Family
+    subtitleRenderBox.style.fontFamily = `"${typoState.fontFamily}", sans-serif`;
+    if (currentFontBadge) currentFontBadge.textContent = typoState.fontFamily;
+    if (fontFamilySelect) fontFamilySelect.value = typoState.fontFamily;
+
+    // Font Size
+    subtitleRenderBox.style.fontSize = `${typoState.fontSize}px`;
+    if (fontSizeVal) fontSizeVal.textContent = `${typoState.fontSize}px`;
+    if (fontSizeSlider) fontSizeSlider.value = String(typoState.fontSize);
+
+    // Text Color
+    subtitleRenderBox.style.color = typoState.baseColor;
+    if (baseColorPicker) baseColorPicker.value = typoState.baseColor;
+
+    // Text Transform
+    subtitleRenderBox.style.textTransform = typoState.textCase as any;
+    if (textCaseSelect) textCaseSelect.value = typoState.textCase;
+
+    // Stroke / Outline
+    if (typoState.strokeWidth > 0) {
+      subtitleRenderBox.style.webkitTextStroke = `${typoState.strokeWidth}px #000000`;
+    } else {
+      subtitleRenderBox.style.webkitTextStroke = '0px transparent';
+    }
+    if (strokeWidthSelect) strokeWidthSelect.value = String(typoState.strokeWidth);
+
+    // Text Shadow
+    if (typoState.shadow) {
+      subtitleRenderBox.style.textShadow = '2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 4px 12px rgba(0,0,0,0.85)';
+    } else {
+      subtitleRenderBox.style.textShadow = 'none';
+    }
+
+    // Backdrop Box
+    if (typoState.backdropBox === 'frosted') {
+      subtitleRenderBox.style.background = 'rgba(0, 0, 0, 0.72)';
+      subtitleRenderBox.style.backdropFilter = 'blur(12px)';
+      subtitleRenderBox.style.webkitBackdropFilter = 'blur(12px)';
+      subtitleRenderBox.style.padding = '8px 22px';
+      subtitleRenderBox.style.borderRadius = '14px';
+      subtitleRenderBox.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+    } else if (typoState.backdropBox === 'solid-black') {
+      subtitleRenderBox.style.background = '#000000';
+      subtitleRenderBox.style.padding = '8px 20px';
+      subtitleRenderBox.style.borderRadius = '10px';
+      subtitleRenderBox.style.border = 'none';
+    } else if (typoState.backdropBox === 'yellow-box') {
+      subtitleRenderBox.style.background = '#facc15';
+      subtitleRenderBox.style.color = '#000000';
+      subtitleRenderBox.style.padding = '8px 20px';
+      subtitleRenderBox.style.borderRadius = '10px';
+      subtitleRenderBox.style.border = 'none';
+    } else {
+      subtitleRenderBox.style.background = 'transparent';
+      subtitleRenderBox.style.backdropFilter = 'none';
+      subtitleRenderBox.style.webkitBackdropFilter = 'none';
+      subtitleRenderBox.style.padding = '0';
+      subtitleRenderBox.style.border = 'none';
+    }
+    if (backdropBoxSelect) backdropBoxSelect.value = typoState.backdropBox;
+
+    // Refresh current subtitle rendering
+    const currentTime = studioVideo ? studioVideo.currentTime : 0;
+    updateSubtitleAtTime(currentTime);
+  }
+
+  // Preset Selection Event Handlers
+  document.querySelectorAll('.style-preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.style-preset-btn').forEach(b => b.classList.remove('ring-2', 'ring-[var(--color-link)]', 'border-[var(--color-link)]'));
+      btn.classList.add('ring-2', 'ring-[var(--color-link)]', 'border-[var(--color-link)]');
+
+      const presetId = btn.getAttribute('data-preset') || 'hormozi';
+      currentPreset = presetId;
+
+      typoState.fontFamily = btn.getAttribute('data-font') || 'Outfit';
+      typoState.baseColor = btn.getAttribute('data-color') || '#ffffff';
+      typoState.highlightColor = btn.getAttribute('data-highlight') || '#facc15';
+      typoState.strokeWidth = parseInt(btn.getAttribute('data-stroke') || '0', 10);
+      typoState.backdropBox = btn.getAttribute('data-bg') || 'none';
+      typoState.textCase = btn.getAttribute('data-transform') || 'uppercase';
+      typoState.shadow = presetId !== 'minimal';
+
+      applyTypographyStyles();
+      showToast(`✓ Applied ${presetId.toUpperCase()} style preset with ${typoState.fontFamily} font!`, 'success');
+    });
+  });
+
+  // Custom Font Select
+  fontFamilySelect?.addEventListener('change', () => {
+    typoState.fontFamily = fontFamilySelect.value;
+    applyTypographyStyles();
+  });
+
+  // Font Size Slider
+  fontSizeSlider?.addEventListener('input', () => {
+    typoState.fontSize = parseInt(fontSizeSlider.value, 10);
+    applyTypographyStyles();
+  });
+
+  // Quick Font Size Buttons
+  document.querySelectorAll('.quick-size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sz = parseInt(btn.getAttribute('data-size') || '28', 10);
+      typoState.fontSize = sz;
+      applyTypographyStyles();
+    });
+  });
+
+  // Base Color Picker & Quick Swatches
+  baseColorPicker?.addEventListener('input', () => {
+    typoState.baseColor = baseColorPicker.value;
+    applyTypographyStyles();
+  });
+
+  document.querySelectorAll('.quick-base-color').forEach(btn => {
+    btn.addEventListener('click', () => {
+      typoState.baseColor = btn.getAttribute('data-color') || '#ffffff';
+      applyTypographyStyles();
+    });
+  });
+
+  // Highlight Color Picker & Quick Swatches
+  highlightColorPicker?.addEventListener('input', () => {
+    typoState.highlightColor = highlightColorPicker.value;
+    applyTypographyStyles();
+  });
+
+  document.querySelectorAll('.quick-high-color').forEach(btn => {
+    btn.addEventListener('click', () => {
+      typoState.highlightColor = btn.getAttribute('data-color') || '#facc15';
+      applyTypographyStyles();
+    });
+  });
+
+  // Stroke, Backdrop & Case Selects
+  strokeWidthSelect?.addEventListener('change', () => {
+    typoState.strokeWidth = parseInt(strokeWidthSelect.value, 10);
+    applyTypographyStyles();
+  });
+
+  backdropBoxSelect?.addEventListener('change', () => {
+    typoState.backdropBox = backdropBoxSelect.value;
+    applyTypographyStyles();
+  });
+
+  textCaseSelect?.addEventListener('change', () => {
+    typoState.textCase = textCaseSelect.value;
+    applyTypographyStyles();
+  });
+
+  animModeSelect?.addEventListener('change', () => {
+    typoState.animMode = animModeSelect.value;
+    applyTypographyStyles();
+  });
+
+  // ─── VIDEO STUDIO PLAYER & SEEKING ───
   const videoPlayBtn = document.getElementById('video-play-btn');
   const ctrlPlayPause = document.getElementById('ctrl-play-pause');
   const ctrlSeekbar = document.getElementById('ctrl-seekbar') as HTMLInputElement;
@@ -885,13 +1249,39 @@ const stylePresets = [
     if (!subtitleRenderBox) return;
 
     const activeCue = currentCues.find(c => time >= c.start && time <= c.end);
-    if (activeCue) {
-      subtitleRenderBox.textContent = activeCue.text;
-      subtitleRenderBox.style.opacity = '1';
-    } else {
-      subtitleRenderBox.textContent = '';
+    if (!activeCue) {
+      subtitleRenderBox.innerHTML = '';
       subtitleRenderBox.style.opacity = '0';
+      return;
     }
+
+    subtitleRenderBox.style.opacity = '1';
+    const words = activeCue.text.trim().split(/\s+/).filter(Boolean);
+    if (words.length === 0) return;
+
+    // Calculate which word is currently spoken based on progress through the cue
+    const cueDuration = Math.max(0.1, activeCue.end - activeCue.start);
+    const progress = Math.min(0.99, Math.max(0, (time - activeCue.start) / cueDuration));
+    const activeWordIdx = Math.floor(progress * words.length);
+
+    // Build rich animated HTML for each word
+    const wordsHtml = words.map((w, idx) => {
+      const isWordActive = idx === activeWordIdx;
+      let wordStyle = '';
+
+      if (isWordActive) {
+        wordStyle = `color: ${typoState.highlightColor}; transform: scale(1.15); display: inline-block; font-weight: 900;`;
+        if (typoState.shadow) {
+          wordStyle += ` text-shadow: 0 0 16px ${typoState.highlightColor}, 2px 2px 0 #000, -2px -2px 0 #000;`;
+        }
+      } else {
+        wordStyle = `color: ${typoState.baseColor}; display: inline-block;`;
+      }
+
+      return `<span class="inline-block mx-1 transition-all duration-75 ${isWordActive ? 'word-active' : ''}" style="${wordStyle}">${w}</span>`;
+    }).join(' ');
+
+    subtitleRenderBox.innerHTML = wordsHtml;
   }
 
   studioVideo?.addEventListener('timeupdate', () => {
@@ -934,6 +1324,43 @@ const stylePresets = [
     updateSubtitleAtTime(target);
   });
 
+  let currentAspectRatio = 'original';
+  let currentFitMode = 'contain';
+
+  function updatePlayerAspectRatio() {
+    const wrapper = document.getElementById('video-preview-wrapper');
+    if (!wrapper) return;
+
+    if (currentAspectRatio === 'original') {
+      const vWidth = studioVideo.videoWidth;
+      const vHeight = studioVideo.videoHeight;
+      if (vWidth && vHeight && vWidth > 0 && vHeight > 0) {
+        wrapper.style.aspectRatio = `${vWidth} / ${vHeight}`;
+      } else {
+        wrapper.style.aspectRatio = '16 / 9';
+      }
+    } else if (currentAspectRatio === '9:16') {
+      wrapper.style.aspectRatio = '9 / 16';
+    } else if (currentAspectRatio === '16:9') {
+      wrapper.style.aspectRatio = '16 / 9';
+    } else if (currentAspectRatio === '1:1') {
+      wrapper.style.aspectRatio = '1 / 1';
+    }
+  }
+
+  studioVideo?.addEventListener('loadedmetadata', () => {
+    updatePlayerAspectRatio();
+    const duration = studioVideo.duration || 0;
+    if (ctrlTimeDisplay) {
+      const formatSec = (s: number) => {
+        const m = Math.floor(s / 60);
+        const sec = Math.floor(s % 60);
+        return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      };
+      ctrlTimeDisplay.textContent = `00:00 / ${formatSec(duration)}`;
+    }
+  });
+
   // Aspect Ratio Switcher
   document.querySelectorAll('.aspect-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -944,15 +1371,65 @@ const stylePresets = [
       btn.classList.add('bg-[var(--color-canvas)]', 'text-[var(--color-ink)]', 'shadow-xs');
       btn.classList.remove('text-[var(--color-mute)]');
 
-      const aspect = btn.getAttribute('data-aspect');
-      const wrapper = document.getElementById('video-preview-wrapper');
-      if (wrapper) {
-        wrapper.classList.remove('aspect-[9/16]', 'aspect-[16/9]', 'aspect-square');
-        if (aspect === '9:16') wrapper.classList.add('aspect-[9/16]');
-        else if (aspect === '16:9') wrapper.classList.add('aspect-[16/9]');
-        else if (aspect === '1:1') wrapper.classList.add('aspect-square');
-      }
+      currentAspectRatio = btn.getAttribute('data-aspect') || 'original';
+      updatePlayerAspectRatio();
     });
+  });
+
+  // Video Fit / Fill Toggle
+  const videoFitBtn = document.getElementById('video-fit-btn');
+  videoFitBtn?.addEventListener('click', () => {
+    if (currentFitMode === 'contain') {
+      currentFitMode = 'cover';
+      studioVideo.className = 'w-full h-full object-cover max-h-[520px] block';
+      videoFitBtn.textContent = 'Fill (Cropped)';
+      showToast('Fill Mode: Video fills container (outer edges may be cropped)', 'info');
+    } else {
+      currentFitMode = 'contain';
+      studioVideo.className = 'w-full h-full object-contain max-h-[520px] block';
+      videoFitBtn.textContent = 'Fit (100% View)';
+      showToast('Fit Mode: 100% full uncropped video at original quality', 'success');
+    }
+  });
+
+  // Editor Video Upload / Replace input
+  const editorVideoUploadInput = document.getElementById('editor-video-upload-input') as HTMLInputElement;
+  editorVideoUploadInput?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      loadVideoToPlayer(file);
+      showToast(`✓ Loaded video: ${file.name}`, 'success');
+    }
+  });
+
+  // Drag and Drop directly on Video Player Wrapper
+  const videoWrapper = document.getElementById('video-preview-wrapper');
+  videoWrapper?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    videoWrapper.classList.add('ring-2', 'ring-[var(--color-link)]');
+  });
+  videoWrapper?.addEventListener('dragleave', () => {
+    videoWrapper.classList.remove('ring-2', 'ring-[var(--color-link)]');
+  });
+  videoWrapper?.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    videoWrapper.classList.remove('ring-2', 'ring-[var(--color-link)]');
+    const file = e.dataTransfer?.files?.[0];
+    if (!file) return;
+
+    if (file.type.startsWith('video/') || file.name.match(/\.(mp4|mov|webm|mkv|m4v)$/i)) {
+      loadVideoToPlayer(file);
+      showToast(`✓ Loaded video: ${file.name}`, 'success');
+    } else if (file.name.match(/\.(srt|vtt|ass|ssa|sub|json|txt)$/i)) {
+      const text = await file.text();
+      const cues = parseSubtitleText(text, file.name);
+      if (cues.length > 0) {
+        originalCues = [...cues];
+        currentCues = [...cues];
+        renderCuesList();
+        showToast(`✓ Loaded ${cues.length} cues from ${file.name}`, 'success');
+      }
+    }
   });
 
   // Safe Zones
@@ -976,17 +1453,6 @@ const stylePresets = [
     if (positionSelect.value === 'bottom') overlay.classList.add('bottom-16');
     else if (positionSelect.value === 'top') overlay.classList.add('top-16');
     else if (positionSelect.value === 'center') overlay.classList.add('inset-y-0');
-  });
-
-  // Style Preset Selection
-  document.querySelectorAll('.style-preset-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const preset = btn.getAttribute('data-preset') || 'hormozi';
-      currentPreset = preset;
-      if (subtitleRenderBox) {
-        subtitleRenderBox.className = `subtitle-style-${preset} font-extrabold text-2xl tracking-tight transition-transform`;
-      }
-    });
   });
 
   // Sync Offset & Drift Adjuster
@@ -1117,7 +1583,7 @@ const stylePresets = [
     });
   });
 
-  // In-Browser Frame-Accurate Video Burner
+  // ─── HIGH-FIDELITY IN-BROWSER MP4 VIDEO BURNER ───
   document.getElementById('export-burned-video-btn')?.addEventListener('click', async () => {
     if (!studioVideo.src) {
       showToast('Please upload a video or select an audio clip before burning.', 'warning');
@@ -1127,20 +1593,57 @@ const stylePresets = [
     const exportBtn = document.getElementById('export-burned-video-btn') as HTMLButtonElement;
     if (exportBtn) {
       exportBtn.disabled = true;
-      exportBtn.textContent = 'Rendering Video with Subtitles…';
+      exportBtn.textContent = 'Rendering High-Res Video with Subtitles…';
     }
 
     try {
       const canvas = document.getElementById('studio-burn-canvas') as HTMLCanvasElement;
-      const ctx = canvas.getContext('2d');
+      const ctx = canvas.getContext('2d', { alpha: false, desynchronized: true }) || canvas.getContext('2d');
       if (!ctx) throw new Error('Canvas context unavailable');
 
-      canvas.width = studioVideo.videoWidth || 1080;
-      canvas.height = studioVideo.videoHeight || 1920;
+      // Native resolution matching uploaded video for 100% quality retention
+      const nativeWidth = studioVideo.videoWidth || 1920;
+      const nativeHeight = studioVideo.videoHeight || 1080;
+      canvas.width = nativeWidth;
+      canvas.height = nativeHeight;
 
-      const stream = canvas.captureStream(30);
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm',
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      // Capture canvas stream at 60fps for crisp video
+      const canvasStream = canvas.captureStream(60);
+      const combinedTracks: MediaStreamTrack[] = [...canvasStream.getVideoTracks()];
+
+      // Capture audio from video element if present
+      try {
+        let audioStream: MediaStream | null = null;
+        if (typeof (studioVideo as any).captureStream === 'function') {
+          audioStream = (studioVideo as any).captureStream();
+        } else if (typeof (studioVideo as any).mozCaptureStream === 'function') {
+          audioStream = (studioVideo as any).mozCaptureStream();
+        }
+        if (audioStream && audioStream.getAudioTracks().length > 0) {
+          combinedTracks.push(...audioStream.getAudioTracks());
+        }
+      } catch (audioErr) {
+        console.warn('Audio stream capture notice:', audioErr);
+      }
+
+      const combinedStream = new MediaStream(combinedTracks);
+
+      const mimeTypes = [
+        'video/webm;codecs=vp9,opus',
+        'video/webm;codecs=vp8,opus',
+        'video/mp4;codecs=h264,aac',
+        'video/webm',
+        'video/mp4'
+      ];
+      const selectedMime = mimeTypes.find(m => MediaRecorder.isTypeSupported(m)) || 'video/webm';
+
+      const mediaRecorder = new MediaRecorder(combinedStream, {
+        mimeType: selectedMime,
+        videoBitsPerSecond: 16_000_000, // 16 Mbps for full 1080p/4K bitrate
+        audioBitsPerSecond: 192_000,
       });
 
       const chunks: Blob[] = [];
@@ -1149,11 +1652,13 @@ const stylePresets = [
       };
 
       mediaRecorder.onstop = () => {
-        const videoBlob = new Blob(chunks, { type: 'video/mp4' });
+        const isMp4 = selectedMime.includes('mp4');
+        const ext = isMp4 ? 'mp4' : 'webm';
+        const videoBlob = new Blob(chunks, { type: selectedMime });
         const downloadUrl = URL.createObjectURL(videoBlob);
         const a = document.createElement('a');
         a.href = downloadUrl;
-        a.download = 'freeautocaption-burned-video.mp4';
+        a.download = `freeautocaption-burned-video.${ext}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1163,7 +1668,7 @@ const stylePresets = [
           exportBtn.disabled = false;
           exportBtn.textContent = '🎬 Export High-Res MP4 (Burned Subtitles)';
         }
-        showToast('✓ Burned MP4 video downloaded successfully!', 'success');
+        showToast('✓ Video exported in full resolution with crisp subtitles!', 'success');
       };
 
       studioVideo.currentTime = 0;
@@ -1172,40 +1677,89 @@ const stylePresets = [
 
       function drawFrame() {
         if (studioVideo.paused || studioVideo.ended) {
-          mediaRecorder.stop();
+          if (mediaRecorder.state === 'recording') mediaRecorder.stop();
           return;
         }
 
         ctx!.drawImage(studioVideo, 0, 0, canvas.width, canvas.height);
 
-        // Render current subtitle cue
+        // Render current subtitle cue with custom fonts & colors
         const currentTime = studioVideo.currentTime;
         const cue = currentCues.find(c => currentTime >= c.start && currentTime <= c.end);
         if (cue) {
           ctx!.save();
-          ctx!.font = `bold ${Math.round(canvas.height * 0.045)}px Outfit, Inter, sans-serif`;
+          const baseFontSize = Math.max(28, Math.round(canvas.height * (typoState.fontSize / 700)));
+          ctx!.font = `bold ${baseFontSize}px "${typoState.fontFamily}", Outfit, Inter, sans-serif`;
           ctx!.textAlign = 'center';
           ctx!.textBaseline = 'middle';
 
-          const textY = canvas.height * 0.82;
+          // Y position according to position setting
+          let textY = canvas.height * 0.82;
+          const posVal = (document.getElementById('position-select') as HTMLSelectElement)?.value || 'bottom';
+          if (posVal === 'top') textY = canvas.height * 0.18;
+          else if (posVal === 'center') textY = canvas.height * 0.5;
+
           const textX = canvas.width / 2;
 
-          // Draw glow/stroke
-          ctx!.lineWidth = 8;
-          ctx!.strokeStyle = '#000000';
-          ctx!.strokeText(cue.text, textX, textY);
+          let rawText = cue.text;
+          if (typoState.textCase === 'uppercase') rawText = rawText.toUpperCase();
 
-          // Fill based on preset
-          if (currentPreset === 'hormozi') {
+          const words = rawText.trim().split(/\s+/).filter(Boolean);
+          const cueDuration = Math.max(0.1, cue.end - cue.start);
+          const progress = Math.min(0.99, Math.max(0, (currentTime - cue.start) / cueDuration));
+          const activeWordIdx = Math.floor(progress * words.length);
+
+          // Measure total width
+          const wordMetrics = words.map(w => ctx!.measureText(w + ' ').width);
+          const totalWidth = wordMetrics.reduce((a, b) => a + b, 0);
+
+          // Draw Backdrop Box if enabled
+          if (typoState.backdropBox === 'frosted' || typoState.backdropBox === 'solid-black') {
+            const padX = 24;
+            const padY = 14;
+            const boxW = totalWidth + padX * 2;
+            const boxH = baseFontSize + padY * 2;
+            ctx!.fillStyle = typoState.backdropBox === 'solid-black' ? 'rgba(0, 0, 0, 0.95)' : 'rgba(0, 0, 0, 0.72)';
+            ctx!.beginPath();
+            ctx!.roundRect(textX - boxW / 2, textY - boxH / 2, boxW, boxH, 12);
+            ctx!.fill();
+          } else if (typoState.backdropBox === 'yellow-box') {
+            const padX = 24;
+            const padY = 14;
+            const boxW = totalWidth + padX * 2;
+            const boxH = baseFontSize + padY * 2;
             ctx!.fillStyle = '#facc15';
-          } else if (currentPreset === 'beast') {
-            ctx!.fillStyle = '#06b6d4';
-          } else if (currentPreset === 'neon') {
-            ctx!.fillStyle = '#ff0080';
-          } else {
-            ctx!.fillStyle = '#ffffff';
+            ctx!.beginPath();
+            ctx!.roundRect(textX - boxW / 2, textY - boxH / 2, boxW, boxH, 12);
+            ctx!.fill();
           }
-          ctx!.fillText(cue.text, textX, textY);
+
+          // Draw word by word with active word highlight
+          let currentX = textX - totalWidth / 2;
+          words.forEach((word, idx) => {
+            const isWordActive = idx === activeWordIdx;
+            const wordW = wordMetrics[idx];
+            const wordCenterX = currentX + wordW / 2;
+
+            // Draw outline stroke if active
+            const strokeW = typoState.strokeWidth > 0 ? Math.max(3, typoState.strokeWidth * (baseFontSize / 28)) : (typoState.shadow ? Math.max(4, Math.round(baseFontSize * 0.16)) : 0);
+            if (strokeW > 0) {
+              ctx!.lineWidth = strokeW;
+              ctx!.strokeStyle = '#000000';
+              ctx!.strokeText(word, wordCenterX, textY);
+            }
+
+            // Fill color
+            if (isWordActive) {
+              ctx!.fillStyle = typoState.highlightColor;
+            } else {
+              ctx!.fillStyle = typoState.backdropBox === 'yellow-box' ? '#000000' : typoState.baseColor;
+            }
+            ctx!.fillText(word, wordCenterX, textY);
+
+            currentX += wordW;
+          });
+
           ctx!.restore();
         }
 
@@ -1229,7 +1783,8 @@ const stylePresets = [
     }
   });
 
-  // Initial setup with default cues
+  // Initial setup with default demo cues & typography styling
   currentCues = [...defaultDemoCues];
   originalCues = [...defaultDemoCues];
+  applyTypographyStyles();
 </script>
