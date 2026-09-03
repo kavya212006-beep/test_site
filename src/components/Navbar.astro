@@ -8,12 +8,8 @@ const { lang } = Astro.props;
 const rtl = isRTL(lang);
 
 const navLinks = [
-  { key: 'nav.home' as const, path: '/' },
-  { key: 'nav.burn' as const, path: '/burn-subtitles-into-video' },
-  { key: 'nav.adjuster' as const, path: '/srt-timing-adjuster' },
-  { key: 'nav.converter' as const, path: '/convert-subtitles' },
-  { key: 'nav.styles' as const, path: '/subtitle-styles' },
   { key: 'nav.howItWorks' as const, path: '/how-it-works' },
+  { key: 'nav.about' as const, path: '/about' },
 ];
 
 const currentPath = Astro.url.pathname;

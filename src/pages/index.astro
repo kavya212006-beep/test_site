@@ -3,7 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import HeroGradient from '../components/HeroGradient.astro';
 import SubtitleStudio from '../components/SubtitleStudio/SubtitleStudio.astro';
 import FeaturesGrid from '../components/FeaturesGrid.astro';
-import StyleShowcase from '../components/StyleShowcase.astro';
 import CompetitorComparison from '../components/CompetitorComparison.astro';
 import FaqAccordion from '../components/FaqAccordion.astro';
 import { t, getLocalizedUrl } from '../i18n/utils';
@@ -27,9 +26,6 @@ const lang = 'en';
 
   <!-- Key Features Grid -->
   <FeaturesGrid lang={lang} />
-
-  <!-- Trending Style Showcase Gallery -->
-  <StyleShowcase lang={lang} />
 
   <!-- Competitor Comparison (vs InVideo, CapCut, Kapwing) -->
   <CompetitorComparison lang={lang} />

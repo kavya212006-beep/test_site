@@ -48,11 +48,11 @@ const fontFamilies = [
   <div id="studio-upload-view" class="w-full max-w-3xl mx-auto flex flex-col items-center gap-5 transition-all">
     
     <!-- Prominent Mode Switcher Tabs (Option 1: AI Auto-Captions vs Option 2: Burn Existing Subtitles) -->
-    <div class="flex items-center p-1.5 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-[var(--color-hairline)] w-full max-w-lg mx-auto shadow-xs">
+    <div class="flex items-center p-1.5 rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 w-full max-w-lg mx-auto shadow-xs">
       <button
         id="mode-tab-ai"
         type="button"
-        class="mode-tab-btn flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 bg-white dark:bg-zinc-800 text-[var(--color-ink)] shadow-sm"
+        class="mode-tab-btn flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white shadow-sm cursor-pointer"
         data-target-mode="ai"
       >
         <span class="text-base">🎙️</span>
@@ -62,7 +62,7 @@ const fontFamilies = [
       <button
         id="mode-tab-burn"
         type="button"
-        class="mode-tab-btn flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 text-[var(--color-mute)] hover:text-[var(--color-ink)]"
+        class="mode-tab-btn flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer"
         data-target-mode="burn"
       >
         <span class="text-base">🔥</span>
@@ -289,10 +289,6 @@ const fontFamilies = [
 
     </div>
 
-    <!-- Bottom note -->
-    <p class="text-center text-xs text-[var(--color-mute)] pt-2">
-      Editing in Premiere Pro or CapCut? <a href="/subtitle-styles" class="text-[var(--color-ink)] font-semibold underline hover:text-[var(--color-link)] transition-colors">Explore viral caption styles</a> for your timeline.
-    </p>
 
   </div>
 
@@ -799,18 +795,18 @@ const fontFamilies = [
 
   function switchMode(mode: 'ai' | 'burn') {
     if (mode === 'ai') {
-      tabBtnAi?.classList.add('bg-white', 'dark:bg-zinc-800', 'text-[var(--color-ink)]', 'shadow-sm');
-      tabBtnAi?.classList.remove('text-[var(--color-mute)]');
-      tabBtnBurn?.classList.remove('bg-white', 'dark:bg-zinc-800', 'text-[var(--color-ink)]', 'shadow-sm');
-      tabBtnBurn?.classList.add('text-[var(--color-mute)]');
+      tabBtnAi?.classList.add('bg-white', 'dark:bg-zinc-700', 'text-zinc-900', 'dark:text-white', 'shadow-sm');
+      tabBtnAi?.classList.remove('text-zinc-500', 'dark:text-zinc-400');
+      tabBtnBurn?.classList.remove('bg-white', 'dark:bg-zinc-700', 'text-zinc-900', 'dark:text-white', 'shadow-sm');
+      tabBtnBurn?.classList.add('text-zinc-500', 'dark:text-zinc-400');
 
       viewModeAi?.classList.remove('hidden');
       viewModeBurn?.classList.add('hidden');
     } else {
-      tabBtnBurn?.classList.add('bg-white', 'dark:bg-zinc-800', 'text-[var(--color-ink)]', 'shadow-sm');
-      tabBtnBurn?.classList.remove('text-[var(--color-mute)]');
-      tabBtnAi?.classList.remove('bg-white', 'dark:bg-zinc-800', 'text-[var(--color-ink)]', 'shadow-sm');
-      tabBtnAi?.classList.add('text-[var(--color-mute)]');
+      tabBtnBurn?.classList.add('bg-white', 'dark:bg-zinc-700', 'text-zinc-900', 'dark:text-white', 'shadow-sm');
+      tabBtnBurn?.classList.remove('text-zinc-500', 'dark:text-zinc-400');
+      tabBtnAi?.classList.remove('bg-white', 'dark:bg-zinc-700', 'text-zinc-900', 'dark:text-white', 'shadow-sm');
+      tabBtnAi?.classList.add('text-zinc-500', 'dark:text-zinc-400');
 
       viewModeBurn?.classList.remove('hidden');
       viewModeAi?.classList.add('hidden');
