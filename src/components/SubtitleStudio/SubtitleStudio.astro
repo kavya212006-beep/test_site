@@ -3,8 +3,9 @@ import { t } from '../../i18n/utils';
 
 interface Props {
   lang: string;
+  initialMode?: 'ai' | 'burn';
 }
-const { lang } = Astro.props;
+const { lang, initialMode = 'ai' } = Astro.props;
 
 const stylePresets = [
   { id: 'hormozi', nameKey: 'styles.hormozi', icon: '🔥', font: 'Outfit', color: '#ffffff', highlight: '#facc15', stroke: 0, shadow: true, bg: 'none', transform: 'uppercase', desc: 'Bold yellow pop, high-energy viral retention' },
@@ -35,7 +36,7 @@ const fontFamilies = [
 ];
 ---
 
-<div id="subtitle-studio" class="w-full flex flex-col gap-6">
+<div id="subtitle-studio" class="w-full flex flex-col gap-6" data-initial-mode={initialMode}>
 
   <!-- Notification Toast Container -->
   <div id="studio-toast" class="hidden fixed top-6 right-6 z-50 max-w-md p-4 rounded-2xl shadow-2xl border transition-all flex items-center gap-3">
@@ -43,149 +44,306 @@ const fontFamilies = [
     <p id="studio-toast-msg" class="text-sm font-medium"></p>
   </div>
 
-  <!-- ─── 1. CLEAN HERO UPLOAD VIEW (Exact match to reference design) ─── -->
-  <div id="studio-upload-view" class="w-full max-w-3xl mx-auto flex flex-col items-center gap-4 transition-all">
+  <!-- ─── 1. UPLOAD VIEW WITH 2 CLEAR OPTIONS / MODES ─── -->
+  <div id="studio-upload-view" class="w-full max-w-3xl mx-auto flex flex-col items-center gap-5 transition-all">
     
-    <!-- Hero Dropzone Card -->
-    <label
-      id="hero-dropzone"
-      for="hero-media-input"
-      class="relative w-full border-2 border-dashed border-sky-400/80 hover:border-sky-500 bg-white/70 dark:bg-[#141417]/80 backdrop-blur-md rounded-3xl p-10 md:p-14 text-center cursor-pointer transition-all hover:bg-sky-50/40 dark:hover:bg-sky-950/30 shadow-l2 group flex flex-col items-center justify-center gap-3"
-    >
-      <!-- Upload Icon inside clean squircle -->
-      <div class="w-14 h-14 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700 shadow-sm flex items-center justify-center text-sky-600 dark:text-sky-400 group-hover:scale-110 transition-transform">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="17 8 12 3 7 8"></polyline>
-          <line x1="12" y1="3" x2="12" y2="15"></line>
-        </svg>
-      </div>
+    <!-- Prominent Mode Switcher Tabs (Option 1: AI Auto-Captions vs Option 2: Burn Existing Subtitles) -->
+    <div class="flex items-center p-1.5 rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-[var(--color-hairline)] w-full max-w-lg mx-auto shadow-xs">
+      <button
+        id="mode-tab-ai"
+        type="button"
+        class="mode-tab-btn flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 bg-white dark:bg-zinc-800 text-[var(--color-ink)] shadow-sm"
+        data-target-mode="ai"
+      >
+        <span class="text-base">🎙️</span>
+        <span>Auto Subtitles (AI)</span>
+      </button>
+      
+      <button
+        id="mode-tab-burn"
+        type="button"
+        class="mode-tab-btn flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 text-[var(--color-mute)] hover:text-[var(--color-ink)]"
+        data-target-mode="burn"
+      >
+        <span class="text-base">🔥</span>
+        <span>Burn Subtitles (Video + Subtitle)</span>
+      </button>
+    </div>
 
-      <!-- Main Headline & Subtitle -->
-      <div class="flex flex-col gap-0.5">
-        <h3 class="text-base sm:text-lg font-bold text-[var(--color-ink)]">
-          Drag & drop your video or song
-        </h3>
-        <p class="text-xs sm:text-sm text-[var(--color-link)] font-medium">
-          or click to browse
+    <!-- ───────────────────────────────────────────────────────── -->
+    <!-- OPTION 1: AI AUTO-CAPTION GENERATOR VIEW                  -->
+    <!-- ───────────────────────────────────────────────────────── -->
+    <div id="view-mode-ai" class="w-full flex flex-col items-center gap-4 transition-all">
+      
+      <!-- AI Dropzone Card -->
+      <label
+        id="hero-dropzone"
+        for="hero-media-input"
+        class="relative w-full border-2 border-dashed border-sky-400/80 hover:border-sky-500 bg-white/70 dark:bg-[#141417]/80 backdrop-blur-md rounded-3xl p-10 md:p-14 text-center cursor-pointer transition-all hover:bg-sky-50/40 dark:hover:bg-sky-950/30 shadow-l2 group flex flex-col items-center justify-center gap-3"
+      >
+        <div class="w-14 h-14 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700 shadow-sm flex items-center justify-center text-sky-600 dark:text-sky-400 group-hover:scale-110 transition-transform">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+        </div>
+
+        <div class="flex flex-col gap-0.5">
+          <h3 class="text-base sm:text-lg font-bold text-[var(--color-ink)]">
+            Drag & drop your video or audio clip
+          </h3>
+          <p class="text-xs sm:text-sm text-[var(--color-link)] font-medium">
+            or click to browse from device
+          </p>
+        </div>
+
+        <p class="text-xs text-[var(--color-mute)] max-w-md mt-1 leading-relaxed">
+          Video (MP4, MOV, WebM, MKV) or audio (MP3, WAV) · AI auto-transcribes speech · Download .SRT/.VTT or export MP4
         </p>
-      </div>
 
-      <!-- Format constraints note -->
-      <p class="text-xs text-[var(--color-mute)] max-w-md mt-1 leading-relaxed">
-        Video (MP4, MOV, WebM) or audio (MP3, WAV) · up to 10 min · under 2 GB · stays on your device
-      </p>
+        <!-- Hidden input for AI mode -->
+        <input
+          id="hero-media-input"
+          type="file"
+          accept="video/*,audio/*,.mp4,.mov,.webm,.mkv,.mp3,.wav,.m4a"
+          class="sr-only"
+        />
 
-      <!-- Hidden Input for file browsing -->
-      <input
-        id="hero-media-input"
-        type="file"
-        accept="video/*,audio/*,.mp4,.mov,.webm,.mkv,.mp3,.wav,.m4a,.srt,.vtt,.ass"
-        class="sr-only"
-      />
-
-      <!-- Transcribe Loading Overlay inside Dropzone -->
-      <div id="transcribe-loading-overlay" class="hidden absolute inset-0 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center gap-4 z-20">
-        <div class="flex items-center gap-1.5 h-8">
-          <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-1 h-6 animate-pulse"></div>
-          <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-2 h-8 animate-pulse"></div>
-          <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-3 h-4 animate-pulse"></div>
-          <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-4 h-7 animate-pulse"></div>
-          <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-5 h-5 animate-pulse"></div>
+        <!-- Transcribe Loading Overlay inside Dropzone -->
+        <div id="transcribe-loading-overlay" class="hidden absolute inset-0 bg-white/95 dark:bg-zinc-900/95 backdrop-blur-md rounded-3xl flex flex-col items-center justify-center gap-4 z-20">
+          <div class="flex items-center gap-1.5 h-8">
+            <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-1 h-6 animate-pulse"></div>
+            <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-2 h-8 animate-pulse"></div>
+            <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-3 h-4 animate-pulse"></div>
+            <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-4 h-7 animate-pulse"></div>
+            <div class="w-1.5 bg-sky-500 rounded-full waveform-bar-5 h-5 animate-pulse"></div>
+          </div>
+          <p id="transcribe-status-text" class="text-sm font-semibold text-[var(--color-ink)] animate-pulse">
+            Transcribing speech with Cloudflare Whisper AI…
+          </p>
         </div>
-        <p id="transcribe-status-text" class="text-sm font-semibold text-[var(--color-ink)] animate-pulse">
-          Transcribing speech with AI…
-        </p>
-      </div>
-    </label>
+      </label>
 
-    <!-- 3 Step Process Cards (Clean horizontal row below dropzone) -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-2 w-full">
-      <!-- Step 1 -->
-      <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
-        <div class="w-7 h-7 rounded-full bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 font-bold text-xs flex items-center justify-center shrink-0">
-          1
+      <!-- 3 Step Process Cards for AI Auto-Caption -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-1 w-full">
+        <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
+          <div class="w-7 h-7 rounded-full bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 font-bold text-xs flex items-center justify-center shrink-0">1</div>
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-[var(--color-ink)]">1. Upload Clip</span>
+            <span class="text-[11px] text-[var(--color-mute)]">Video or Audio file</span>
+          </div>
         </div>
-        <div class="flex flex-col">
-          <span class="text-xs font-bold text-[var(--color-ink)]">Upload</span>
-          <span class="text-[11px] text-[var(--color-mute)]">Your clip</span>
-        </div>
-      </div>
 
-      <!-- Step 2 -->
-      <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
-        <div class="w-7 h-7 rounded-full bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 font-bold text-xs flex items-center justify-center shrink-0">
-          2
+        <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
+          <div class="w-7 h-7 rounded-full bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 font-bold text-xs flex items-center justify-center shrink-0">2</div>
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-[var(--color-ink)]">2. AI Transcribe & Style</span>
+            <span class="text-[11px] text-[var(--color-mute)]">Whisper + Viral presets</span>
+          </div>
         </div>
-        <div class="flex flex-col">
-          <span class="text-xs font-bold text-[var(--color-ink)]">Edit & style</span>
-          <span class="text-[11px] text-[var(--color-mute)]">Review + template</span>
+
+        <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
+          <div class="w-7 h-7 rounded-full bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 font-bold text-xs flex items-center justify-center shrink-0">3</div>
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-[var(--color-ink)]">3. Download / Export</span>
+            <span class="text-[11px] text-[var(--color-mute)]">Captioned MP4 or .SRT/.VTT</span>
+          </div>
         </div>
       </div>
 
-      <!-- Step 3 -->
-      <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
-        <div class="w-7 h-7 rounded-full bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 font-bold text-xs flex items-center justify-center shrink-0">
-          3
-        </div>
-        <div class="flex flex-col">
-          <span class="text-xs font-bold text-[var(--color-ink)]">Export</span>
-          <span class="text-[11px] text-[var(--color-mute)]">Captioned MP4</span>
-        </div>
+      <!-- Instant Sample Demos -->
+      <div class="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs text-[var(--color-mute)]">
+        <span>Or try an instant sample:</span>
+        <button type="button" class="sample-audio-btn text-xs font-semibold text-[var(--color-link)] hover:underline" data-sample="motivation">🔥 Viral Reel</button>
+        <span>·</span>
+        <button type="button" class="sample-audio-btn text-xs font-semibold text-[var(--color-link)] hover:underline" data-sample="podcast">🎙️ Tech Podcast</button>
+        <span>·</span>
+        <button type="button" class="sample-audio-btn text-xs font-semibold text-[var(--color-link)] hover:underline" data-sample="tutorial">⚡ Coding Tutorial</button>
       </div>
     </div>
 
-    <!-- Instant Sample Demos -->
-    <div class="flex flex-wrap items-center justify-center gap-2 pt-2 text-xs text-[var(--color-mute)]">
-      <span>Or try an instant sample:</span>
-      <button type="button" class="sample-audio-btn text-xs font-semibold text-[var(--color-link)] hover:underline" data-sample="motivation">🔥 Viral Reel</button>
-      <span>·</span>
-      <button type="button" class="sample-audio-btn text-xs font-semibold text-[var(--color-link)] hover:underline" data-sample="podcast">🎙️ Tech Podcast</button>
-      <span>·</span>
-      <button type="button" class="sample-audio-btn text-xs font-semibold text-[var(--color-link)] hover:underline" data-sample="tutorial">⚡ Coding Tutorial</button>
+    <!-- ───────────────────────────────────────────────────────── -->
+    <!-- OPTION 2: BURN EXISTING SUBTITLES (VIDEO + SUBTITLE FILE) -->
+    <!-- ───────────────────────────────────────────────────────── -->
+    <div id="view-mode-burn" class="hidden w-full flex flex-col items-center gap-5 transition-all">
+      
+      <div class="text-center max-w-xl flex flex-col gap-1">
+        <h3 class="text-base sm:text-lg font-bold text-[var(--color-ink)]">
+          Burn Existing Subtitles into Video
+        </h3>
+        <p class="text-xs sm:text-sm text-[var(--color-body)]">
+          Already have a subtitle file? Upload your video and subtitle file to sync, apply viral animations, and burn directly into high-res MP4!
+        </p>
+      </div>
+
+      <!-- Dual Dropzone Grid: Video File + Subtitle File -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+        
+        <!-- 1. Video File Drop Card -->
+        <div
+          id="burn-video-dropzone"
+          class="relative border-2 border-dashed border-sky-400/70 hover:border-sky-500 bg-white/70 dark:bg-[#141417]/80 backdrop-blur-md rounded-3xl p-6 text-center cursor-pointer transition-all hover:bg-sky-50/40 dark:hover:bg-sky-950/30 shadow-l1 flex flex-col items-center justify-center gap-2 group min-h-[190px]"
+        >
+          <input
+            id="burn-video-input"
+            type="file"
+            accept="video/*,.mp4,.mov,.webm,.mkv,.avi,.m4v"
+            class="sr-only"
+          />
+          <div class="w-12 h-12 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700 shadow-xs flex items-center justify-center text-sky-600 dark:text-sky-400 group-hover:scale-110 transition-transform">
+            <span class="text-2xl">🎬</span>
+          </div>
+
+          <div class="flex flex-col gap-0.5">
+            <span class="text-sm font-bold text-[var(--color-ink)]">1. Select Video File</span>
+            <span class="text-xs text-[var(--color-link)] font-medium">MP4, MOV, WebM, MKV</span>
+          </div>
+
+          <div id="burn-video-selected-badge" class="hidden mt-1 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-mono font-medium max-w-[90%] truncate">
+            ✓ Video chosen
+          </div>
+          <p id="burn-video-empty-text" class="text-[11px] text-[var(--color-mute)]">Drop video or click to browse</p>
+        </div>
+
+        <!-- 2. Subtitle File Drop Card -->
+        <div
+          id="burn-sub-dropzone"
+          class="relative border-2 border-dashed border-amber-400/70 hover:border-amber-500 bg-white/70 dark:bg-[#141417]/80 backdrop-blur-md rounded-3xl p-6 text-center cursor-pointer transition-all hover:bg-amber-50/40 dark:hover:bg-amber-950/30 shadow-l1 flex flex-col items-center justify-center gap-2 group min-h-[190px]"
+        >
+          <input
+            id="burn-sub-input"
+            type="file"
+            accept=".srt,.vtt,.ass,.ssa,.sub,.sbv,.json,.txt"
+            class="sr-only"
+          />
+          <div class="w-12 h-12 rounded-2xl bg-white dark:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700 shadow-xs flex items-center justify-center text-amber-600 dark:text-amber-400 group-hover:scale-110 transition-transform">
+            <span class="text-2xl">📄</span>
+          </div>
+
+          <div class="flex flex-col gap-0.5">
+            <span class="text-sm font-bold text-[var(--color-ink)]">2. Select Subtitle File</span>
+            <span class="text-xs text-amber-600 dark:text-amber-400 font-medium">.SRT, .VTT, .ASS, .SUB, .JSON</span>
+          </div>
+
+          <div id="burn-sub-selected-badge" class="hidden mt-1 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 text-xs font-mono font-medium max-w-[90%] truncate">
+            ✓ Subtitle chosen
+          </div>
+          <p id="burn-sub-empty-text" class="text-[11px] text-[var(--color-mute)]">Drop .SRT/.VTT or click to browse</p>
+        </div>
+
+      </div>
+
+      <!-- Quick Dual Drop Helper Note -->
+      <p class="text-center text-xs text-[var(--color-mute)]">
+        💡 <strong>Quick tip:</strong> You can select or drag <em>both files together</em> into either box above!
+      </p>
+
+      <!-- Launch Burner Button -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 w-full justify-center">
+        <button
+          id="burn-launch-btn"
+          type="button"
+          class="w-full sm:w-auto px-8 py-3.5 rounded-pill bg-[var(--color-ink)] text-[var(--color-on-primary)] font-bold text-sm hover:opacity-90 transition-all shadow-l2 flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span>🔥</span>
+          <span>Open Studio & Burn Subtitles into Video →</span>
+        </button>
+
+        <button
+          id="burn-sample-pair-btn"
+          type="button"
+          class="w-full sm:w-auto px-5 py-3.5 rounded-pill border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold text-xs hover:bg-[var(--color-canvas-soft)] transition-all shadow-xs"
+        >
+          <span>✨</span>
+          <span>Try Sample Video + Subtitles</span>
+        </button>
+      </div>
+
+      <!-- 3 Step Process Cards for Burn Mode -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-2 w-full">
+        <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
+          <div class="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 font-bold text-xs flex items-center justify-center shrink-0">1</div>
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-[var(--color-ink)]">1. Upload Both</span>
+            <span class="text-[11px] text-[var(--color-mute)]">Video + Subtitle file</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
+          <div class="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 font-bold text-xs flex items-center justify-center shrink-0">2</div>
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-[var(--color-ink)]">2. Style & Timing Sync</span>
+            <span class="text-[11px] text-[var(--color-mute)]">Hormozi, MrBeast & offset</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3.5 p-4 rounded-2xl bg-white/70 dark:bg-[#141417]/80 border border-[var(--color-hairline)] shadow-xs">
+          <div class="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 font-bold text-xs flex items-center justify-center shrink-0">3</div>
+          <div class="flex flex-col">
+            <span class="text-xs font-bold text-[var(--color-ink)]">3. Export MP4</span>
+            <span class="text-[11px] text-[var(--color-mute)]">Zero watermark burned MP4</span>
+          </div>
+        </div>
+      </div>
+
     </div>
 
     <!-- Bottom note -->
     <p class="text-center text-xs text-[var(--color-mute)] pt-2">
-      Editing in Premiere Pro? <a href="/subtitle-styles" class="text-[var(--color-ink)] font-semibold underline hover:text-[var(--color-link)] transition-colors">Explore viral caption styles</a> for your timeline.
+      Editing in Premiere Pro or CapCut? <a href="/subtitle-styles" class="text-[var(--color-ink)] font-semibold underline hover:text-[var(--color-link)] transition-colors">Explore viral caption styles</a> for your timeline.
     </p>
 
   </div>
 
-  <!-- ─── 2. STUDIO EDITOR VIEW (Revealed after upload or sample selection) ─── -->
+  <!-- ─── 2. STUDIO EDITOR VIEW (Unified for both AI Generated & Uploaded Subtitles) ─── -->
   <div id="studio-editor-view" class="hidden w-full bg-[var(--color-canvas)] rounded-3xl border border-[var(--color-hairline)] shadow-l3 overflow-hidden flex-col gap-6 p-6 md:p-8 transition-all">
     
     <!-- Top Action Bar -->
     <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-[var(--color-hairline)]">
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3">
         <button
           id="back-to-upload-btn"
           type="button"
           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[var(--color-canvas-soft)] border border-[var(--color-hairline)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft-2)] hover:border-[var(--color-hairline-strong)] transition-all"
         >
           <span>←</span>
-          <span>Upload Another Video</span>
+          <span>Upload Another</span>
         </button>
-        <span id="current-file-badge" class="px-3 py-1 text-xs font-mono font-medium rounded-full bg-[var(--color-link-bg-soft)] text-[var(--color-link)] max-w-[200px] truncate">
+        
+        <span id="current-file-badge" class="px-3 py-1 text-xs font-mono font-medium rounded-full bg-[var(--color-link-bg-soft)] text-[var(--color-link)] max-w-[180px] truncate" title="Current Video">
           ✓ demo-video.mp4
+        </span>
+
+        <span id="current-sub-badge" class="px-3 py-1 text-xs font-mono font-medium rounded-full bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 max-w-[180px] truncate" title="Current Subtitles">
+          ✓ 4 subtitle cues
         </span>
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
+        <!-- Load or replace subtitle file -->
+        <label for="studio-load-sub-input" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full border border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-200 hover:bg-amber-100/60 cursor-pointer transition-all shadow-xs">
+          <span>📄</span>
+          <span>Import Subtitle File (.SRT/.VTT)</span>
+          <input id="studio-load-sub-input" type="file" accept=".srt,.vtt,.ass,.ssa,.sub,.sbv,.json,.txt" class="sr-only" />
+        </label>
+
+        <!-- Replace Video -->
+        <label for="studio-replace-file-input" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft)] cursor-pointer transition-all shadow-xs">
+          <span>🎬</span>
+          <span>Change Video</span>
+          <input id="studio-replace-file-input" type="file" accept="video/*,audio/*,.mp4,.mov,.webm,.mkv,.mp3,.wav,.m4a" class="sr-only" />
+        </label>
+
+        <!-- Re-transcribe with AI -->
         <button
           id="editor-whisper-btn"
           type="button"
           class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-full bg-[var(--color-link)] text-white hover:opacity-90 transition-all shadow-xs"
         >
           <span>⚡</span>
-          <span>Auto-Transcribe with Whisper</span>
+          <span>AI Re-Transcribe</span>
         </button>
-
-        <label for="studio-replace-file-input" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-full border border-[var(--color-hairline)] bg-[var(--color-canvas)] text-[var(--color-ink)] hover:bg-[var(--color-canvas-soft)] cursor-pointer transition-all shadow-xs">
-          <span>📁</span>
-          <span>Change Media</span>
-          <input id="studio-replace-file-input" type="file" accept="video/*,audio/*,.mp4,.mov,.webm,.mkv,.mp3,.wav,.m4a,.srt,.vtt,.ass" class="sr-only" />
-        </label>
       </div>
     </div>
 
@@ -500,7 +658,7 @@ const fontFamilies = [
           </div>
         </div>
 
-        <!-- Export & Download Actions -->
+        <!-- Export & Download Actions (Both Options Supported!) -->
         <div class="flex flex-col gap-3 pt-2 border-t border-[var(--color-hairline)]">
           <button
             id="export-burned-video-btn"
@@ -512,16 +670,16 @@ const fontFamilies = [
           </button>
 
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-            <button id="export-srt-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+            <button id="export-srt-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center" title="Download SubRip .SRT">
               ⬇️ .SRT
             </button>
-            <button id="export-vtt-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+            <button id="export-vtt-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center" title="Download WebVTT .VTT">
               ⬇️ .VTT
             </button>
-            <button id="export-ass-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+            <button id="export-ass-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center" title="Download Advanced SubStation Alpha .ASS">
               ⬇️ .ASS
             </button>
-            <button id="export-copy-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center">
+            <button id="export-copy-btn" type="button" class="p-2 rounded-xl border border-[var(--color-hairline)] bg-[var(--color-canvas-soft)] hover:bg-[var(--color-canvas)] text-[var(--color-ink)] font-semibold transition-colors text-center" title="Copy plain text transcript">
               📋 Copy
             </button>
           </div>
@@ -553,7 +711,7 @@ const fontFamilies = [
     </div>
   </dialog>
 
-  <!-- ─── 4. FLOATING CHAT / FEEDBACK BUBBLE (Bottom Right matching screenshot) ─── -->
+  <!-- ─── 4. FLOATING CHAT / FEEDBACK BUBBLE ─── -->
   <button
     id="floating-chat-btn"
     type="button"
@@ -579,6 +737,11 @@ const fontFamilies = [
   let syncOffset = 0;
   let videoBlobUrl = '';
   let activeVideoFile: File | null = null;
+  let activeSubtitleFilename = '';
+
+  // State for Burn Subtitles Dual Upload Mode
+  let burnSelectedVideo: File | null = null;
+  let burnSelectedSub: File | null = null;
 
   // Custom Typography State
   const typoState = {
@@ -626,6 +789,44 @@ const fontFamilies = [
   const editorView = document.getElementById('studio-editor-view');
   const studioVideo = document.getElementById('studio-video') as HTMLVideoElement;
   const currentFileBadge = document.getElementById('current-file-badge');
+  const currentSubBadge = document.getElementById('current-sub-badge');
+
+  // Mode Switcher Elements
+  const tabBtnAi = document.getElementById('mode-tab-ai');
+  const tabBtnBurn = document.getElementById('mode-tab-burn');
+  const viewModeAi = document.getElementById('view-mode-ai');
+  const viewModeBurn = document.getElementById('view-mode-burn');
+
+  function switchMode(mode: 'ai' | 'burn') {
+    if (mode === 'ai') {
+      tabBtnAi?.classList.add('bg-white', 'dark:bg-zinc-800', 'text-[var(--color-ink)]', 'shadow-sm');
+      tabBtnAi?.classList.remove('text-[var(--color-mute)]');
+      tabBtnBurn?.classList.remove('bg-white', 'dark:bg-zinc-800', 'text-[var(--color-ink)]', 'shadow-sm');
+      tabBtnBurn?.classList.add('text-[var(--color-mute)]');
+
+      viewModeAi?.classList.remove('hidden');
+      viewModeBurn?.classList.add('hidden');
+    } else {
+      tabBtnBurn?.classList.add('bg-white', 'dark:bg-zinc-800', 'text-[var(--color-ink)]', 'shadow-sm');
+      tabBtnBurn?.classList.remove('text-[var(--color-mute)]');
+      tabBtnAi?.classList.remove('bg-white', 'dark:bg-zinc-800', 'text-[var(--color-ink)]', 'shadow-sm');
+      tabBtnAi?.classList.add('text-[var(--color-mute)]');
+
+      viewModeBurn?.classList.remove('hidden');
+      viewModeAi?.classList.add('hidden');
+    }
+  }
+
+  tabBtnAi?.addEventListener('click', () => switchMode('ai'));
+  tabBtnBurn?.addEventListener('click', () => switchMode('burn'));
+
+  // Initialize mode from dataset or URL query params
+  const initialModeAttr = document.getElementById('subtitle-studio')?.getAttribute('data-initial-mode');
+  const urlParams = new URLSearchParams(window.location.search);
+  const modeParam = urlParams.get('mode');
+  if (modeParam === 'burn' || initialModeAttr === 'burn') {
+    switchMode('burn');
+  }
 
   function showEditor() {
     uploadView?.classList.add('hidden');
@@ -633,7 +834,7 @@ const fontFamilies = [
     editorView?.classList.add('flex');
     renderCuesList();
     applyTypographyStyles();
-    // Scroll smoothly to editor if needed
+    updateSubBadge();
     editorView?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -657,14 +858,23 @@ const fontFamilies = [
     if (currentFileBadge) currentFileBadge.textContent = `✓ ${file.name}`;
   }
 
-  // Dropzone handling
+  function updateSubBadge() {
+    if (currentSubBadge) {
+      if (activeSubtitleFilename) {
+        currentSubBadge.textContent = `✓ ${activeSubtitleFilename} (${currentCues.length} cues)`;
+      } else {
+        currentSubBadge.textContent = `✓ ${currentCues.length} subtitle cues`;
+      }
+    }
+  }
+
+  // ─── OPTION 1: AI Auto-Caption Upload Handlers ───
   const heroDropzone = document.getElementById('hero-dropzone');
   const heroMediaInput = document.getElementById('hero-media-input') as HTMLInputElement;
-  const replaceFileInput = document.getElementById('studio-replace-file-input') as HTMLInputElement;
   const transcribeLoadingOverlay = document.getElementById('transcribe-loading-overlay');
   const transcribeStatusText = document.getElementById('transcribe-status-text');
 
-  async function handleIncomingFile(file: File) {
+  async function handleAiIncomingFile(file: File) {
     if (!file) return;
 
     if (file.type.startsWith('video/') || file.name.match(/\.(mp4|mov|webm|mkv|avi|m4v)$/i)) {
@@ -675,7 +885,7 @@ const fontFamilies = [
       }
       showEditor();
       showToast(`✓ Video loaded: ${file.name}`, 'success');
-      // Trigger transcription automatically if video audio present
+      // Trigger transcription automatically
       transcribeMediaFile(file);
     } else if (file.type.startsWith('audio/') || file.name.match(/\.(mp3|wav|m4a|aac|flac|ogg)$/i)) {
       if (currentCues.length === 0) {
@@ -690,6 +900,7 @@ const fontFamilies = [
       if (cues.length > 0) {
         originalCues = [...cues];
         currentCues = [...cues];
+        activeSubtitleFilename = file.name;
         showEditor();
         showToast(`✓ Loaded ${cues.length} subtitle cues from ${file.name}`, 'success');
       }
@@ -698,15 +909,9 @@ const fontFamilies = [
 
   heroMediaInput?.addEventListener('change', (e) => {
     const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) handleIncomingFile(file);
+    if (file) handleAiIncomingFile(file);
   });
 
-  replaceFileInput?.addEventListener('change', (e) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) handleIncomingFile(file);
-  });
-
-  // Drag & drop on Hero Dropzone
   heroDropzone?.addEventListener('dragover', (e) => {
     e.preventDefault();
     heroDropzone.classList.add('border-sky-500', 'bg-sky-50/60');
@@ -719,8 +924,193 @@ const fontFamilies = [
   heroDropzone?.addEventListener('drop', (e) => {
     e.preventDefault();
     heroDropzone.classList.remove('border-sky-500', 'bg-sky-50/60');
-    const file = e.dataTransfer?.files?.[0];
-    if (file) handleIncomingFile(file);
+    
+    // Check if multiple files were dropped (e.g. video + subtitle file together)
+    const files = Array.from(e.dataTransfer?.files || []);
+    if (files.length >= 2) {
+      handleDualFiles(files);
+    } else if (files[0]) {
+      handleAiIncomingFile(files[0]);
+    }
+  });
+
+  // ─── OPTION 2: Burn Subtitles Dual Upload Handlers ───
+  const burnVideoDropzone = document.getElementById('burn-video-dropzone');
+  const burnSubDropzone = document.getElementById('burn-sub-dropzone');
+  const burnVideoInput = document.getElementById('burn-video-input') as HTMLInputElement;
+  const burnSubInput = document.getElementById('burn-sub-input') as HTMLInputElement;
+  const burnVideoSelectedBadge = document.getElementById('burn-video-selected-badge');
+  const burnSubSelectedBadge = document.getElementById('burn-sub-selected-badge');
+  const burnVideoEmptyText = document.getElementById('burn-video-empty-text');
+  const burnSubEmptyText = document.getElementById('burn-sub-empty-text');
+  const burnLaunchBtn = document.getElementById('burn-launch-btn');
+  const burnSamplePairBtn = document.getElementById('burn-sample-pair-btn');
+
+  function setBurnVideo(file: File) {
+    burnSelectedVideo = file;
+    if (burnVideoSelectedBadge) {
+      burnVideoSelectedBadge.textContent = `✓ ${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)`;
+      burnVideoSelectedBadge.classList.remove('hidden');
+    }
+    if (burnVideoEmptyText) burnVideoEmptyText.classList.add('hidden');
+    showToast(`✓ Selected video: ${file.name}`, 'info');
+
+    // Auto-launch if subtitle is already chosen
+    if (burnSelectedSub) {
+      launchBurnerStudio();
+    }
+  }
+
+  async function setBurnSubtitle(file: File) {
+    burnSelectedSub = file;
+    const text = await file.text();
+    const cues = parseSubtitleText(text, file.name);
+    if (cues.length > 0) {
+      originalCues = [...cues];
+      currentCues = [...cues];
+      activeSubtitleFilename = file.name;
+      if (burnSubSelectedBadge) {
+        burnSubSelectedBadge.textContent = `✓ ${file.name} (${cues.length} cues)`;
+        burnSubSelectedBadge.classList.remove('hidden');
+      }
+      if (burnSubEmptyText) burnSubEmptyText.classList.add('hidden');
+      showToast(`✓ Loaded ${cues.length} subtitle cues from ${file.name}`, 'success');
+
+      // Auto-launch if video is already chosen
+      if (burnSelectedVideo) {
+        launchBurnerStudio();
+      }
+    } else {
+      showToast(`⚠️ Could not parse cues from ${file.name}. Please check format.`, 'warning');
+    }
+  }
+
+  function handleDualFiles(files: File[]) {
+    const videoFile = files.find(f => f.type.startsWith('video/') || f.name.match(/\.(mp4|mov|webm|mkv|avi|m4v)$/i));
+    const subFile = files.find(f => f.name.match(/\.(srt|vtt|ass|ssa|sub|json|txt)$/i));
+
+    if (videoFile) setBurnVideo(videoFile);
+    if (subFile) setBurnSubtitle(subFile);
+
+    if (videoFile || subFile) {
+      switchMode('burn');
+    }
+  }
+
+  burnVideoDropzone?.addEventListener('click', () => burnVideoInput?.click());
+  burnSubDropzone?.addEventListener('click', () => burnSubInput?.click());
+
+  burnVideoInput?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) setBurnVideo(file);
+  });
+
+  burnSubInput?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) setBurnSubtitle(file);
+  });
+
+  // Drag & drop on Video card
+  burnVideoDropzone?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    burnVideoDropzone.classList.add('border-sky-500', 'bg-sky-50/60');
+  });
+  burnVideoDropzone?.addEventListener('dragleave', () => {
+    burnVideoDropzone.classList.remove('border-sky-500', 'bg-sky-50/60');
+  });
+  burnVideoDropzone?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    burnVideoDropzone.classList.remove('border-sky-500', 'bg-sky-50/60');
+    const files = Array.from(e.dataTransfer?.files || []);
+    if (files.length >= 2) {
+      handleDualFiles(files);
+    } else if (files[0]) {
+      if (files[0].name.match(/\.(srt|vtt|ass|ssa|sub|json|txt)$/i)) {
+        setBurnSubtitle(files[0]);
+      } else {
+        setBurnVideo(files[0]);
+      }
+    }
+  });
+
+  // Drag & drop on Subtitle card
+  burnSubDropzone?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    burnSubDropzone.classList.add('border-amber-500', 'bg-amber-50/60');
+  });
+  burnSubDropzone?.addEventListener('dragleave', () => {
+    burnSubDropzone.classList.remove('border-amber-500', 'bg-amber-50/60');
+  });
+  burnSubDropzone?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    burnSubDropzone.classList.remove('border-amber-500', 'bg-amber-50/60');
+    const files = Array.from(e.dataTransfer?.files || []);
+    if (files.length >= 2) {
+      handleDualFiles(files);
+    } else if (files[0]) {
+      if (files[0].name.match(/\.(srt|vtt|ass|ssa|sub|json|txt)$/i)) {
+        setBurnSubtitle(files[0]);
+      } else {
+        setBurnVideo(files[0]);
+      }
+    }
+  });
+
+  function launchBurnerStudio() {
+    if (burnSelectedVideo) {
+      loadVideoToPlayer(burnSelectedVideo);
+    }
+    if (currentCues.length === 0) {
+      currentCues = [...defaultDemoCues];
+      originalCues = [...defaultDemoCues];
+    }
+    showEditor();
+    showToast('✓ Video and subtitles loaded into Burner Studio!', 'success');
+  }
+
+  burnLaunchBtn?.addEventListener('click', () => {
+    if (!burnSelectedVideo && currentCues.length === 0) {
+      showToast('Please select a video file and subtitle file first.', 'warning');
+      return;
+    }
+    launchBurnerStudio();
+  });
+
+  burnSamplePairBtn?.addEventListener('click', () => {
+    currentCues = [...defaultDemoCues];
+    originalCues = [...defaultDemoCues];
+    activeSubtitleFilename = 'sample-captions.srt';
+    if (currentFileBadge) currentFileBadge.textContent = '✓ sample-video.mp4';
+    showEditor();
+    showToast('✓ Loaded sample video and synced subtitle file!', 'success');
+  });
+
+  // ─── EDITOR QUICK ACTION INPUTS ───
+  const replaceFileInput = document.getElementById('studio-replace-file-input') as HTMLInputElement;
+  const loadSubInput = document.getElementById('studio-load-sub-input') as HTMLInputElement;
+
+  replaceFileInput?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      loadVideoToPlayer(file);
+      showToast(`✓ Changed video to: ${file.name}`, 'success');
+    }
+  });
+
+  loadSubInput?.addEventListener('change', async (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      const text = await file.text();
+      const cues = parseSubtitleText(text, file.name);
+      if (cues.length > 0) {
+        originalCues = [...cues];
+        currentCues = [...cues];
+        activeSubtitleFilename = file.name;
+        renderCuesList();
+        updateSubBadge();
+        showToast(`✓ Loaded ${cues.length} subtitle cues from ${file.name}`, 'success');
+      }
+    }
   });
 
   // Whisper AI Transcriber
@@ -773,7 +1163,9 @@ const fontFamilies = [
       if (allExtractedCues.length > 0) {
         currentCues = allExtractedCues.map((c, idx) => ({ ...c, id: idx + 1 }));
         originalCues = [...currentCues];
+        activeSubtitleFilename = 'ai-whisper-transcription.srt';
         renderCuesList();
+        updateSubBadge();
         showToast(`✓ Cloudflare Whisper AI transcribed ${currentCues.length} subtitle cues!`, 'success');
       }
     } catch (err: any) {
@@ -783,6 +1175,7 @@ const fontFamilies = [
         currentCues = [...defaultDemoCues];
         originalCues = [...defaultDemoCues];
         renderCuesList();
+        updateSubBadge();
       }
     } finally {
       transcribeLoadingOverlay?.classList.add('hidden');
@@ -803,6 +1196,7 @@ const fontFamilies = [
     btn.addEventListener('click', () => {
       currentCues = [...defaultDemoCues];
       originalCues = [...defaultDemoCues];
+      activeSubtitleFilename = 'sample-demo.srt';
       if (currentFileBadge) currentFileBadge.textContent = '✓ demo-sample.mp4';
       showEditor();
       showToast('✓ Loaded sample demo video & subtitles', 'info');
@@ -1205,6 +1599,7 @@ const fontFamilies = [
         currentCues.splice(idx, 1);
         originalCues = [...currentCues];
         renderCuesList();
+        updateSubBadge();
       });
     });
   }
@@ -1221,9 +1616,10 @@ const fontFamilies = [
     });
     originalCues = [...currentCues];
     renderCuesList();
+    updateSubBadge();
   });
 
-  // Export Downloads
+  // Export Downloads (For both Option 1 & Option 2)
   function downloadFile(content: string, filename: string, type: string) {
     const blob = new Blob([content], { type });
     const url = URL.createObjectURL(blob);
@@ -1261,7 +1657,7 @@ const fontFamilies = [
     });
   });
 
-  // MP4 Video Burner Exporter
+  // MP4 Video Burner Exporter (Option 1 & Option 2: Burns subtitles directly into video!)
   document.getElementById('export-burned-video-btn')?.addEventListener('click', async () => {
     if (!studioVideo.src) {
       showToast('Please upload a video before burning.', 'warning');
@@ -1483,4 +1879,5 @@ const fontFamilies = [
   currentCues = [...defaultDemoCues];
   originalCues = [...defaultDemoCues];
   applyTypographyStyles();
+  updateSubBadge();
 </script>
